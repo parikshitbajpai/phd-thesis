@@ -1,0 +1,97 @@
+\documentclass{dissertation}
+
+\usepackage{mhchem}
+\usepackage{siunitx}
+\usepackage{pdflscape}
+\usepackage{enumitem}
+\usepackage[final]{pdfpages}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{nameref}
+
+\theoremstyle{definition}
+\newtheorem*{objective}{Objective}
+ 
+\theoremstyle{remark}
+\newtheorem*{constraint}{Constraints}
+
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+\newcommand{\compresslist}{
+	\setlength{\itemsep}{1pt}
+	\setlength{\parskip}{0pt}
+	\setlength{\parsep}{0pt}
+	}
+%\onehalfspacing
+
+\begin{document}
+
+%% Specify the title and author of the thesis. This information will be used on
+%% the title page (in title/title.tex) and in the metadata of the final PDF.\documentclass{dissertation}
+
+% Format: \title[Optional Subtitle]{Title}
+\title[Development of the Corrosion Modelling Application Yellowjacket]{Thermochemical Equilibrium for Multiphysics Simulations of Nuclear Materials} 
+%\subtitle{Development of Corrosion Modelling Application Yellowjacket}
+\author{Parikshit}{Bajpai}
+
+%% Use Roman numerals for the page numbers of the title pages and table of
+%% contents.
+\frontmatter
+
+\include{title/title}
+
+%% The (optional) dedication can be used to thank someone or display a
+%% significant quotation.
+% \dedication{\epigraph{This perpetual motion machine she made today is a joke, it just keeps going faster and faster... \\ Lisa ... In this house, we OBEY the laws of thermodynamics!}{Homer Simpson}}
+
+\include{acks/acks}
+
+\include{summary/summary}
+
+\tableofcontents
+
+\listoffigures
+
+\listoftables
+
+% \include{preface/preface}
+% \include{summary/summary}
+
+%% Use Arabic numerals for the page numbers of the chapters.
+\mainmatter
+
+%% Turn on thumb indices.
+%\thumbtrue
+
+\include{chapters/chapter-1}
+\include{chapters/chapter-2}
+\include{chapters/chapter-3}
+\include{chapters/chapter-4}
+\include{chapters/chapter-5}
+\include{chapters/chapter-6}
+\include{conclusion/conclusion}
+% \include{epilogue/epilogue}
+
+\references{dissertation.bib}
+
+%% Use letters for the chapter numbers of the appendices.
+\appendix
+
+%% Turn off thumb indices for unnumbered chapters.
+\thumbfalse
+
+% \include{cv/cv}
+\include{publications/publications}
+
+%\newpage
+%\cleardoublepage
+%\thispagestyle{empty}
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=\textwidth]{figures/YJ_cartoon}
+%\end{figure}
+
+\end{document}
+
