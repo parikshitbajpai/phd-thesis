@@ -28,36 +28,56 @@
 
 \begin{document}
 
-%% Specify the title and author of the thesis. This information will be used on
-%% the title page (in title/title.tex) and in the metadata of the final PDF.\documentclass{dissertation}
+%% Specify the title and author of the thesis. This information will be used on the title page (in title/title.tex) and in the metadata of the final PDF.
 
+% Thesis Title
 % Format: \title[Optional Subtitle]{Title}
 \title[Development of the Corrosion Modelling Application Yellowjacket]{Thermochemical Equilibrium for Multiphysics Simulations of Nuclear Materials} 
 %\subtitle{Development of Corrosion Modelling Application Yellowjacket}
+
+% Author Name
+% Format: \author{Firstname}{Lastname}
 \author{Parikshit}{Bajpai}
 
-%% Use Roman numerals for the page numbers of the title pages and table of
-%% contents.
+% Degree and Program
+% Format: \DegreeProgram{Degree}{Program}
+\DegreeProgram{Doctor of Philosophy}{Modelling and Computational Science}
+
+% Thesis month and year
+% Format: \DegreeDate{Month}{Year}
+\DegreeDate{June}{2022}
+
+%% Use Roman numerals for the front matter.
 \frontmatter
 
+% Title page
 \include{title/title}
 
-%% The (optional) dedication can be used to thank someone or display a
-%% significant quotation.
-% \dedication{\epigraph{This perpetual motion machine she made today is a joke, it just keeps going faster and faster... \\ Lisa ... In this house, we OBEY the laws of thermodynamics!}{Homer Simpson}}
+% Thesis exam information
+\include{frontmatter/exam_info}
+
+\include{abstract/abstract}
+
+\include{frontmatter/declaration}
+
+\include{frontmatter/contributions}
 
 \include{acks/acks}
 
-\include{summary/summary}
-
+\cleardoublepage
 \tableofcontents
 
+\cleardoublepage
 \listoffigures
 
+\cleardoublepage
 \listoftables
 
 % \include{preface/preface}
 % \include{summary/summary}
+
+%% The (optional) dedication can be used to thank someone or display a significant quotation.
+ \dedication{\epigraph{This perpetual motion machine she made today is a joke, it just keeps going faster and faster... \\ Lisa ... In this house, we OBEY the laws of thermodynamics!}{Homer Simpson}}
 
 %% Use Arabic numerals for the page numbers of the chapters.
 \mainmatter

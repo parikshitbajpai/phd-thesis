@@ -6,7 +6,7 @@ all: dissertation.pdf
 force-build:
 
 dissertation.pdf: force-build
-	xelatex dissertation
+	xelatex Thesis
 	bibtex chapter-1/chapter-1
 	xelatex dissertation
 	xelatex dissertation

@@ -196,6 +196,18 @@
     \hypersetup{pdfauthor=#1\ #2}%
 }
 
+%% New command to specify degree and program name
+\newcommand{\DegreeProgram}[2]{
+	\def\degree{#1}%
+	\def\program{#2}%
+}
+
+%% New command to specify degree month and year
+\newcommand{\DegreeDate}[2]{
+	\def\degreemonth{#1}%
+	\def\degreeyear{#2}%
+}
+
 %% Remove the header and page number on empty pages.
 \def\cleardoublepage{%
     \clearpage%
@@ -432,6 +444,7 @@
 %% The dedication is vertically centered on a separate page and flushed to the
 %% right.
 \newcommand\dedication[1]{%
+    \newpage \cleardoublepage
     \thispagestyle{empty}%
     \vspace*{\fill}%
     \begin{flushright}%
