@@ -203,9 +203,10 @@
 }
 
 %% New command to specify degree month and year
-\newcommand{\DegreeDate}[2]{
-	\def\degreemonth{#1}%
-	\def\degreeyear{#2}%
+\newcommand{\DefenseDate}[3]{
+	\def\defensedate{#1}
+	\def\degreemonth{#2}%
+	\def\degreeyear{#3}%
 }
 
 %% Remove the header and page number on empty pages.

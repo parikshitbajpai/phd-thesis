@@ -1,16 +1,14 @@
-
 .PHONY: force-build
 
-all: dissertation.pdf
+all: thesis clean
 
 force-build:
 
-dissertation.pdf: force-build
+thesis: force-build
 	xelatex Thesis
-	bibtex chapter-1/chapter-1
-	xelatex dissertation
-	xelatex dissertation
+	bibtex Thesis
+	xelatex Thesis
+	xelatex Thesis
 
-propositions.pdf: force-build
-	xelatex propositions
-	xelatex propositions
+clean:
+	rm -rf *.out *.aux */*.aux *bbl *blg *log *toc *.ptb *.tod *.fls *.fdb_latexmk *.lof *.lot
