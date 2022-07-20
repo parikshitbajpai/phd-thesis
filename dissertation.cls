@@ -468,8 +468,7 @@
     \vspace{2\baselineskip}%
 }
 
-%% The epigraph environment can be used to to add a quote to the title page of
-%% a chapter.
+%% The epigraph environment can be used to to add a quote to the title page of a chapter.
 \newcommand\epigraph[3][2\baselineskip]{%
     \begin{flushright}%
         {\rmfamily\itshape #2}%
