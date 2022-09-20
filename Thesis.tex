@@ -24,7 +24,8 @@
 	\setlength{\parskip}{0pt}
 	\setlength{\parsep}{0pt}
 	}
-%\onehalfspacing
+\onehalfspacing
+%\doublespacing
 
 \begin{document}
 
@@ -50,6 +51,7 @@
 %% Use Roman numerals for the front matter.
 \frontmatter
 
+\begin{singlespace}
 % Title page
 \include{title/title}
 
@@ -63,6 +65,8 @@
 \include{frontmatter/contributions}
 
 \include{acks/acks}
+
+\end{singlespace}
 
 \cleardoublepage
 \tableofcontents

@@ -8,7 +8,7 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 
-\LoadClass[11pt]{book}
+\LoadClass[12pt]{book}
 
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
