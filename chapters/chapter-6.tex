@@ -1,4 +1,4 @@
-\chapter{Results and Discussions} \label{chap:results}
+\chapter{Computational Implementation} \label{chap:implementation}
 
 
 	This chapter presents the numerical algorithms that can be employed in computing thermodynamic equilibria. While most of these algorithms embody the concepts previously presented in the open literature, there remains a scope for improving the efficiency and capabilities of some of these algorithms through careful implementation and/or building upon them. This chapter discusses the computational implementation of the proposed thermodynamic equilibrium solver, the top-level architecture of which has been outlined in figure~\ref{fig:structure}. The program essentially consists of a parsing and input module to read the required thermodynamic data and system information followed by initialisation routines which provide the initial assemblage to a non-linear GEM routine. The assemblage from the non-linear solver is then checked to ensure global minimum is achieved at which stage the outputs are produced.
