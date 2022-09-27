@@ -160,10 +160,19 @@
 %% Set the paper size to 17 by 24 cm, approximately halfway between A4 and A5.
 \if@print
     %% In print mode we add a 3 mm bleed on the outside of the page.
+%    \geometry{
+%        papersize = {173mm,246mm},
+%        layoutsize = {167mm,240mm},
+%        layoutoffset = {3mm,3mm},
+%        bindingoffset = -3mm
+%    }
+%\else
     \geometry{
-        papersize = {173mm,246mm},
-        layoutsize = {167mm,240mm},
-        layoutoffset = {3mm,3mm},
+        paper = letterpaper,
+        inner = 15mm,
+        outer = 10mm,
+        top = 10mm,
+        bottom = 10mm,
         bindingoffset = -3mm
     }
 \else

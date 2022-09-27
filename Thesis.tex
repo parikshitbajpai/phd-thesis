@@ -27,14 +27,16 @@
 \onehalfspacing
 %\doublespacing
 
+\newcommand{\YJ}{Yellowjacket}
+\newcommand{\GEM}{{\YJ}~-~GEM}
+
 \begin{document}
 
 %% Specify the title and author of the thesis. This information will be used on the title page (in title/title.tex) and in the metadata of the final PDF.
 
 % Thesis Title
 % Format: \title[Optional Subtitle]{Title}
-\title[Development of the Corrosion Modelling Application Yellowjacket]{Calculating Thermochemical Equilibrium for Multiphysics Simulations of Nuclear Materials} 
-%\subtitle{Development of Corrosion Modelling Application Yellowjacket}
+\title[Development of Yellowjacket Gibbs Energy Minimiser]{Calculating Thermochemical Equilibrium for Multiphysics Simulations of Nuclear Materials} 
 
 % Author Name
 % Format: \author{Firstname}{Lastname}
@@ -46,7 +48,7 @@
 
 % Thesis month and year
 % Format: \DefenseDate{Month}{Year}
-\DefenseDate{30}{October}{2022}
+\DefenseDate{30}{November}{2022}
 
 %% Use Roman numerals for the front matter.
 \frontmatter
@@ -87,17 +89,17 @@
 \mainmatter
 
 %% Turn on thumb indices.
-%\thumbtrue
+\thumbtrue
 
-
-\include{chapters/chapter-1}
-\include{chapters/chapter-2}
+\include{introduction/chapter-1}
+\include{introduction/chapter-2}
 \include{chapters/chapter-3}
 \include{chapters/chapter-4}
 \include{chapters/chapter-5}
 \include{chapters/chapter-6}
-\include{conclusion/conclusion}
-% \include{epilogue/epilogue}
+\include{chapters/chapter-7}
+\include{conclusion/chapter-8}
+\include{conclusion/chapter-9}
 
 \references{dissertation.bib}
 
@@ -109,14 +111,6 @@
 
 % \include{cv/cv}
 \include{publications/publications}
-
-%\newpage
-%\cleardoublepage
-%\thispagestyle{empty}
-%\begin{figure}
-%	\centering
-%	\includegraphics[width=\textwidth]{figures/YJ_cartoon}
-%\end{figure}
 
 \end{document}
 
