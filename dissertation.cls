@@ -121,13 +121,13 @@
 \fi
 
 %% Define the Ontario Tech house style colors.
-\definecolor{ONTech-dark-blue}{cmyk}{1,0.58,0.09,0.46}
-\definecolor{ONTech-light-blue}{cmyk}{1,0.31,0,0}
-\definecolor{ONTech-orange}{cmyk}{0,0.70,1,0}
-\definecolor{ONTech-warm-grey}{cmyk}{0.9,0.11,0.13,0.20}
-\definecolor{ONTech-cool-grey}{cmyk}{0.20,0.14,0.12,0.40}
-\definecolor{ONTech-dark-grey}{cmyk}{0.45,0.25,0.16,0.59}
-\definecolor{ONTech-navy}{cmyk}{1,0.75,0.50,0.50}
+\definecolor{ONTech-future-blue}{HTML}{003C71}
+\definecolor{ONTech-simcoe-blue}{HTML}{0077CA}
+\definecolor{ONTech-tangerine}{HTML}{E75D2A}
+\definecolor{ONTech-warm-grey}{HTML}{ACA39A}
+\definecolor{ONTech-cool-grey}{HTML}{A7A8AA}
+\definecolor{ONTech-dark-grey}{HTML}{5B6770}
+\definecolor{ONTech-spirit-navy}{HTML}{00283C}
 
 %% Define the TU Delft house style colors.
 \definecolor{tudelft-cyan}{cmyk}{1,0,0,0}
@@ -514,8 +514,8 @@
 %% Hyperlinks are cyan, except in print mode, when they are all black.
 \hypersetup{
     colorlinks = true,
-    citecolor = ONTech-orange,
-    linkcolor = ONTech-light-blue,
+    citecolor = ONTech-future-blue,
+    linkcolor = ONTech-simcoe-blue,
     urlcolor = tudelft-fuchsia
 }
 

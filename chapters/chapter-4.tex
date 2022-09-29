@@ -1,62 +1,104 @@
 \chapter{Equilibrium Thermodynamics} \label{chap:equilibrium}
 
 	The foundations of thermodynamic equilibrium calculations were laid down by American chemical physicist Josiah Willard Gibbs who originally published his work \emph{On the Equilibrium of Heterogeneous Substances} in a relatively obscure American journal, the Transactions of the Connecticut Academy of Arts and Sciences, in several parts, during the years 1875 to 1878. Thermodynamic equilibrium computations in isothermal, isobaric systems are aimed at identifying a unique combination of phases and species which minimises the integral Gibbs energy of the system while satisfying the necessary underlying conditions. Thermodynamics requires that a favourable change in a system must decrease the Gibbs energy of the system while respecting the mass constraints of the system components and the Gibbs' phase rule must be satisfied.
+	
+%==============================================================================================================================
+%													Phase Equilibrium
+%==============================================================================================================================	
+\section{Phase Equilibrium in Heterogeneous Systems} \label{sec:multi_eqb}
+	A heterogeneous system is defined as one where the thermodynamic properties may have different values in different parts of the system when the system is at equilibrium. While a continuous variation of these properties is possible, equilibrium thermodynamics in the context of this work only concerns discontinuous variations where the properties have different values in different portions of the systems but are homogenous within each portion. A practical example of such a scenario is that of multiple phases being present in a system with the properties in phase being homogenous and the different phases are in equilibrium with each other \cite{liu_wang_2016}.
+	
+	In a system at equilibrium, with $C$ components, there are $C+2$ natural variables with $2$ representing the variables temperature, $T$, and pressure, $P$. For an isothermal, isobaric system, the equilibrium conditions result in:
+	\begin{equation}
+		d G_{\text{sys}} = -S dT -Vd(-P) + \sum_{i} \mu_j d n_j = 0.
+	\end{equation}
+	As a result, the equilibrium state is defined by a minimum in the integral Gibbs energy of the system at constant $T$, $P$ and $n_i$. In doing so one must respect the mass balance and charge neutrality constraints. In the present context, this also implies that the chemical potential of each component must be homogenous in all phases stable at equilibrium and gives the common tangent construction for phases at equilibrium:
+	\begin{equation}
+		\mu_{i}^{\phi_1} = \mu_{i}^{\phi_2} = \mu_{i}^{\phi_2} = \cdots,
+	\end{equation}
+	where $\phi_1$, $\phi_2$, etc. denote the phases stable at equilibrium. The above arguments can be generalised into the necessary and sufficient conditions for equilibrium which are used in the development of the Gibbs energy minimiser. 
+%==============================================================================================================================
+%													Conditions of Phase Equilibrium
+%==============================================================================================================================
 
-  \section{Conditions of thermodynamic equilibrium}\label{sec:eqb_theory}
-		The law of \textbf{conservation of mass} requires that the linear equations representing mass constraints be satisfied. For component $j$, the mass balance equation can be written as
+\section{Conditions of Phase Equilibrium} \label{sec:eqb_theory}
+A thermodynamic equilibrium solver must meet both the necessary and sufficient conditions for thermodynamic equilibrium. Rooted in the fundamental laws of thermodynamics, the necessary and sufficient conditions together ensure that the Gibbs energy of the system is at a local equilibrium while respecting the constraints.
+
+\subsection{Necessary conditions}
+	The necessary conditions for thermodynamic equilibrium require satisfaction of mass conservation and the Gibbs' phase rule in addition to satisfying the Gibbs' criterion which is a generalisation of the common tangent construction. These condition can be summarised as follows.
+	
+	\begin{enumerate}
+		\item \textbf{Conservation of mass}\\
+			The law of conservation of mass requires that the linear equations representing mass constraints be satisfied. For component $j$, the mass balance equation can be written as:
 			\begin{equation}\label{eq:massbalance}
-				b_j = \sum_{\lambda=1}^{\Lambda} n_{\lambda}\sum_{i=1}^{N_{\lambda}}x_{i({\lambda})}{\nu}_{i,j} +  \sum_{\omega=1}^{\Omega} n_{\omega}{\nu}_{\omega}
+				b_j = \sum_{\phi=1}^{\Phi} n_{\phi}\sum_{i=1}^{N_{\phi}} {\nu}_{ij} x_{i},
 			\end{equation}
-			where, ${\nu}_{i,j}$ and ${\nu}_{\omega}$ represent the stoichiometric coefficients of element $j$ in solution phase species $j$ and stoichiometric phase $\omega$ respectively. In an electrochemical system where the electrons form a system component with zero moles overall in the system, the mass balance constraint represents charge neutrality constraint.
-
-		Thermodynamic equilibrium conditions also require that the \textbf{Gibbs' phase rule} must also be satisfied. Gibbs' phase rule determines the \emph{degree of freedom} of the system i.e. the number of phases that can be stable at equilibrium in relation to the state variables \cite{Gibbs:1878aa}. In general, the phase rule can be written as:
+			where ${\nu}_{ij}$ represents the stoichiometric coefficient of element $j$ in phase species $i$. In an electrochemical system where the electrons form a system component with zero moles overall in the system, the mass balance constraint includes the charge neutrality constraint but it can be explicitly written as:
+			\begin{equation}\label{eq:chargebalance}
+				b_{e^-} = \sum_{i=1}^{N_{\phi}}x_{i}{\nu}_{i{e^-}} = 0.
+			\end{equation} 
+			
+		\item \textbf{Gibbs' phase rule}\\
+			Thermodynamic equilibrium conditions also require that the Gibbs' phase rule be satisfied. Gibbs' phase rule determines the \emph{degree of freedom} of the system, i.e., the number of phases that can be stable at equilibrium in relation to the state variables \cite{Gibbs:1878aa}. In general, the phase rule can be written as:
 			\begin{equation}
-                			F=C-\Phi + 2 + \Xi
+                			F=C-\Phi + 2 + \Xi,
             		\end{equation}
-            		where, $F$ represents the degrees of freedom, $C$ denotes the number of components in the system, $\Phi$ denotes the number of phases and $\Xi$ denotes the number of ionic phases. However, for isothermal, isobaric systems with no charged species, the phase rule takes the following simplified form :
+            		where $F$ represents the degrees of freedom, $C$ denotes the number of components in the system, $\Phi$ denotes the number of phases and $\Xi$ denotes the number of ionic phases. However, for isothermal, isobaric systems with no charged species, the phase rule takes the following simplified form :
 			\begin{equation}
-                			F=C-\Phi
+                			F=C-\Phi,
             		\end{equation}
 			which implies that the number of phases that can co-exist at equilibrium cannot exceed the number of components in a closed isothermal, isobaric system.
-
-		Ensuring that the Gibbs phase rule and mass balance constraints are satisfied is relatively straightforward but special attention must be paid to ensuring that the integral Gibbs energy of the system is at a minimum. The equilibrium criteria established by Gibbs requires that at equilibrium $d G_{sys} = 0$ \cite{Gibbs:1878aa}. Thus, differentiating equation~\ref{eqn:integralGibbs}
-		\begin{equation}\label{eqn:dGibbs1}
-			d G_{sys} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( d n_{i(\phi)}\mu_{i(\phi)} + n_{i(\phi)} d \mu_{i(\phi)}\right) = 0
-		\end{equation}
-
-		The chemical potentials are related through the \emph{Gibbs-Duhem equation} which, at constant temperature and pressure, can be written as \cite{Olander08}:
-		\begin{equation}\label{eqn:dGibbs2}
-			\sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( n_{i(\phi)} d \mu_{i(\phi)}\right) = 0
-		\end{equation}
-
-		Substituting the Gibbs-Duhem equation in equation~\ref{eqn:dGibbs2} gives:
-		\begin{equation}\label{eqn:dGibbs3}
-			d G_{sys} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( d n_{i(\phi)}\mu_{i(\phi)} \right) = 0
-		\end{equation}
-
-		The chemical potentials of the species can be written in terms of the chemical potentials of the system components. Therefore, substituting equation~\ref{eq:massbalance} into equation~\ref{eq:elempot}, differentiating with respect to $n_{i(\phi)}$ at constant temperature and pressure and equating to zero gives:
-		\begin{equation}\label{eqn:dGibbs4}
-			d G_{sys} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}}  d n_{i(\phi)}\sum_{j=1}^{C}\nu_{i,j}\Gamma_j  = 0
-		\end{equation}
-
-		Rearranging gives:
-		\begin{equation}\label{eqn:dGibbs5}
-			\sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}}  d n_{i(\phi)} \left( \mu_{i(\phi)} - \sum_{j=1}^{C}\nu_{i,j}\Gamma_j \right) = 0
-		\end{equation}
-
-		Since both $\nu_{i,j}$ and $\mu_{i(\phi)}$ are unique for every species, the chemical potentials of species or phase in the system can be related to chemical potentials of system component at equilibrium through the following equation \cite{vanZeggeren11}:
+			
+		\item \textbf{Gibbs' criterion}\\
+			Ensuring that the Gibbs phase rule and mass balance constraints are satisfied is relatively straightforward but special attention must be paid to ensuring that the integral Gibbs energy of the system is at a minimum. The equilibrium criteria established by Gibbs requires that at equilibrium $d G_\text{sys} = 0$ \cite{Gibbs:1878aa}. Thus, differentiating equation~(\ref{eqn:integralGibbs}):
+			\begin{equation}\label{eqn:dGibbs1}
+				d G_{\text{sys}} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( d n_{i}\mu_{i} + n_{i} d \mu_{i}\right) = 0.
+			\end{equation}
+			The chemical potentials are related through the \emph{Gibbs-Duhem equation} which, at constant temperature and pressure, can be written as \cite{Olander08}:
+			\begin{equation}\label{eqn:dGibbs2}
+				\sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( n_{i} d \mu_{i}\right) = 0.
+			\end{equation}
+			Substituting the Gibbs-Duhem equation in equation~(\ref{eqn:dGibbs2}) gives:
+			\begin{equation}\label{eqn:dGibbs3}
+				d G_{\text{sys}} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( d n_{i}\mu_{i} \right) = 0.
+			\end{equation}
+			The chemical potentials of the species can be written in terms of the chemical potentials of the system components. Therefore, substituting equation~(\ref{eq:massbalance}) into equation~(\ref{eq:elempot}), differentiating with respect to $n_{i}$ at constant temperature and pressure and equating to zero gives:
+			\begin{equation}\label{eqn:dGibbs4}
+				d G_{\text{sys}} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}}  d n_{i}\sum_{j=1}^{C}\nu_{ij}\Gamma_j  = 0,
+			\end{equation}
+			and rearranging the above results in:
+			\begin{equation}\label{eqn:dGibbs5}
+				\sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}}  d n_{i} \left( \mu_{i} - \sum_{j=1}^{C}\nu_{ij}\Gamma_j \right) = 0.
+			\end{equation}
+		Since both $\nu_{ij}$ and $\mu_{i}$ are unique for every species, the chemical potentials of species or phase in the system can be related to chemical potentials of system component at equilibrium through the following equation \cite{vanZeggeren11}:
 		\begin{equation}\label{eqn:dGibbs6}
-			\mu_{i(\phi)} = \sum_{j=1}^{C}\nu_{i,j}\Gamma_j
+			\mu_{i(\phi)} = \sum_{j=1}^{C}\nu_{ij}\Gamma_j.
 		\end{equation}
+		Equation~(\ref{eqn:dGibbs6}) is known as \emph{Gibbs' criterion} and ensuring that it is satisfied for all species in the system is equivalent to satisfying the equilibrium criterion that the Gibbs energy of the system be at a local minimum. This is useful in developing a convergence criterion for thermodynamic equilibrium calculations.
+	\end{enumerate}	
+	
+\subsection{Sufficient conditions}
+	The linear equality in equation~\ref{eqn:dGibbs6} justifies the selection of stable species and making sure that no metastable species gets added to the system. However, satisfying the linear equation is insufficient to conclude that the system is at a \emph{global} minimum since $g_{\phi}^{ex}$ can be non-convex \cite{Piro16}. The driving force of a phase, $\Delta G_{\phi} $, is used to determine whether a system involving that phase is more stable than the previous system, which is defined as:
+	\begin{equation}
+        		\Delta G_{\phi}= \min_{\lambda} \sum_{i=1}^{N_{\lambda}}x_{i} \left (\mu_{i} - \sum_{j=1}^C \nu_{ij}\Gamma_j \right ),
+    	\end{equation}
+	which is subject to the following following linear equality and inequality constraints:
+	\begin{align}
+		\sum_{i=1}^{N_\phi} x_i = 1, \; x_i > 0, \; \forall i \in \phi.
+	\end{align}
+	
+%==============================================================================================================================
+%												Methods for Calculating Phase Equilibrium
+%==============================================================================================================================
 
-		Ensuring that equation~\ref{eqn:dGibbs6} is satisfied for all species in the system is equivalent to satisfying the equilibrium criterion that the Gibbs energy of the system is at a local minimum. This is useful in developing a convergence criterion for thermodynamic equilibrium calculations and is discussed in the following section.
+\section{Computing Phase Equilibria}
 
-	\section{Convergence criteria}
+\subsection{Convergence criteria}
 	A number of different methods can be proposed to judge the convergence of a thermodynamic equilibrium solver, the most obvious being ensuring that the relative change in Gibbs energy between two iterations is within a specified tolerance. Another approach that makes better use of principles of thermodynamic equilibrium is based on equation~\ref{eqn:dGibbs6} and requires that the chemical potentials of all species lie on or above the Gibbs plane formed by chemical potentials of system components.
-		\subsection{Evaluation of the tolerance of $G_{sys}^m$}
+		\subsubsection{Evaluation of the tolerance of $G_{sys}^m$}
 		The most obvious method of ensuring convergence is to ensure that the normalised absolute difference of Gibbs energy, $\Psi_G$, between subsequent iterations is within a specified tolerance. Mathematically, this can be expressed as:
 		\begin{equation}\label{eqn:conv1}
-			\Psi_G = \left \vert \frac{G_{sys}^{m} - G_{sys}^{m-1}}{G_{sys}^{m}} \right \vert < \epsilon
+			\Psi_G = \left \vert \frac{G_\text{sys}^{m} - G_\text{sys}^{m-1}}{G_\text{sys}^{m}} \right \vert < \epsilon
 		\end{equation}
 		where, $\epsilon$ denotes the specified tolerance and the superscripts refer to iteration $m$ and $m-1$ respectively. Using the interpretation of Lagrange multipliers in the Gibbs Energy Minimisation (GEM) method proposed by White \textit{et al.} \cite{White58a}, we can obtain a similar estimate of convergence. Since the Lagrange multipliers, $\pi_{j}$, denote the chemical potentials, they can be related to Gibbs energy of the system, $G_{sys}$. This can be mathematically expressed as:
 		\begin{equation}\label{eqn:conv2}
@@ -65,7 +107,7 @@
 
 		Though intuitive, this approach to judging convergence suffers from two potential issues. The first issue is commonly observed in iterative solutions of non-linear systems where numerical stagnation can occur when significant numerical dampening is required to maintain the stability of numerical algorithm. In GEM for large chemical components, numerical dampening is often required and false convergence can result when the approach to minimum Gibbs energy becomes extremely slow.  The second issue relates to insignificant contribution to the Gibbs energy of the system  by minor species. These minor species can often be incorrect by several orders of magnitude and though they don't contribute to Gibbs energy significantly, they might be of significant chemical or radiological importance and the false sense of convergence can then lead to significant problems.
 
-		\subsection{The Gibbs Criteria}
+		\subsubsection{The Gibbs Criteria}
 	 The Gibbs criteria for judging convergence relies on the relationship between chemical potentials and Gibbs energies. To utilise this concept, the chemical potentials can be expressed per gram-atom as:
 	 \begin{equation}
 	 	\hat{\mu}_{i(\phi)} = \frac{{\mu}_i(\phi)}{a_{i(T)}}
@@ -85,30 +127,55 @@
 			\Psi_{\Gamma} = \left \vert  \hat{\mu}_{i(\phi)}(\Gamma) - \hat{\mu}_{i(\phi)} \right \vert < \epsilon
 		\end{equation}
 	 i.e., all the species in equilibrium must lie on the Gibbs plane. If a phase lies below the Gibbs plane, adding it to the phase assemblage would yield a lower Gibbs energy of the system and such a system would not be at a global minimum. The Gibbs criteria is easily extendable to electrochemical equilibrium and can be conveniently implemented in a thermodynamic equilibrium	 solver.
+	 
+%==============================================================================================================================
+%														Global Optimisation
+%==============================================================================================================================
 
-	\section{Global optimisation}\label{sec:global_opt_intro}
+\section{Global Energy Minimisation}\label{sec:global_opt_intro}
 	 Global minimisation of Gibbs energy is crucial to accurately predicting the stable phase assemblage using equilibrium thermodynamic softwares. An example application is the detection of miscibility gaps in phases containing regions of compositional instability. In a miscibility gap, the same phase can appear with different compositions and finding the global minimum from among the many local minima can be a daunting challenge. For multi-component systems, the topology of the energy surfaces tends to become quite complex particularly when there are multiple non-ideal phases in the system. This significantly complicates the interaction of the Gibbs energy surface with the Gibbs hyperplane and an inadequate numerical approach may lead to a false sense of thermodynamic equilibrium despite being far from the true equilibrium. To illustrate how an inadequate solver may yield a false equilibrium, the following scenarios can be considered:
 	\begin{enumerate}
-		\item In the fictive binary system shown in figure~\ref{fig:go_sys-AB}, a solution phase $\alpha$ and a stoichiometric phase \ce{A3B2} can possibly coexist. While the stoichiometric phase \ce{A3B2} and solution phase $\alpha$ are predicted to be stable, as represented by the dashed tangent line, they are in fact metastable and a miscibility gap would yield a lower value of the integral Gibbs energy of the system, $G_\text{sys}$.
+	\item In the fictive binary system shown in figure~\ref{fig:go_sys-AB}, a solution phase $\alpha$ and a stoichiometric phase \ce{A3B2} can possibly coexist. While the stoichiometric phase \ce{A3B2} and solution phase $\alpha$ are predicted to be stable, as represented by the dashed tangent line, they are in fact metastable and a miscibility gap would yield a lower value of the integral Gibbs energy of the system, $G_\text{sys}$.
 		\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.75\textwidth]{figures/chapter-4/System_AB.pdf}
-		\caption{Fictive system with miscibility gap showing a possible false positive from thermodynamic equilibrium solver (after Piro and Simunovic \cite{Piro16}).}
-		\label{fig:go_sys-AB}
-	\end{figure}
+			\centering
+			\includegraphics[width=0.75\textwidth]{figures/chapter-4/System_AB.pdf}
+			\caption{Fictive system with miscibility gap showing a possible false positive from thermodynamic equilibrium solver (after Piro and Simunovic \cite{Piro16}).}
+			\label{fig:go_sys-AB}
+		\end{figure}
 
 	\item In the fictive binary system shown in figure~\ref{fig:go_sys-CD} which can have three possible solution phases, the $\delta$ phase is believed to be metastable but one must confirm that the combination of $\beta$ and $\gamma$ is most stable or if a different combination is more stable. However, it can be seen that inserting the $\delta$ phase into the system and replacing one of the other two phases would yield a lower value of the integral Gibbs energy of the system, $G_\text{sys}$.
 		\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.75\textwidth]{figures/chapter-4/System_CD.pdf}
-		\caption{Fictive system with three possible phases showing a false positive from thermodynamic equilibrium solver wherein a wrong phase is believed to be present at equilibrium (after Piro and Simunovic \cite{Piro16}).}
-		\label{fig:go_sys-CD}
-	\end{figure}
+			\centering
+			\includegraphics[width=0.75\textwidth]{figures/chapter-4/System_CD.pdf}
+			\caption{Fictive system with three possible phases showing a false positive from thermodynamic equilibrium solver wherein a wrong phase is believed to be present at equilibrium (after Piro and Simunovic \cite{Piro16}).}
+			\label{fig:go_sys-CD}
+		\end{figure}
 	\end{enumerate}
 
+As previously mentioned in section~\ref{sec:eqb_theory}, satisfying the necessary conditions, specifically the Gibbs' Criterion, is equivalent to finding a local minimum but one must demonstrate that the driving force, $\Delta G$, is non-negative for all phases to be metastable. Throughout the iterative process, the driving force for all the metastable phases should be calculated to determine if a particular phase needs to be added to the system. At this point, two similar but distinct approaches to the problem of identifying phases with negative driving force can be adopted. In the first approach, the goal is only to find out whether or not a phase has a negative driving force while in the second approach the goal is to determine the minimum value of the driving force subject to the equality and inequality constraints mentioned previously. While the first approach can be computationally cheaper, the second approach can provide additional information about the state of the system. For instance, when multiple phases have a negative driving force, the phase with the most negative driving force can be added to the system. 
 
-
-
+Since the driving force function can be non-convex, finding the most negative driving force is essentially a constrained global optimisation problem. The domain space of  the problem is defined by the number of species in the solution phase and, because the mole fractions of the species must lie in $(0,1)$, the search space is box constrained. Using the sufficient conditions previously mentioned, the Lagrangian function of the driving force of solution phase $\phi$ can be defined as:
+	\begin{equation}
+		\mathcal{L}_\phi = \sum_{i=1}^{N_\phi} x_i \left(\tilde{\mu}_i - \sum_{j=1}^{C} \nu_{ij} \tilde{\Gamma}_j \right)
+						 - \lambda_\phi \left( \sum_{i=1}^{N_\phi} x_i - 1 \right)
+						 - \lambda_{e^-} \left( \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i - 1 \right),
+	\end{equation}
+	where the first Lagrange multiplier, $\lambda_phi$, imposes the constraint on mole fractions and the second multiplier, $\lambda_{e^-}$, extends the constraints to handle ionic phases where the charge neutrality constraint must also be satisfied. The natural constraint on mole fractions implies $x_i \in (0, 1)$ and the  unknowns in the above expression, $x_i$, $\lambda_\phi$ and $\lambda_{e^-}$, must lie in $\mathbb{R}^{N_\phi + 2}$. For phases without any ionic components, the dimension of the above problem reduces by one.  The Lagrangian function has a minimum value when $\nabla \mathcal{L} = 0$. Differentiating $\mathcal{L}$ with respect to $x_i$:
+	\begin{equation}
+		\frac{\partial \mathcal{L}}{\partial x_i}	= \tilde{\mu}_i -  \sum_{j=1}^{C} \nu_{ij} \tilde{\Gamma}_j - \lambda_\phi,
+	\end{equation}
+	which shows that the undetermined Lagrange multiplier, $\lambda_\phi$, is the same as the driving force of the phase, $\Delta G_\phi$. Differentiating with respect to $\lambda_\phi$ yields:
+	\begin{equation}
+		\frac{\partial \mathcal{L}}{\partial \lambda_\phi}	= 1 - \sum_{i=1}^{N_\phi} x_i,
+	\end{equation}
+	and taking the derivative with respect to $\lambda_{e^-}$ results in:
+	\begin{equation}
+		\frac{\partial \mathcal{L}}{\partial \lambda_{e^-}}	= 1 - \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i.
+	\end{equation}
+	The system of non-linear equations above can be solved using many different non-linear solution methods such as by taking the second order Taylor expansion of the Lagrangian function. The global optimisation algorithms used in {\GEM} will be discussed in further details in chapter~\ref{chap:implementation}.
+%==============================================================================================================================
+%															Summary
+%==============================================================================================================================
 
 \section{Summary of Thermodynamic Equilibrium}
 Achieving thermochemical equilibrium in a system requires satisfaction of several conditions which are as follows:
