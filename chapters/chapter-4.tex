@@ -50,7 +50,7 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 			which implies that the number of phases that can co-exist at equilibrium cannot exceed the number of components in a closed isothermal, isobaric system.
 			
 		\item \textbf{Gibbs' criterion}\\
-			Ensuring that the Gibbs phase rule and mass balance constraints are satisfied is relatively straightforward but special attention must be paid to ensuring that the integral Gibbs energy of the system is at a minimum. The equilibrium criteria established by Gibbs requires that at equilibrium $d G_\text{sys} = 0$ \cite{Gibbs:1878aa}. Thus, differentiating equation~(\ref{eqn:integralGibbs}):
+			Ensuring that the Gibbs phase rule and mass balance constraints are satisfied is relatively straightforward but special attention must be paid to ensuring that the integral Gibbs energy of the system is at a minimum. The equilibrium criteria established by Gibbs requires that at equilibrium $d G_\text{sys} = 0$ \cite{Gibbs:1878aa}. Thus, differentiating equation~\eqref{eqn:integralGibbs}:
 			\begin{equation}\label{eqn:dGibbs1}
 				d G_{\text{sys}} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( d n_{i}\mu_{i} + n_{i} d \mu_{i}\right) = 0.
 			\end{equation}
@@ -58,11 +58,11 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 			\begin{equation}\label{eqn:dGibbs2}
 				\sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( n_{i} d \mu_{i}\right) = 0.
 			\end{equation}
-			Substituting the Gibbs-Duhem equation in equation~(\ref{eqn:dGibbs2}) gives:
+			Substituting the Gibbs-Duhem equation in equation~\eqref{eqn:dGibbs2} gives:
 			\begin{equation}\label{eqn:dGibbs3}
 				d G_{\text{sys}} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( d n_{i}\mu_{i} \right) = 0.
 			\end{equation}
-			The chemical potentials of the species can be written in terms of the chemical potentials of the system components. Therefore, substituting equation~(\ref{eq:massbalance}) into equation~(\ref{eq:elempot}), differentiating with respect to $n_{i}$ at constant temperature and pressure and equating to zero gives:
+			The chemical potentials of the species can be written in terms of the chemical potentials of the system components. Therefore, substituting equation~\eqref{eq:massbalance} into equation~\eqref{eq:elempot}, differentiating with respect to $n_{i}$ at constant temperature and pressure and equating to zero gives:
 			\begin{equation}\label{eqn:dGibbs4}
 				d G_{\text{sys}} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}}  d n_{i}\sum_{j=1}^{C}\nu_{ij}\Gamma_j  = 0,
 			\end{equation}
@@ -71,14 +71,14 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 				\sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}}  d n_{i} \left( \mu_{i} - \sum_{j=1}^{C}\nu_{ij}\Gamma_j \right) = 0.
 			\end{equation}
 		Since both $\nu_{ij}$ and $\mu_{i}$ are unique for every species, the chemical potentials of species or phase in the system can be related to chemical potentials of system component at equilibrium through the following equation \cite{vanZeggeren11}:
-		\begin{equation}\label{eqn:dGibbs6}
+		\begin{equation}\label{eq:Gibbs_criterion}
 			\mu_{i(\phi)} = \sum_{j=1}^{C}\nu_{ij}\Gamma_j.
 		\end{equation}
-		Equation~(\ref{eqn:dGibbs6}) is known as \emph{Gibbs' criterion} and ensuring that it is satisfied for all species in the system is equivalent to satisfying the equilibrium criterion that the Gibbs energy of the system be at a local minimum. This is useful in developing a convergence criterion for thermodynamic equilibrium calculations.
+		Equation~\eqref{eq:mu_ex} is known as \emph{Gibbs' criterion} and ensuring that it is satisfied for all species in the system is equivalent to satisfying the equilibrium criterion that the Gibbs energy of the system be at a local minimum. This is useful in developing a convergence criterion for thermodynamic equilibrium calculations.
 	\end{enumerate}	
 	
 \subsection{Sufficient conditions}
-	The linear equality in equation~\ref{eqn:dGibbs6} justifies the selection of stable species and making sure that no metastable species gets added to the system. However, satisfying the linear equation is insufficient to conclude that the system is at a \emph{global} minimum since $g_{\phi}^{ex}$ can be non-convex \cite{Piro16}. The driving force of a phase, $\Delta G_{\phi} $, is used to determine whether a system involving that phase is more stable than the previous system, which is defined as:
+	The linear equality in equation~\eqref{eq:mu_ex} justifies the selection of stable species and making sure that no metastable species gets added to the system. However, satisfying the linear equation is insufficient to conclude that the system is at a \emph{global} minimum since $g_{\phi}^{ex}$ can be non-convex \cite{Piro16}. The driving force of a phase, $\Delta G_{\phi} $, is used to determine whether a system involving that phase is more stable than the previous system, which is defined as:
 	\begin{equation}
         		\Delta G_{\phi}= \min_{\lambda} \sum_{i=1}^{N_{\lambda}}x_{i} \left (\mu_{i} - \sum_{j=1}^C \nu_{ij}\Gamma_j \right ),
     	\end{equation}
@@ -92,41 +92,263 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 %==============================================================================================================================
 
 \section{Computing Phase Equilibria}
+Accurate and computationally efficient determination of equilibrium from the conditions mentioned in the previous section require careful consideration of the numerical method employed in the solver. Over the years, numerous strategies have been developed to solve the equilibrium thermodynamics problems but the two most relevant methods are the \emph{Gibbs Energy Minimisation} by White, Johnson and Dantzig \cite{White:58} which is based on the method of steepest descent of second order and the \emph{Partitioning of Free Energy}  which was also proposed by White \cite{White67} but is substantially different from Gibbs energy minimisation.
+
+The goal of both Gibbs energy minimisation (GEM) and partitioning of Gibbs energy (PGE) approaches is to predict a unique combination of phases and species that minimise the integral Gibbs energy of an isothermal, isobaric system at a given composition. As in equation~\eqref{eqn:integralGibbs}, the integral Gibbs energy of a multicomponent multiphase system can be represented as:
+\begin{equation}\label{eq:int_gibbs}
+    G = RT \left(\sumsolnphase \molesol \sumspecies \molefrac{i} \cps{i} + \sumstoichphase \molestoich \cpst\right),
+\end{equation}
+where the symbols represent their usual variables mentioned before. 
+As the conditions that must be satisfied at thermodynamic equilibrium have already been mentioned, the numerical procedures for  both the approaches can now be elaborated.
+
+\subsection{Method of Lagrange multipliers}
+White \textit{et al.} \cite{White:58} established a second order steepest descent method for Gibbs energy minimisation which is based on the method of Lagrange multipliers for constrained optimisation. The GEM approach simultaneously optimises mass balance constraint and Gibbs' criterion while fixing the system size through the Gibbs phase rule. The dimensionless form of Gibbs energy of the system can be expressed as a quadratic approximation obtained by the Taylor series expansion as follows:
+  \begin{equation}\label{eq:GibbsTaylor}
+    \begin{split}
+      \tilde{Q}^{m+1} = \tilde{G}^{m} &+ \left .\sumstoichphase \Delta_{\omega} \pder{\tilde{G}^m}{\molestoich^m} \right \vert_{\molestoich^m = \molestoich^{m+1}} \\
+                      &+ \left . \sumsolnphase \sumspecies \Delta_i \pder{\tilde{G}^m}{\molespecies{i}^m}\right \vert_{\molespecies{i}^m = \molespecies{i}^{m+1}} \\
+                      &+ \left . \frac{1}{2} \sumstoichphase \Delta^2_{\omega} \ppder{\tilde{G}^m}{\molestoich^m} \right \vert_{\molestoich^m = \molestoich^{m+1}} \\
+                      &+ \left . \frac{1}{2} \sumsolnphase \sumspecies \sumspecies[l] \Delta_i \Delta_l \pqder{\tilde{G}^m}{\molespecies{i}^m}{\molespecies{l}^m} \right \vert_{\molespecies{i}^m = \molespecies{i}^{m+1}},
+    \end{split}
+  \end{equation}
+where the superscript $m$ and $m+1$ denote the iteration at which the Gibbs energy is calculated and the deltas can be represented as follows:
+  \begin{gather}
+      \Delta_i = \molespecies{i}^{m+1} - \molespecies{i}^{m},\\
+      \Delta_\lambda = \molesol^{m+1} - \molesol^{m}, \\
+      \Delta_\omega = \molestoich^{m+1} - \molestoich^{m}.
+  \end{gather}
+
+While the first order partial derivatives are equal to the chemical potentials as shown in equation~\eqref{eq:mu_def}, the second order derivatives are as follows:
+\begin{gather}
+  \ppder{\tilde{G}^m}{\molestoich^m} = 0, \label{eq:partial1}\\
+  \ppder{\tilde{G}^m}{\molespecies{i}^m} = \frac{1}{\molespecies{i}^m} - \frac{1}{\molesol^m}, \label{eq:partial2} \\
+  \pqder{\tilde{G}^m}{\molespecies{i}^m}{\molespecies{l \neq i}^m} = - \frac{1}{\molesol^m}. \label{eq:partial3}
+\end{gather}
+
+Substituting equations \eqref{eq:mu_def}~and~\eqref{eq:partial1}--\eqref{eq:partial3} into the second order approximation of Gibbs energy given by equation~\eqref{eq:GibbsTaylor}, one gets the following objective function:
+\begin{equation}
+  \tilde{Q}^{m+1} = \tilde{G}^{m} + \sumstoichphase \cpst^m
+                  + \sumsolnphase \sumspecies \Delta_i \cps{i}^m
+                  + \frac{1}{2} \sumsolnphase \sumspecies \molespecies{i}^m \left(\frac{\Delta_i}{\molespecies{i}} - \frac{\Delta_\lambda}{\molesol^m} \right)^2,
+\end{equation}
+which must be minimised subject to the mass balance constraint. In order to solve the constrained optimisation problem, the method of Lagrange multipliers can be used and the resulting Lagrangian function is defined as:
+  \begin{equation}\label{eq:GEM_Lagrangian}
+      \mathcal{L} = \tilde{Q}^{m+1} - \sumelements \pi_{j}^{m+1} \left(\moleelem{j} - \moleelem{j}^m\right),
+  \end{equation}
+where $\pi_{j}$ denote the dimensionless undetermined Lagrange multipliers\footnote{While $\lambda$ is commonly used to denote Lagrange multipliers, $\pi$ is used here to avoid confusion with the solution phase index $\lambda$.}. The Gibbs energy of the system and the mass balance residuals can be simultaneously minimised by equating the gradient of the Lagrangian function to zero:
+\begin{equation}
+  \nabla \mathcal{L} = 0.
+\end{equation}
+The elements of the gradient vector are found by taking the partial derivatives of  equation~\eqref{eq:GEM_Lagrangian} with respect to the number of moles of species $\molespecies{i}$ and $\molestoich$:
+\begin{gather}
+  \pder{\mathcal{L}}{\molespecies{i}} = \cps{i} - \sumelements \stoich{i}{j} \pi_j^{m+1} + \left(\frac{\molespecies{i}^{m+1}}{\molespecies{i}^{m}} - \frac{\molesol^{m+1}}{\molesol^{m}} \right), \label{eq:pderL1}\\
+  \pder{\mathcal{L}}{\molestoich} = \cpst - \sumelements \stoich{\omega}{j} \pi_{j}^{m+1},\\
+  \pder{\mathcal{L}}{\pi_j} = \moleelem{j} - \moleelem{j}^m.
+\end{gather}
+
+By rearranging the preceeding equations and substituting the mass balance constraint, the following equation is obtained:
+\begin{equation}
+  \moleelem{j} = \sumsolnphase \sumspecies \left(-\cps{i}^m + \frac{\molesol^{m+1}}{\molesol^{m}} + \sumelements[k] \stoich{i}{k} \pi_k^{m+1} \right)\molespecies{i}^m \stoich{i}{j} + \sumstoichphase \molestoich^m\stoich{i}{j}.
+\end{equation}
+Upon rearranging, the commonly used form proposed by Eriksson and Ros\'{e}n \cite{Eriksson73} is obtained:
+\begin{multline}\label{eq:Hess1}
+  \sumelements \underbrace{\sumsolnphase \sumspecies \molespecies{i}\stoich{i}{j}\stoich{i}{k}}_{r_{jk}} \pi_j^{m+1} +
+  \sumsolnphase \underbrace{\sumspecies\molespecies{i} \stoich{i}{j}}_{\phi_{j\lambda}^m} \underbrace{\left(\frac{\molesol^{m+1}}{\molesol^{m}} - 1\right)}_{\pi_\lambda^{m+1}} \\
+  + \sumstoichphase \molestoich^{m+1} \stoich{\omega}{j} =
+  \moleelem{j} + \sumsolnphase \sumspecies \left(\cps{i}^{m+1} -1 \right)\molespecies{i}^{m} \stoich{i}{j}.
+\end{multline}
+
+The chemical potentials of the species in solution phases can be related to system component potentials by the following:
+\begin{equation}\label{eq:Hess2}
+  \sumelements \pi_j^{m+1} \phi_{j \lambda}^m = \sumspecies \cps{i}^m \molespecies{i}^m,
+\end{equation}
+and the chemical potentials of stoichiometric phases constrain the system component potentials through the following relationship:
+\begin{equation}\label{eq:Hess3}
+  \cpst = \sumelements\stoich{\omega}{j}\pi_j^{m+1}.
+\end{equation}
+
+Together, equations \eqref{eq:Hess1}--\eqref{eq:Hess3} results in the following system of linear equations:
+\begin{equation} \label{eq:HessianEqn}
+  \Hessian \Unknown = \Constraint
+\end{equation}
+where the unknown vector $\Unknown \in \mathbb{R}^N$ and the vector of constraints $\Constraint \in \mathbb{R}^N$ with the number of unknowns $N = E + \Lambda + \Omega$. The two can be expanded as:
+% \begin{gather}
+%   \Unknown = \begin{bmatrix}
+%                 \pi_{j=1}^{m+1} & \dots & \pi_{j=E}^{m+1} & \pi_{\lambda=1}^{m+1} & \dots & \pi_{\lambda=\Lambda}^{m+1} &  n_{\omega=1}^{m+1} & \dots & n_{\omega=\Omega}^{m+1}
+%             \end{bmatrix}^T,
+%   \Constraint = \begin{bmatrix}
+%                   \moleelem{j=1} + \sumsolnphase \sumspecies \left(\cps{i}^m -1 \right)\molespecies{i}^m\stoich{i}{j=1} \\
+%                   \vdots \\
+%                   \moleelem{j=E} + \sumsolnphase \sumspecies \left(\cps{i}^m -1 \right)\molespecies{i}^m\stoich{i}{j=E} \\
+%                   \sumspecies \tilde{\mu}_{i(\lambda = 1)}^m n_{i(\lambda = 1)}^m \\
+%                   \vdots \\
+%                   \sumspecies \tilde{\mu}_{i(\lambda = \Lambda)}^m n_{i(\lambda = \Lambda)}^m \\
+%                   \tilde{\mu}_{\omega = 1} \\
+%                   \vdots \\
+%                   \tilde{\mu}_{\omega = \Omega}
+%                 \end{bmatrix}.
+% \end{gather}
+\begin{equation}
+  \Unknown = \begin{bmatrix}
+                \pi_{j=1}^{m+1} \\ \vdots \\ \pi_{j=E}^{m+1} \\ \pi_{\lambda=1}^{m+1} \\ \vdots \\ \pi_{\lambda=\Lambda}^{m+1} \\  n_{\omega=1}^{m+1} \\ \vdots \\ n_{\omega=\Omega}^{m+1}
+            \end{bmatrix},
+  \Constraint = \begin{bmatrix}
+                  \moleelem{j=1} + \sumsolnphase \sumspecies \left(\cps{i}^m -1 \right)\molespecies{i}^m\stoich{i}{j=1} \\
+                  \vdots \\
+                  \moleelem{j=E} + \sumsolnphase \sumspecies \left(\cps{i}^m -1 \right)\molespecies{i}^m\stoich{i}{j=E} \\
+                  \sumspecies \tilde{\mu}_{i(\lambda = 1)}^m n_{i(\lambda = 1)}^m \\
+                  \vdots \\
+                  \sumspecies \tilde{\mu}_{i(\lambda = \Lambda)}^m n_{i(\lambda = \Lambda)}^m \\
+                  \tilde{\mu}_{\omega = 1} \\
+                  \vdots \\
+                  \tilde{\mu}_{\omega = \Omega}
+                \end{bmatrix}.
+\end{equation}
+
+The Hessian matrix, \Hessian, is given as follows:
+\begin{equation}
+\Hessian =
+    \begin{bmatrix}
+      r_{11} & \dots & r_{1E} & \phi_{11} & \dots & \phi_{1\Lambda} & \nu_{11} & \dots & \nu_{1\Omega} \\
+      \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+      r_{E1} & \dots & r_{EE} & \phi_{E1} & \dots & \phi_{E\Lambda} & \nu_{E1} & \dots & \nu_{E\Omega} \\
+      \phi_{11} & \dots & \phi_{1E} & 0 & \dots & 0 & 0 & \dots & 0 \\
+      \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+      \phi_{\Lambda1} & \dots & \phi_{\Lambda E} & 0 & \dots & 0 & 0 & \dots & 0 \\
+      \nu_{11} & \dots & \nu_{1E} & 0 & \dots & 0 & 0 & \dots & 0 \\
+      \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+      \nu_{\Omega 1} & \dots & \nu_{\Omega E} & 0 & \dots & 0 & 0 & \dots & 0 \\
+    \end{bmatrix},
+\end{equation}
+where the terms $r_{jk}$ and $\phi_{j\lambda}$ are defined in equation~\eqref{eq:Hess1} and $\nu_{\omega j}$ represents the stoichiometric coefficient of system component $j$ in stoichiometric compound $\omega$.
+
+While solving equation~\eqref{eq:HessianEqn} gives the mole numbers of stoichiometric phases directly, the mole numbers of the species of solution phases must be computed using the following rearranged form of equation~\eqref{eq:pderL1}:
+\begin{equation}
+  \molespecies{i}^{m+1} = \molespecies{i}^{m+1}\left(-\cps{i}^m + \frac{\molesol^{m+1}}{\molesol^{m} - \sumelements\stoich{i}{j} \pi_j^{m+1}}\right).
+\end{equation}
+
+\subsection{Partitioning of Gibbs energy}
+PGE is based on finding the roots of the mass balance residual by expressing the mole fraction as a function of system component potentials. The expression for chemical potential of a species from equation~\eqref{eq:mu_ex} can be substituted into equation~\eqref{eq:Gibbs_criterion} and upon rearranging one gets:
+    \begin{equation}
+        \molefrac{i} = \exp{\left(-\pmgref{i} - \pmgex{i} +  \sumelements \stoich{i}{j} \cpe{j}\right)}.
+    \end{equation}
+
+Substituting the previous equation into the mass balance equation~\eqref{eq:massbalance}, one can formally relate the mass balance equations to the element potentials and results in the following:
+    \begin{equation}
+        \moleelem{k}^m = \sumsolnphase \molesol^m \sumspecies \stoich{i}{k} \exp{\left(-\pmgref{i} - \pmgex{i} +  \sumelements \stoich{i}{j} \cpe{j}^m\right)} + \sumstoichphase \molestoich^m \stoich{\omega}{k},
+    \end{equation}
+where the superscript $m$ denotes that the mass of element $k$ is the estimated mass at iteration $m$ and not the true total amount of the element in the system which will be denoted by \moleelem{k} without the iteration index. At convergence, the two will be equal and the sum of the mole fractions of the species \molefrac{i} will be equal to unity.
+
+The PGE method surmises to partitioning the Gibbs energy of the system among elements by manipulating $\cpe{j}^m$ together with $\molesol^m$
+and $\molestoich^m$ in order to reduce the residuals of the mass balance equations to zero. While doing this, one must ensure that the Gibbs criterion given by equation~\eqref{eq:Gibbs_criterion} is always satisfied. Mathematically this is equivalent to finding the roots of the system of non-linear equations of mass balance. The residual of mass balance $\Delta\moleelem{k}^m$ at iteration $m$ can be defined as:
+    \begin{equation}\label{eq:residual_b}
+        \Delta\moleelem{k}^m = \sumsolnphase \molesol^m \sumspecies \stoich{i}{k} \exp{\left(-\pmgref{i} - \pmgex{i} +  \sumelements \stoich{i}{j} \cpe{j}^m\right)} + \sumstoichphase \molestoich^m \stoich{\omega}{k} - \moleelem{k}.
+    \end{equation}
+
+The subsidiary condition satisfying the requirement for the sum of all mole fraction to be equal to unity results in the following residual for each phase $\lambda$:
+    \begin{equation}\label{eq:residual_x}
+        \Delta x_\lambda^m = x_\lambda^m - 1,
+    \end{equation}
+where $x_\lambda^m$ denotes the sum of mole fractions of all species of phase $\lambda$ at iteration $m$ (i.e. $x_\lambda^m = \sumspecies \molefrac{i}$).
+
+Finally, the chemical potentials of the stoichiometric phases constrain the adjustments applied to the element potentials through the Gibbs criterion and results in the following residual equation:
+    \begin{equation}\label{eq:residual_mu}
+        \Delta\cpst = \sumelements[k] \stoich{\omega}{k} \cpe{k} - \pmgrefst.
+    \end{equation}
+
+Together, the residual equations~\eqref{eq:residual_b}--\eqref{eq:residual_mu} result in the following system of equation with the objective of finding roots \Unknown{} of the residual vector \Residual{}:
+    \begin{equation}\label{eq:system}
+        \Residual (\Unknown) = 0,
+    \end{equation}
+where $\Residual \in \mathbb{R}^N$, $\Unknown \in \mathbb{R}^N$ and $N$ is the number of non-linear equations and corresponding unknown variables ($N = E + \Lambda + \Omega$). The residual vector, \Residual, can be expanded as:
+\begin{equation}\label{eq:resvec}
+    \Residual(\Unknown) = \begin{bmatrix}
+                                \Delta\moleelem{k=1}^m & \dots & \Delta\moleelem{k=E}^m & \Delta x_{\lambda=1}^m & \dots & \Delta x_{\lambda=\Lambda}^m &  \Delta\tilde{\mu}_{\omega=1} & \dots & \Delta\tilde{\mu}_{\omega=\Omega}
+                          \end{bmatrix}^T,
+\end{equation}
+where superscript $T$ denotes the transpose. The unknown system variable vector takes the following form:
+\begin{equation}\label{eq:unknwnvec}
+    \Unknown = \begin{bmatrix}
+                    \cpe{k=1}^m & \dots & \cpe{k=E}^m & n_{\lambda=1}^m & \dots &  n_{\lambda=\Lambda}^m & n_{\omega=1}^m & \dots &  n_{\omega=\Omega}^m
+                \end{bmatrix}^T.
+\end{equation}
+
+The roots of equation~\eqref{eq:system} can be found using the Newton-Raphson method. Given $\Residual:\mathbb{R}^N \rightarrow \mathbb{R}^N$ continuously differentiable and starting with an initial estimate $\Unknown^0$, the Newton-Raphson method for a system of nonlinear equations requires solving the following at each iteration $m$ \cite{Dennis:1996aa}:
+\begin{gather}
+    \Jacobian(\Unknown^m) \Step^m = -\Residual(\Unknown^m),\\
+    \Unknown^{m+1} = \Unknown^m + \alpha^m \Step^{m},
+\end{gather}
+where $\alpha^m$ is a scaling factor selected using an appropriate line search algorithm and $\Step^m$ is the Newton step representing the adjustment to the system variables and is given by:
+\begin{equation}
+    \Step^{m} = \begin{bmatrix}
+                    d\cpe{k=1}^m & \dots & d\cpe{k=E}^m & d n_{\lambda=1}^m & \dots & d n_{\lambda=\Lambda}^m & d n_{\omega=1}^m & \dots &  d n_{\omega=\Omega}^m
+                \end{bmatrix}^T.
+\end{equation}
+
+The Jacobian matrix\footnote{It must be noted the Jacobian matrix from the partitioning of Gibbs energy method is equivalent to the Hessian matrix resulting from the Gibbs energy minimisation approach.} is defined as:
+\begin{equation}
+\Jacobian =
+    \begin{bmatrix}
+     \spder{\moleelem{1}^m}{\cpe{1}^m} & \dots & \spder{\moleelem{1}^m}{\cpe{E}^m} & \spder{\moleelem{1}^m}{n_{\lambda=1}^m} & \dots & \spder{\moleelem{1}^m}{n_{\lambda=\Lambda}^m} & \spder{\moleelem{1}^m}{n_{\omega=1}^m} & \dots & \spder{\moleelem{1}^m}{n_{\omega=\Omega}^m} \\
+    \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+    \spder{\moleelem{E}^m}{\cpe{1}^m} & \dots & \spder{\moleelem{E}^m}{\cpe{E}^m} & \spder{\moleelem{E}^m}{n_{\lambda=1}^m} & \dots & \spder{\moleelem{E}^m}{n_{\lambda=\Lambda}^m} & \spder{\moleelem{E}^m}{n_{\omega=1}^m} & \dots & \spder{\moleelem{E}^m}{n_{\omega=\Omega}^m} \\
+    \spder{\moleelem{1}^m}{n_{\lambda=1}^m} & \dots & \spder{\moleelem{1}^m}{n_{\lambda=\Lambda}^m} & 0 & \dots & 0 & 0 & \dots & 0 \\
+    \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+    \spder{\moleelem{E}^m}{n_{\lambda=1}^m} & \dots & \spder{\moleelem{E}^m}{n_{\lambda=\Lambda}^m} & 0 & \dots & 0 & 0 & \dots & 0 \\
+    \spder{\moleelem{1}^m}{n_{\omega=1}^m} & \dots & \spder{\moleelem{E}^m}{n_{\omega=1}^m} & 0 & \dots & 0 & 0 & \dots & 0 \\
+    \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+    \spder{\moleelem{1}^m}{n_{\omega=\Omega}^m} & \dots & \spder{\moleelem{E}^m}{n_{\omega=\Omega}^m} & 0 & \dots & 0 & 0 & \dots & 0
+    \end{bmatrix}
+\end{equation}
+where, the partials derivatives are defined as follows:
+\begin{gather}
+    \pder{\moleelem{j}^m}{\cpe{k}^m} = \sumsolnphase \molesol^m \sumspecies \molefrac{i}^m \stoich{i}{j} \stoich{i}{k}\\
+    \pder{\moleelem{j}^m}{n_{\lambda}^m} = \sumspecies \molefrac{i}^m \stoich{i}{j} \\
+    \pder{\moleelem{j}^m}{n_{\omega}^m} = \stoich{\omega}{j}.
+\end{gather}
+
+At every iteration step, the direction vector is computed and the system is adjusted until the convergence criteria are achieved.
+
 
 \subsection{Convergence criteria}
-	A number of different methods can be proposed to judge the convergence of a thermodynamic equilibrium solver, the most obvious being ensuring that the relative change in Gibbs energy between two iterations is within a specified tolerance. Another approach that makes better use of principles of thermodynamic equilibrium is based on equation~\ref{eqn:dGibbs6} and requires that the chemical potentials of all species lie on or above the Gibbs plane formed by chemical potentials of system components.
-		\subsubsection{Evaluation of the tolerance of $G_{sys}^m$}
+	A number of different methods can be proposed to judge the convergence of a thermodynamic equilibrium solver, the most obvious being ensuring that the relative change in Gibbs energy between two iterations is within a specified tolerance. Another approach that makes better use of principles of thermodynamic equilibrium is based on equation~\eqref{eq:mu_ex} and requires that the chemical potentials of all species lie on or above the Gibbs plane formed by chemical potentials of system components.
+	\begin{enumerate}
+		\item \textbf{Tolerance of} $G_\text{sys}^m$\\
 		The most obvious method of ensuring convergence is to ensure that the normalised absolute difference of Gibbs energy, $\Psi_G$, between subsequent iterations is within a specified tolerance. Mathematically, this can be expressed as:
 		\begin{equation}\label{eqn:conv1}
-			\Psi_G = \left \vert \frac{G_\text{sys}^{m} - G_\text{sys}^{m-1}}{G_\text{sys}^{m}} \right \vert < \epsilon
+			\Psi_G = \left \vert \frac{G_\text{sys}^{m} - G_\text{sys}^{m-1}}{G_\text{sys}^{m}} \right \vert < \epsilon,
 		\end{equation}
-		where, $\epsilon$ denotes the specified tolerance and the superscripts refer to iteration $m$ and $m-1$ respectively. Using the interpretation of Lagrange multipliers in the Gibbs Energy Minimisation (GEM) method proposed by White \textit{et al.} \cite{White58a}, we can obtain a similar estimate of convergence. Since the Lagrange multipliers, $\pi_{j}$, denote the chemical potentials, they can be related to Gibbs energy of the system, $G_{sys}$. This can be mathematically expressed as:
+		where $\epsilon$ denotes the specified tolerance and the superscripts refer to iteration $m$ and $m-1$ respectively. Using the interpretation of Lagrange multipliers in the Gibbs Energy Minimisation (GEM) method proposed by White \textit{et al.} \cite{White58a}, we can obtain a similar estimate of convergence. Since the Lagrange multipliers, $\pi_{j}$, denote the chemical potentials, they can be related to Gibbs energy of the system, $G_{sys}$. This can be mathematically expressed as:
 		\begin{equation}\label{eqn:conv2}
-			\Psi_{\pi} = \left \vert \frac{\pi_{j}^{m} - \pi_{j}^{m-1}}{\pi_{j}^{m}} \right \vert < \epsilon
+			\Psi_{\pi} = \left \vert \frac{\pi_{j}^{m} - \pi_{j}^{m-1}}{\pi_{j}^{m}} \right \vert < \epsilon.
 		\end{equation}
+		Though intuitive, this approach to judging convergence suffers from two potential issues. The first issue is commonly observed in iterative solutions of non-linear systems where numerical stagnation can occur when significant numerical dampening is required to maintain the stability of numerical algorithm. In GEM for large chemical components, numerical dampening is often required and false convergence can result when the approach to minimum Gibbs energy becomes extremely slow.  The second issue relates to insignificant contribution to the Gibbs energy of the system  by minor species. These minor species can often be incorrect by several orders of magnitude and though they don't contribute to Gibbs energy significantly, they might be of significant chemical or radiological importance and the false sense of convergence can then lead to significant problems \cite{Piro11a}.
 
-		Though intuitive, this approach to judging convergence suffers from two potential issues. The first issue is commonly observed in iterative solutions of non-linear systems where numerical stagnation can occur when significant numerical dampening is required to maintain the stability of numerical algorithm. In GEM for large chemical components, numerical dampening is often required and false convergence can result when the approach to minimum Gibbs energy becomes extremely slow.  The second issue relates to insignificant contribution to the Gibbs energy of the system  by minor species. These minor species can often be incorrect by several orders of magnitude and though they don't contribute to Gibbs energy significantly, they might be of significant chemical or radiological importance and the false sense of convergence can then lead to significant problems.
-
-		\subsubsection{The Gibbs Criteria}
+		\item \textbf{Gibbs' Criterion}\\
 	 The Gibbs criteria for judging convergence relies on the relationship between chemical potentials and Gibbs energies. To utilise this concept, the chemical potentials can be expressed per gram-atom as:
 	 \begin{equation}
-	 	\hat{\mu}_{i(\phi)} = \frac{{\mu}_i(\phi)}{a_{i(T)}}
+	 	\hat{\mu}_{i} = \frac{{\mu}_i}{a_{i(T)}},
 	 \end{equation}
-	 where, $\hat{\mu}_{i(\phi)}$ [\si{\joule \per g-at}] is the chemical potential and ${a_{i(T)}}$  is the total number of atoms in the formula mass. This method of defining chemical potentials allows an equivalent comparison of chemical potentials of compounds with different numbers of atoms per molar mass.
+	 where $\hat{\mu}_{i}$ [\si{\joule \per g-at}] is the chemical potential and ${a_{i(T)}}$  is the total number of atoms in the formula mass. This method of defining chemical potentials allows an equivalent comparison of chemical potentials of compounds with different numbers of atoms per molar mass.
 
-	 At equilibrium, all $\hat{\mu}_{i(\phi)}$ must lie on a hyper-plane at equilibrium in the C-dimensional Euclidean space, where C represents the number of system components. This plane is called the \emph{Gibbs plane} and an example of it is shown in figure~\ref{fig:GibbsPlane} for a three dimensional space.
+	 At equilibrium, all $\hat{\mu}_{i}$ must lie on a hyper-plane at equilibrium in the $C$-dimensional Euclidean space, where $C$ represents the number of system components. This plane is called the \emph{Gibbs plane} and an example of it is shown in figure~\ref{fig:GibbsPlane} for a three dimensional space.
 	 \begin{figure}[htbp]
 		\centering
-		\includegraphics[width=0.52\textwidth]{figures/Gibbs_plane.jpg}
+		\includegraphics[width=0.6\textwidth]{figures/Gibbs_plane.jpg}
 		\caption{The Gibbs criteria is satisfied when the chemical potentials for all species represented per gram-atom lie on the Gibbs Plane within an acceptable tolerance \cite{Piro11a}.}
 		\label{fig:GibbsPlane}
 	\end{figure}
 
 	The chemical potential of any point on the Gibbs plane can be expressed as a linear combination of  chemical potentials of system components and this interpolated potential can be denoted by $\hat{\mu}_{i(\phi)}(\Gamma)$. The absolute difference between $\hat{\mu}_{i(\phi)}(\Gamma)$ and $\hat{\mu}_{i(\phi)}$, $\Psi_{\Gamma}$ can then be used as convergence criterion:
 		\begin{equation}\label{eqn:convGC}
-			\Psi_{\Gamma} = \left \vert  \hat{\mu}_{i(\phi)}(\Gamma) - \hat{\mu}_{i(\phi)} \right \vert < \epsilon
+			\Psi_{\Gamma} = \left \vert  \hat{\mu}_{i(\phi)}(\Gamma) - \hat{\mu}_{i(\phi)} \right \vert < \epsilon,
 		\end{equation}
-	 i.e., all the species in equilibrium must lie on the Gibbs plane. If a phase lies below the Gibbs plane, adding it to the phase assemblage would yield a lower Gibbs energy of the system and such a system would not be at a global minimum. The Gibbs criteria is easily extendable to electrochemical equilibrium and can be conveniently implemented in a thermodynamic equilibrium	 solver.
+	 i.e., all the species in equilibrium must lie on the Gibbs plane. If a phase lies below the Gibbs plane, adding it to the phase assemblage would yield a lower Gibbs energy of the system and such a system would not be at a global minimum. The Gibbs criteria is easily extendable to electrochemical equilibrium and can be conveniently implemented in a thermodynamic equilibrium solver \cite{Piro11a}.
+	 \end{enumerate}
+	 
+\subsection{Choice of numerical algorithm}
+	Both GEM and PGE have advantages and disadvantages and the choice of the algorithm must be based on the applications and excess mixing models used in them. For {\GEM}, the Gibbs energy minimisation method was selected and the reasoning behind it has been explained by Bajpai \textit{et al.} \cite{Bajpai:2021ab}. While the paper, presented on the following pages, was written primarily for the thermochemistry library Thermochimica, the goal was also to pre-emptively justify the choice of the algorithm for {\GEM}. 
+	\includepdf[pages=-]{publications/Bajpai_2021_CMS.pdf}
 	 
 %==============================================================================================================================
 %														Global Optimisation
@@ -177,38 +399,38 @@ Since the driving force function can be non-convex, finding the most negative dr
 %															Summary
 %==============================================================================================================================
 
-\section{Summary of Thermodynamic Equilibrium}
-Achieving thermochemical equilibrium in a system requires satisfaction of several conditions which are as follows:
-	\subsection{Necessary conditions}
+\section{Summary}
+Based on the fundamental laws of thermodynamics, achieving thermochemical equilibrium in a system requires satisfaction of several conditions which are as follows:
+%	\subsection{Necessary conditions}
     	\begin{enumerate}\compresslist
-        		\item \emph{Conservation of mass} requires that the mass of element $j$, $b_j$, must satisfy the following mass balance equation
-            	\begin{equation}
-                		b_j = \sum_{\lambda=1}^{\Lambda} n_{\lambda}\sum_{i=1}^{N_{\lambda}}x_{i({\lambda})}{\nu}_{i,j} +  \sum_{\omega=1}^{\Omega} n_{\omega}{\nu}_{\omega}
-            	\end{equation}
-            	where, ${\nu}_{i,j}$ and ${\nu}_{\omega}$ represent the stoichiometric coefficients of element $j$ in solution phase species $j$ and stoichiometric phase $\omega$ respectively.
-        		\item \emph{Gibbs' phase rule} which defines the thermodynamic degrees of freedom of the system must also be     satisfied
-            	\begin{equation}
-                		F=C-\Phi + 2 + \Xi
-            	\end{equation}
-            	where, $F$ represents the degrees of freedom, $C$ denotes the number of components in the system, $\Phi$ denotes the number of phases and $\Xi$ denotes the number of ionic phases.
-        		\item \emph{Gibbs' criteria} for equilibrium requires that the Gibbs energy of a system be at a global equilibrium. In equivalent terms, the chemical potential for each system component must have the same value in all stable phases within the system \cite{HILLERT198131}, where the chemical potential of any constituent in a stable phase can be defined as a linear function of the element potentials, $\Gamma_j$, as
-            	\begin{equation}
-		        \mu_{i} = \sum_{j=1}^C \nu_{i,j} \Gamma_j
-            	\end{equation}
+        		\item \emph{Conservation of mass} requires that the mass of element $j$, $b_j$, must satisfy the following mass balance equation:
+            	\begin{equation*}
+                		b_j = \sum_{\lambda=1}^{\Lambda} n_{\lambda}\sum_{i=1}^{N_{\lambda}}x_{i({\lambda})}{\nu}_{ij} +  \sum_{\omega=1}^{\Omega} n_{\omega}{\nu}_{\omega},
+            	\end{equation*}
+            	where ${\nu}_{ij}$ and ${\nu}_{\omega}$ represent the stoichiometric coefficients of element $j$ in solution phase species $j$ and stoichiometric phase $\omega$ respectively.
+        		\item \emph{Gibbs' phase rule} which defines the thermodynamic degrees of freedom of the system must also be     satisfied:
+            	\begin{equation*}
+                		F=C-\Phi + 2 + \Xi,
+            	\end{equation*}
+            	where $F$ represents the degrees of freedom, $C$ denotes the number of components in the system, $\Phi$ denotes the number of phases and $\Xi$ denotes the number of ionic phases.
+        		\item \emph{Gibbs' criteria} for equilibrium requires that the Gibbs energy of a system be at a global equilibrium. In equivalent terms, the chemical potential for each system component must have the same value in all stable phases within the system \cite{HILLERT198131}, where the chemical potential of any constituent in a stable phase can be defined as a linear function of the element potentials, $\Gamma_j$, as:
+            	\begin{equation*}
+		        \mu_{i} = \sum_{j=1}^C \nu_{i,j} \Gamma_j.
+            	\end{equation*}
     	\end{enumerate}
 
-	\subsection{Sufficient conditions}
+%	\subsection{Sufficient conditions}
     	The necessary conditions for thermodynamic equilibrium require that the chemical potentials of all stable solution phase species and stoichiometric phases abide by the above equality, which is equivalent to Gibbs energy of the system being at a local minimum, and that the conservation of mass and the Gibbs phase rule are satisfied. The sufficient condition requires that all the metastable phases abide by the following conditions
     	\begin{equation*}
-        		\pi_{\lambda} = \min_{\lambda} \sum_{i=1}^{N_{\lambda}}x_{i({\lambda})} \left (\mu_{i({\lambda})} - \sum_{j=1}^C \nu_{i,j}\Gamma_j \right )
+        		\Delta G_{\phi} = \min_{x} \sum_{i=1}^{N_{\phi}}x_{i} \left (\mu_{i} - \sum_{j=1}^C \nu_{ij}\Gamma_j \right ),
     	\end{equation*}
     	i.e., there must exist a Gibbs' plane such that the element potentials lie on the plane and the chemical potentials of all the species lie on or above the plane and the mole fraction of the species must satisfy the following constraints
-	\begin{equation}
+	\begin{equation*}
         		\begin{aligned}
-            		\sum_{i=1}^{N_{\lambda}}x_{i({\lambda})} = 1 \\
-			x_{i({\lambda})} \geq 0 \;\; \forall i
+            		\sum_{i=1}^{N_{\phi}}x_{i} = 1, \\
+			x_{i} \geq 0 \;\; \forall i,
         		\end{aligned}
-    	\end{equation}
-    	i.e., the sum of mole fraction of all the species in a phase $\lambda$ must be unity and that the individual mole fractions must be greater than or equal to zero.
+    	\end{equation*}
+    	i.e., the sum of mole fraction of all the species in a phase $\phi$ must be unity and that the individual mole fractions must be greater than or equal to zero.
 
-    	The aforementioned conditions are used in Gibbs energy minimisers to find a unique combination of phases that are stable in the system.
+    	The aforementioned conditions are used in Gibbs energy minimisers to find a unique combination of phases that are stable in the system. In such solvers, one must also carefully consider the role of the numerical algorithm and the convergence criteria to be adopted as these choices can have a significant impact on both computational performance and robustness of the solver.

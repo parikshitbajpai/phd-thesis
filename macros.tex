@@ -1,0 +1,31 @@
+%%-------------------------------
+%%  MATH MACROS
+%%-------------------------------
+\newcommand{\molesol}{\ensuremath{n_\lambda}}                               		% Moles of solution phase
+\newcommand{\molestoich}{\ensuremath{n_\omega}}                             		% Moles of stoichiometric phase
+\newcommand{\moleelem}[1]{\ensuremath{b_{#1}}}                              		% Moles of elements
+\newcommand{\molefrac}[1]{\ensuremath{x_{#1(\lambda)}}}                     		% Mole fraction of solution phase species
+\newcommand{\molespecies}[1]{\ensuremath{n_{#1(\lambda)}}}                  	% Moles of solution phase species
+\newcommand{\stoich}[2]{\ensuremath{\nu_{#1#2}}}                            		% Stoichiometric coefficient
+\newcommand{\cps}[1]{\ensuremath{\tilde{\mu}_{#1(\lambda)}}}               		% Chemical potential of solution phase species
+\newcommand{\cpst}{\ensuremath{\tilde{\mu}_{\omega}}}                       		% Chemical potential of stoich. phase
+\newcommand{\cpe}[1]{\ensuremath{\tilde{\Gamma}_{#1}}}                      		% Element potential
+\newcommand{\pmgref}[1]{\ensuremath{\tilde{\mu}_{#1(\lambda)}^{\circ}}}     	% Partial molar reference Gibbs energy
+\newcommand{\pmgrefst}{\ensuremath{\tilde{\mu}_{\omega}^{\circ}}}           	% Partial molar reference Gibbs energy of stoich. phase
+\newcommand{\pmgid}[1]{\ensuremath{\ln{\molefrac{#1}}}}                     		% Partial molar ideal Gibbs energy of mixing
+\newcommand{\pmgex}[1]{\ensuremath{\tilde{\mu}_{#1(\lambda)}^\text{ex}}}    	% Partial molar excess Gibbs energy of mixing
+\newcommand{\sumsolnphase}{\ensuremath{\sum_{\lambda=1}^{\Lambda}}}         	% Summation solution phases
+\newcommand{\sumstoichphase}{\ensuremath{\sum_{\omega=1}^{\Omega}}}         	% Summation stoich. phases
+\newcommand{\sumelements}[1][j]{\ensuremath{\sum_{#1 = 1}^{C}}}             		% Summation elements
+\newcommand{\sumspecies}[1][i]{\ensuremath{\sum_{#1 = 1}^{N_{\lambda}}}}    	% Summation species
+\newcommand{\Residual}{\ensuremath{\boldsymbol{\epsilon}}}                  			% Residual vector
+\newcommand{\Unknown}{\ensuremath{\mathbf{u}}}                              			% Unknown vector
+\newcommand{\Jacobian}{\ensuremath{\mathbf{J}}}                             			% Jacobian
+\newcommand{\Hessian}{\ensuremath{\mathbf{H}}}                              			% Hessian
+\newcommand{\Constraint}{\ensuremath{\boldsymbol{\kappa}}}                  		% Constraint
+\newcommand{\Step}{\ensuremath{\mathbf{s}}}                                 				% Newton step
+\newcommand{\pder}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}                     		% First Partial derivative
+\newcommand{\ppder}[2]{\ensuremath{\frac{\partial^2 #1}{\partial (#2)^2}}}              		% Second Partial derivative
+\newcommand{\pqder}[3]{\ensuremath{\frac{\partial^2 #1}{\partial #2 \partial #3}}}      	% Second Partial derivative
+\newcommand{\spder}[2]{\ensuremath{\sfrac{\partial #1}{\partial #2}}}                   		% First Partial derivative
+\newcommand{\spqder}[3]{\ensuremath{\sfrac{\partial^2 #1}{\partial #2 \partial #3}}}   	% Second Partial derivative

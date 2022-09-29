@@ -139,7 +139,7 @@ The laws that govern all material systems can be expressed in two seemingly simp
 	\end{equation}
 
 	The fact that Gibbs energies are relative quantities and can be numerically adjusted as long as the elemental differences are preserved is of practical importance and is often used in thermodynamic equilibrium calculation. Chemical potential of species $i$ in phase $\lambda$, $\mu_{i(\lambda)}$ [\si{\joule \per \mole}], is a measure of the change of the Gibbs energy of the system by the introduction of species $i$ and incorporates  the reference Gibbs energy of pure species, $g_{i}^\circ$, and the entropic contribution due to mixing as a function of its mole fraction. Mathematically, the chemical potential of a species $i$ is defined as \cite{Zemansky81}:
-    	\begin{equation}
+    	\begin{equation}\label{eq:mu_def}
         		\mu_{i} = {\left (\frac{\partial G_\text{sys}}{\partial n_{i}} \right )}_{T,P,n_{j \neq i}}.
     	\end{equation}
 
@@ -149,7 +149,7 @@ The laws that govern all material systems can be expressed in two seemingly simp
     	\end{equation}
 
 	For non-ideal solution phases, the chemical potential also includes the partial molar excess Gibbs energy of mixing, $g_{i}^{ex}$ [\si{\joule \per \mole}], to account for non-ideal mixing as follows:
-    	\begin{equation}
+    	\begin{equation}\label{eq:mu_ex}
         		\mu_{i} = \mu_{i}^\circ + \ln x_{i} + \mu_{i}^{ex}.
     	\end{equation}
 
@@ -262,4 +262,4 @@ where $N_p$ denotes the number of excess mixing parameters (note: $N_p \ge N_s$)
 	\subsection{Chemical potential expressions for excess mixing models}
 	Pertinent to the development of a Gibbs energy minimiser are the chemical potential expressions for the different species in phases represented by each of the excess mixing models. These expressions have been published by Bajpai \textit{et al.}\cite{Bajpai:2021aa} and Poschmann \textit{et al.}\cite{POSCHMANN2021102341}. The following pages show the chemical potential expressions for the substitutional solution models and the CEF in the paper titled \textit{Derivations of useful partial molar excess Gibbs energy of mixing expressions of common thermodynamic models} and the expressions for the MQM in section 2 of the paper titled \textit{Recent developments for molten salt systems in Thermochimica}. 
 	\includepdf[pages=-]{publications/Bajpai_2021_JPED.pdf}
-	\includepdf[pages=-]{publications/Poschmann_2021.pdf}
+	\includepdf[pages=-]{publications/Poschmann_2021_abridged.pdf}
