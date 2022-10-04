@@ -1,4 +1,4 @@
-\documentclass{dissertation}
+\documentclass[oneside]{dissertation}
 
 \usepackage[version=4]{mhchem}
 \usepackage{siunitx}
@@ -11,6 +11,7 @@
 \usepackage{setspace}
 \usepackage{nameref}
 \usepackage{xfrac}
+\usepackage{algorithm2e}
 
 \theoremstyle{definition}
 \newtheorem*{objective}{Objective}
@@ -25,11 +26,14 @@
 	\setlength{\parskip}{0pt}
 	\setlength{\parsep}{0pt}
 	}
-\onehalfspacing
-%\doublespacing
+%\onehalfspacing
+\doublespacing
 
 \newcommand{\YJ}{Yellowjacket}
-\newcommand{\GEM}{{\YJ}~-~GEM}
+\newcommand{\GEM}{{\YJ}--GEM}
+
+\DeclareSIUnit{\atmosphere}{atm}
+\DeclareSIQualifier{\electric}{e}
 
 \input{macros}
 
@@ -81,6 +85,9 @@
 
 \cleardoublepage
 \listoftables
+
+\cleardoublepage
+\listofalgorithms
 
 % \include{preface/preface}
 % \include{summary/summary}

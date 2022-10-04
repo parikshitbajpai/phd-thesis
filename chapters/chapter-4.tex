@@ -82,7 +82,7 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 	\begin{equation}
         		\Delta G_{\phi}= \min_{\lambda} \sum_{i=1}^{N_{\lambda}}x_{i} \left (\mu_{i} - \sum_{j=1}^C \nu_{ij}\Gamma_j \right ),
     	\end{equation}
-	which is subject to the following following linear equality and inequality constraints:
+	which is subject to the following linear equality and inequality constraints:
 	\begin{align}
 		\sum_{i=1}^{N_\phi} x_i = 1, \; x_i > 0, \; \forall i \in \phi.
 	\end{align}
@@ -377,7 +377,7 @@ At every iteration step, the direction vector is computed and the system is adju
 As previously mentioned in section~\ref{sec:eqb_theory}, satisfying the necessary conditions, specifically the Gibbs' Criterion, is equivalent to finding a local minimum but one must demonstrate that the driving force, $\Delta G$, is non-negative for all phases to be metastable. Throughout the iterative process, the driving force for all the metastable phases should be calculated to determine if a particular phase needs to be added to the system. At this point, two similar but distinct approaches to the problem of identifying phases with negative driving force can be adopted. In the first approach, the goal is only to find out whether or not a phase has a negative driving force while in the second approach the goal is to determine the minimum value of the driving force subject to the equality and inequality constraints mentioned previously. While the first approach can be computationally cheaper, the second approach can provide additional information about the state of the system. For instance, when multiple phases have a negative driving force, the phase with the most negative driving force can be added to the system. 
 
 Since the driving force function can be non-convex, finding the most negative driving force is essentially a constrained global optimisation problem. The domain space of  the problem is defined by the number of species in the solution phase and, because the mole fractions of the species must lie in $(0,1)$, the search space is box constrained. Using the sufficient conditions previously mentioned, the Lagrangian function of the driving force of solution phase $\phi$ can be defined as:
-	\begin{equation}
+	\begin{equation}\label{eq:DrivingForceLagrangian}
 		\mathcal{L}_\phi = \sum_{i=1}^{N_\phi} x_i \left(\tilde{\mu}_i - \sum_{j=1}^{C} \nu_{ij} \tilde{\Gamma}_j \right)
 						 - \lambda_\phi \left( \sum_{i=1}^{N_\phi} x_i - 1 \right)
 						 - \lambda_{e^-} \left( \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i - 1 \right),

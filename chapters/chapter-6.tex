@@ -1,7 +1,6 @@
 \chapter{Computational Implementation} \label{chap:implementation}
 
-
-	This chapter presents the numerical algorithms that can be employed in computing thermodynamic equilibria. While most of these algorithms embody the concepts previously presented in the open literature, there remains a scope for improving the efficiency and capabilities of some of these algorithms through careful implementation and/or building upon them. This chapter discusses the computational implementation of the proposed thermodynamic equilibrium solver, the top-level architecture of which has been outlined in figure~\ref{fig:structure}. The program essentially consists of a parsing and input module to read the required thermodynamic data and system information followed by initialisation routines which provide the initial assemblage to a non-linear GEM routine. The assemblage from the non-linear solver is then checked to ensure global minimum is achieved at which stage the outputs are produced.
+	The principles of thermodynamic equilibrium set the background for solving phase equilibrium problem in multicomponent system but being able to solve the resulting optimisation problem requires the use of high-quality software implementations. Though several such softwares exists, most of them do not meet the requirements for direct integration with MOOSE framework. The commercial softwares do not provide source codes and the application programming interfaces (APIs) provided by a few of such codes are usually very difficult to modify to meet the needs of multiphysics implementations. The open-source softwares on the other hand do have readily available source codes but often lack in terms of quality of code implementation and software quality assurance (SQA). To overcome the challenges and to provide readily usable thermodynamic equilibrium framework in MOOSE, a new Gibbs energy minimiser was developed.  While many of the algorithms employed in {\GEM} embody the concepts previously presented in open literature, there remains a scope for improving the efficiency and capabilities of some of these algorithms through careful implementation and/or building upon them. The top level architecture of the thermodynamic equilibrium solver has been outlined in figure~\ref{fig:structure}. The program essentially consists of parsing and input modules to read the required thermodynamic data and system information followed by initialisation routines which provide the initial assemblage to a non-linear solver. The assemblage from the non-linear solver is then checked to ensure global minimum is achieved at which stage the outputs are produced.
 	\begin{figure}[htbp]
 	 	\centering
 	   	\includegraphics[width=0.65\textwidth]{figures/YJ_structure.pdf}
@@ -9,10 +8,11 @@
 	   	\label{fig:structure}
 	\end{figure}
 
-\section{Opportunities for Novel Contributions}
-Before delving into the details of a thermodynamic solver, a number of opportunities for novel contributions are presented here. The first and the foremost is integration of the thermodynamic solver within multiphysics framework \texttt{MOOSE}. \texttt{MOOSE} based applications currently leverage the thermochemistry library \texttt{Thermochimica} to perform thermodynamic equilibrium calculations. However, since \texttt{Thermochimica} was developed in FORTRAN and wasn't developed within the \texttt{MOOSE} framework, coupling it requires writing wrapper classes for every intended application. Not only does this lead to waste of time and resources, it also needs a lot of effort to maintain reliability and achieve desired performance. The new thermodynamic sover will be built within the \texttt{MOOSE} framework and will eliminate the need to write multiple wrapper classes. Furthermore, since it will use the same software quality assurance practices as \texttt{MOOSE}, it will be able to meet the desired performance standards.
+%\section{Opportunities for Novel Contributions}
+%Before delving into the details of a thermodynamic solver, a number of opportunities for novel contributions are presented here. The first and the foremost is integration of the thermodynamic solver within multiphysics framework \texttt{MOOSE}. \texttt{MOOSE} based applications currently leverage the thermochemistry library \texttt{Thermochimica} to perform thermodynamic equilibrium calculations. However, since \texttt{Thermochimica} was developed in FORTRAN and wasn't developed within the \texttt{MOOSE} framework, coupling it requires writing wrapper classes for every intended application. Not only does this lead to waste of time and resources, it also needs a lot of effort to maintain reliability and achieve desired performance. The new thermodynamic sover will be built within the \texttt{MOOSE} framework and will eliminate the need to write multiple wrapper classes. Furthermore, since it will use the same software quality assurance practices as \texttt{MOOSE}, it will be able to meet the desired performance standards.
+%
+%	In addition to coupling, the development of the new thermodynamic code will try to achieve performance gain through advanced algorithm development. While the GEM method has little scope of improvement in itself, the performance of thermodynamic equilibrium codes can be significantly improved by improving the initialisation routines and focussing on strategies for updating the estimated phase assemblage. The strategies to achieve this goal have been presented in the following sections. Novel contributions can also be made towards global optimisation routines for thermodynamic equilibrium solvers. As shown in section~\ref{sec:opt_theory}, ensuring that a global minimum of Gibbs energy has been achieved is a challenging task and the global optimisation methods available in the literature have mostly been problem specific. Since a thermodynamic equilibrium solver needs to perform well for different kinds of problems, significant contributions can be made by implementing robust global optimisation algorithms. These strategies are discussed in the following sections.
 
-	In addition to coupling, the development of the new thermodynamic code will try to achieve performance gain through advanced algorithm development. While the GEM method has little scope of improvement in itself, the performance of thermodynamic equilibrium codes can be significantly improved by improving the initialisation routines and focussing on strategies for updating the estimated phase assemblage. The strategies to achieve this goal have been presented in the following sections. Novel contributions can also be made towards global optimisation routines for thermodynamic equilibrium solvers. As shown in section~\ref{sec:opt_theory}, ensuring that a global minimum of Gibbs energy has been achieved is a challenging task and the global optimisation methods available in the literature have mostly been problem specific. Since a thermodynamic equilibrium solver needs to perform well for different kinds of problems, significant contributions can be made by implementing robust global optimisation algorithms. These strategies are discussed in the following sections.
 
 \section{Parsing and Input}
 	Calculation of thermodynamic equilibrium requires a thermodynamic database, which includes Gibbs energy expressions of the different phases and species that can exist in the system. These thermodynamic databases are developed using the well established CALculation of PHAse Diagrams (CALPHAD) method \cite{liu_wang_2016} and are available in different formats, the most commonly used being ThermoCalc (*.tdb) and ChemSage (*.dat) data file formats, which are generated by the commercial software ThermoCalc and FactSage, respectively. An example of a typical ChemSage data file is shown in figure~\ref{fig:datfile} and consists of a header block followed by information blocks for every possible phase in the system.
@@ -468,7 +468,7 @@ The unknown column vector $\boldsymbol{\pi}$ is computed through a linear equati
       				\node [block_center] (10) {Calculate activities}; & \node [block_center] (11) {Calculate numbers of phase and species}; & {}\\
 				\node [block_center] (20) {Calculate chemical potentials}; & {} & \node [block_center,yshift=-3em] (22) {Check if the phase assemblage is new};\\
 				\node [block_center] (30) {Construct and solve linear system}; & \node [block_center,xshift=-7.5em] (31) {\textbf{Minimum Found}}; & {}\\
-				\node [block_center] (40) {Calculate new mole amounts}; & \node [block_center,xshift=-7.5em] (41) {Correct mixture phase mole amounts}; & \node [block_side,xshift=-7.5em] (42a) {Add the phase};  \node [block_side,xshift=7.5em,yshift=-2.5em] (42b) {Select phase to be exchanged}; \node [block_side,xshift=7.5em,yshift=2.5em] (42c) {Exchange the phases};\\
+				\node [block_center] (40) {Calculate new mole amounts}; & \node [block_center,xshift=-7.5em] (41) {Correct mixture phase mole amounts}; & \node [block_side,xshift=-5em] (42a) {Add the phase};  \node [block_side,xshift=5em,yshift=-2.5em] (42b) {Select phase to be exchanged}; \node [block_side,xshift=5em,yshift=2.5em] (42c) {Exchange the phases};\\
 				\node [block_center,yshift=-2.5em] (50) {Correct mole amounts}; & \node [block_center,yshift=-5em] (51) {Remove phases if possible}; & \node [block_center,yshift=-5em] (52) {Test if addition breaks Gibbs' phase rule};\\
 				\node [block_center,yshift=-2.5em] (60) {Test convergence}; &  \node [block_center,yshift=-2.5em] (61) {Test if a phase should be added}; & \node [block_center,yshift=-2.5em] (62) {Select the best phase to be added};\\
     			};	% end matrix
@@ -487,7 +487,7 @@ The unknown column vector $\boldsymbol{\pi}$ is computed through a linear equati
 				\path[-] (51.90) edge node[block_noborder,anchor=east]{\footnotesize{No phase to remove}} (41.270);
 				\path (41) edge  (31);
 				\path[-] (51.20) edge node[block_noborder,anchor=south,rotate=90]{\footnotesize{Phase  removed}}(11.330);
-				\path[-] (60.180) edge[bend left] node[block_noborder,anchor=north,rotate=90]{\footnotesize{Not converged}} (10.180);
+				\path[-] (60.180) edge[bend left=20] node[block_noborder,anchor=north,rotate=90]{\footnotesize{Not converged}} (10.180);
 				\path[-] (50.360) edge node[block_noborder,anchor=north,yshift=-0.25cm]{\footnotesize{Negative/small mole amounts or NaN}} (51.180);
 				\path[-] (52.90) edge node[block_noborder,anchor=east]{\footnotesize{Phase rule satisfied}}(42a.270);
 				\path[-] (52.90) edge node[block_noborder,anchor=west]{\footnotesize{Phase rule broken}}(42b.270);
@@ -496,39 +496,259 @@ The unknown column vector $\boldsymbol{\pi}$ is computed through a linear equati
 				\path[-] (42a.90) edge  (22.260);
 				\path[-] (22.90) edge node[block_noborder,anchor=west]{\footnotesize{New assemblage}}(11.360);
 				\path (11) edge  (10);
-				\path[-] (22.180) edge[bend right=60] node[block_noborder,anchor=south,rotate=90]{\footnotesize{Already tested}} (62.175);
+				\path[-] (22.180) edge[bend right=30] node[block_noborder,anchor=south,rotate=90]{\footnotesize{Already tested}} (62.175);
 			\end{scope}
  		\end{tikzpicture}
-  		\caption{Illustration of the proposed Gibbs energy minimisation algorithm. Adapted from Loukusa \cite{Loukusa:2014aa}.}
+  		\caption{Illustration of the proposed Gibbs energy minimisation algorithm}
   		\label{fig:gem_illus}
 	\end{figure}
 
 \end{landscape}
 \restoregeometry
 
+%==============================================================================================================================
+%														Global Optimisation
+%==============================================================================================================================
 \section{Global Optimisation}
-	The computation of thermodynamic equilibrium, as discussed in sec.~\ref{sec:opt_theory}, is a global optimisation problem where the focus is on systems that can attain equilibrium state under conditions of constant temperature and pressure, where the global minimum value of the Gibbs energy describes the true equilibrium state. The problem can be stated as follows \cite{Floudas99}:
-	\begin{objective}
-	Given $C$ components participating in up to $\Phi$ potential phases under isothermal and isobaric conditions find the mole vector $\mathbf{n}$ that minimises the value of the Gibbs energy while also satisfying the appropriate material balance constraints.
-	\end{objective}
+%Ensuring that the global minimum of Gibbs energy is correctly calculated requires that the driving force of all metastable phases be positive. As described in section~\ref{sec:global_opt_intro}, computing the minimum driving force of a thermodynamic system requires solving a non-convex constrained optimisation problem. 
+%
+%	The computation of thermodynamic equilibrium, as discussed in sec.~\ref{sec:opt_theory}, is a global optimisation problem where the focus is on systems that can attain equilibrium state under conditions of constant temperature and pressure, where the global minimum value of the Gibbs energy describes the true equilibrium state. The problem can be stated as follows \cite{Floudas99}:
+%	\begin{objective}
+%	Given $C$ components participating in up to $\Phi$ potential phases under isothermal and isobaric conditions find the mole vector $\mathbf{n}$ that minimises the value of the Gibbs energy while also satisfying the appropriate material balance constraints.
+%	\end{objective}
+%
+%	\begin{constraint}
+%		The mole fraction of a species in phase $\lambda$, $x_{i(\lambda)}$, must satisfy the following linear equality and inequality constraints
+%		\begin{equation}
+%		\sum_{i=1}^{N_\lambda} x_{i(\lambda)} = 1 \mspace{30mu}x_{i(\lambda)} > 0\mspace{30mu} \forall i
+%		\end{equation}
+%	\end{constraint}
+%
+%The component set is represented by the index set $C = \{i\}$ and the elements that constitute these components are given by $E  = \{e\}$. The set of phases is denoted by $\Phi = \{k\}$ where it is composed of solution and stoichiometric phases, labelled $\Lambda$ and $\Omega$ respectively, so that $\Phi \equiv \Lambda\cup \Omega$.
 
-	\begin{constraint}
-		The mole fraction of a species in phase $\lambda$, $x_{i(\lambda)}$, must satisfy the following linear equality and inequality constraints
-		\begin{equation}
-		\sum_{i=1}^{N_\lambda} x_{i(\lambda)} = 1 \mspace{30mu}x_{i(\lambda)} > 0\mspace{30mu} \forall i
-		\end{equation}
-	\end{constraint}
-
-The component set is represented by the index set $C = \{i\}$ and the elements that constitute these components are given by $E  = \{e\}$. The set of phases is denoted by $\Phi = \{k\}$ where it is composed of solution and stoichiometric phases, labelled $\Lambda$ and $\Omega$ respectively, so that $\Phi \equiv \Lambda\cup \Omega$.
-
-	The conditions for thermodynamic equilibrium discussed in section~\ref{sec:eqb_theory} require that the chemical potentials of all the species must lie on or above the Gibbs plane, which passes through the element potentials $\Gamma_j$. Thus metastable phases must lie above the Gibbs plane and the difference between the Gibbs plane and the plane tangent to a metastable phase is referred to as the \emph{driving force} \cite{Lukas07} or \emph{tangent plane distance function} \cite{Lukas07,Zhang11}. The driving force for solution phase $\lambda$ is represented by $\pi_\lambda$ and is computed as \cite{Piro16}:
+	As described in section~\ref{sec:global_opt_intro}, computing the minimum driving force of a thermodynamic system requires solving a non-convex constrained optimisation problem. The conditions for thermodynamic equilibrium discussed in section~\ref{sec:eqb_theory} require that the chemical potentials of all the species must lie on or above the Gibbs plane, which passes through the element potentials $\Gamma_j$. Thus metastable phases must lie above the Gibbs plane and the difference between the Gibbs plane and the plane tangent to a metastable phase is referred to as the \emph{driving force} \cite{Lukas07} or \emph{tangent plane distance function} \cite{Lukas07,Zhang11}. The driving force for phase $\phi$ is represented by $\Delta G_{\phi}$ and is computed as \cite{Piro16}:
 	\begin{equation}\label{eq:drivingforce}
-		\pi_\lambda = \min_x \sum_{i=1}^{N_\lambda} \left(\mu_{i(\lambda)} - \sum_{j=1}^{C} \nu_{i,j}\Gamma_j \right)
-	\end{equation}
-	which is subject to the mass balance constraints. The sufficient condition for equilibrium requires that the driving force $\pi_\lambda$ computed with equation~\eqref{eq:drivingforce} is positive for all phases believed to be metastable and zero for all the stable phases. According to Hillert \cite{Hillert81}, the driving force of metastable phases can be evaluated at each iteration to determine whether or not it should be added into the system. However, this function can be non-convex and requires the evaluation of a global minimum and forms the basis of the methods discussed below.
+        		\Delta G_{\phi}= \min_{\lambda} \sum_{i=1}^{N_{\lambda}}x_{i} \left (\mu_{i} - \sum_{j=1}^C \nu_{ij}\Gamma_j \right ),
+    	\end{equation}
+	which is subject to conservation of mass and the following linear equality and inequality constraints:
+	\begin{align}
+		\sum_{i=1}^{N_\phi} x_i = 1, \; x_i > 0, \; \forall i \in \phi.
+	\end{align}
+	The sufficient condition for equilibrium requires that the driving force $\Delta G_{\phi}$ computed with equation~\eqref{eq:drivingforce} is positive for all phases believed to be metastable and zero for all the stable phases. According to Hillert \cite{Hillert81}, the driving force of metastable phases can be evaluated at each iteration to determine whether or not it should be added into the system. However, this function can be non-convex and requires the evaluation of a global minimum. Though the open literature on computing these methods appears rather exhaustive, few authors have discussed generalised global minimisation schemes for the phase equilibria problem. The majority of articles focus either on relatively small systems, such as liquid-vapour equilibria, or are aimed at only a handful of calculations. Some notable exceptions to this include those of Hillert \cite{HILLERT198131}, Lukas \textit{et al.}\cite{LUKAS1982229}, Sundman \cite{Sundman15}, Piro and Simunovic \cite{Piro16}, and Otis \textit{et al.} \cite{Otis:2017ab}. Since both the robustness and computational efficiency of {\GEM} are of concern, a number of global optimisation methods were tested through a set of carefully constructed test problems representative of some common scenarios in equilibrium thermodynamics. Though no global optimisation method can guarantee the ability to find the true global minimum, sufficient confidence can be achieved for the problem under consideration under well-defined parameters.
+	
+	\subsection{Test Problems}
+	To objectively test the reliability and performance of various global optimisation algorithms, the methods must be benchmarked against a set of test problems representative of the requirements from the solver. While most of the open  literature focusses on a single problem and tries to optimise the algorithm for the problem, such an approach is not ideal for the development of {\GEM}. Instead the focus here has been to select an algorithm that can work reasonably well for wide variety of problems with a large number of components. The reasoning behind such an approach is that a wide variety of excess mixing models are encountered in computational thermodynamics applied to nuclear materials. To test the algorithms under consideration, eight test cases representing different thermodynamic models and system sizes, and are summarised in table~\ref{tab:test_cases}.
+	\begin{table}[htbp]
+		\centering
+	   	\caption{Summary of test cases used for comparing global optimisation algorithms.}
+	   	\begin{tabular}{@{} lcp{0.82\linewidth} @{}} % Column formatting, @{} suppresses leading/trailing space
+	      		\toprule
+	      		\textbf{Label}	& \textbf{Size}		& \textbf{Problem Description} \\
+	      		\midrule
+	      		A			& 2					& Fictive binary system with a miscibility gap and a stoichiometric phase from Piro and Simunovic \cite{Piro16}.\\
+	      		B			& 2					& \ce{Pd-Rh} binary system with a shallow FCC miscibility gap phase from Kaye \textit {et al.} \cite{Kaye07}.\\
+	      		C			& 2					& Fictive binary system with three convex phases with one phase having a negative driving force from Piro and Simunovic \cite{Piro16}. \\
+	      		D			& 3					& \ce{Pu-U-O} ternary system from Gu\'{e}neau \textit{et al.} \cite{Gueneau11} containing an ideal gas phase, a non-ideal liquid phase, many stoichiometric phases and a \ce{(U$_y$ Pu$_{1-y}$)O$_{2\pm x}$} fluorite phase. Involves a multi-sublattice model and a charge balance constraint.\\
+	      		E			& 3					& \ce{Al-Cr-Co} ternary system used as reference problem by Otis \textit {et al.} \cite{Otis:2017ab}. \\
+	      		F			& 5					& Hexagonal closed packing (HCP) phase in the quinary system containing noble metal fission products \ce{Mo-Pd-Tc-Ru-Rh} from Kaye \textit {et al.} \cite{Kaye07}.\\
+	      		G			& 10					& \multirow{2}{=}{Fictive high-dimensional systems with minefield of miscibility gaps based on Piro and Simunovic \cite{Piro16}.}\\
+	      		H			& 30					& \\
+	      \bottomrule
+	   \end{tabular}
+	   \label{tab:test_cases}
+	\end{table}
+	
+	\begin{enumerate}
+	\item	\emph{Problem A}\\
+		A fictive binary  \ce{A-B} system based on Piro and Simunovic \cite{Piro16} has been considered as the first test problem. As shown previously in section~\ref{sec:global_opt_intro}, it consists of solution phase $\alpha$ and a stoichiometric phase \ce{A3B2} which can possibly coexist and while the stoichiometric phase \ce{A3B2} and solution phase $\alpha$ are initially predicted to be stable, as represented by the dashed tangent line in figure~\ref{fig:testA}, they are in fact metastable and a miscibility gap would yield a lower value of the integral Gibbs energy of the system, $G_\text{sys}$. The $\alpha$ phase is represented by a substitutional solution model with the reference Gibbs energies of the components being $g_{\ce{A}}^\circ = -100 $ \si{\joule \per \mole}, $g_{\ce{B}}^\circ = -300$ \si{\joule \per \mole} and the excess energy given by $g_{\alpha}^\text{ex} = 21000 x_{\ce{A}} x_{\ce{B}} + 7000 x_{\ce{A}} x_{\ce{B}}^2$. The temperature of the system was fixed at $T = 1000$ \si{\kelvin} and the pressure at $P=1$ \si{\atmosphere}.
+		\begin{figure}[htbp]			
+			\centering
+			\includegraphics[width=0.6\textwidth]{figures/chapter-6/System_AB.pdf}
+			\caption[Global optimisation test problem A: Fictive system with miscibility gap showing a possible false positive from thermodynamic equilibrium solver.]{Fictive system with miscibility gap showing a possible false positive from thermodynamic equilibrium solver.}
+			\label{fig:testA}
+		\end{figure}
+ 
+	
+	\item	\emph{Problem B}\\
+		The binary  \ce{Pd-Rh} system from Kaye \textit{et al.} \cite{Kaye07} has been selected as the second test problem. It consists of a shallow miscibility gap in the FCC phase which is assumed to be properly identified by the solver but the global optimisation algorithm must confirm that the driving force, $\Delta G_\text{FCC}$, of the miscibility gap phase is indeed zero. The phase is represented by a substitutional solution model with the reference Gibbs energies of the components being $g_{\ce{Pd}}^\circ = -16480 + 9.02T$ \si{\joule \per \mole}, $g_{\ce{Rh}}^\circ = -26568 + 11.88 T$ \si{\joule \per \mole} and the excess energy given by $g_\text{FCC}^\text{ex} = x_{\ce{Pd}}x_{\ce{Rh}} \left(21247 + 2199 x_{\ce{Rh}} - (2.74 - 0.56x_{\ce{Rh}})T\right)$. The temperature of the system was fixed at $T = 1100$ \si{\kelvin} and the pressure at $P=1$ \si{\atmosphere}.
+		\begin{figure}[htbp]			
+			\centering
+			\includegraphics[width=0.6\textwidth]{figures/chapter-6/System_PdRh.pdf}
+			\caption[Global optimisation test problem B: FCC phase miscibility gap in \ce{Pd-Rh} binary system.]{FCC phase miscibility gap in \ce{Pd-Rh} binary system from Kaye \textit{et al.} \cite{Kaye07} shows a correctly identified miscibility gap which must be verified by the global optimisation algorithm.}
+			\label{fig:testB}
+		\end{figure}
 
-	This section describes three global optimisation methods that have been shown to be promising in thermodynamic  equilibrium calculations. These methods are both stochastic - \emph{particle swarm optimisation} and deterministic - \emph{grid construction} and \emph{branch and bound}.
+	\item	\emph{Problem C}\\
+		Another fictive binary system, from Piro and Simunovic \cite{Piro16}, with components \ce{C-D} can have three possible solution phases, the $\delta$ phase as shown in figure~\ref{fig:testC}. At  temperature  $T = 1100$ \si{\kelvin}, pressure $P=1$ \si{\atmosphere} and composition $x_{\ce{D}} = 0.6$, the $\delta$ phase is believed to be metastable but one must confirm that the combination of $\beta$ and $\gamma$ is most stable or if a different combination is more stable. However, it can be seen that inserting the $\delta$ phase into the system and replacing one of the other two phases would yield a lower value of the integral Gibbs energy of the system, $G_\text{sys}$. For this system, $g_{\ce{C}(\beta)}^\circ = 0$ \si{\joule \per \mole}, $g_{\ce{D}(\beta)}^\circ = 12471$ \si{\joule \per \mole}, $g_{\ce{C}(\gamma)}^\circ = 16628$ \si{\joule \per \mole}, $g_{\ce{D}(\gamma)}^\circ = 4157$ \si{\joule \per \mole}, $g_{\ce{C}(\delta)}^\circ = 26604$ \si{\joule \per \mole} and $g_{\ce{D}(\delta)}^\circ = 33256$ \si{\joule \per \mole}. The molar Gibbs energies of mixing are $g_{\beta}^\text{ex} = 41570 x_{\ce{C}} x_{\ce{D}} - 58198 x_{\ce{C}}x_{\ce{D}}^2$, $g_{\gamma}^\text{ex} = -5238 x_{\ce{C}} x_{\ce{D}}$ and $g_{\delta}^\text{ex} = -59445 x_{\ce{C}} x_{\ce{D}} - 74826 x_{\ce{C}}x_{\ce{D}}^2$.
+		\begin{figure}[htbp]
+			\centering
+			\includegraphics[width=0.6\textwidth]{figures/chapter-6/System_CD.pdf}
+			\caption[Global optimisation test problem C: Fictive system with three phases showing a false positive from thermodynamic equilibrium solver wherein a wrong phase is believed to be present at equilibrium.]{Fictive system with three phases showing a false positive from thermodynamic equilibrium solver wherein a wrong phase is believed to be present at equilibrium.}
+			\label{fig:testC}
+		\end{figure}
+	
+	\item	\emph{Problem D}\\
+		Mixed oxide fuel (MOX) is a nuclear fuel which is manufactured by mixing plutonium recovered from used reactor fuel with depleted uranium and the \ce{Pu-U-O} ternary system from Gu\'{e}neau \textit{et al.} \cite{Gueneau11} has been selected as a test problem. The thermodynamic assessment of the system contains an ideal gas, a non-ideal liquid,  and a \ce{(U_y Pu_{1-y})O$_{2\pm x}$} fluorite phase modelled using CEF with three sublattices and is an ionic phases where the first sublattice contains actinoid cations and the second and third sublattices contain oxygen anions mixing with vacancies. The global optimisation algorithm must respect the charge neutrality constraint thus distinguishing this problem from others. The system composition, as in \cite{Piro16}, is \SI{0.93}{\mole} of \ce{U}, \SI{0.07}{\mole} of \ce{Pu} and \SI{2}{\mole} of \ce{O} maintained at temperature $T = 1000$ \si{\kelvin} and hydrostatic pressure $P=1$ \si{\atmosphere}. The global optimisation algorithm must verify that the \ce{(U_y Pu_{1-y})O$_{2\pm x}$} fluorite phase is only stable phase at equilibrium.
+		
+	\item	\emph{Problem E}\\
+		Otis \textit{et al.} \cite{Otis:2017ab} demonstrated that for the \ce{Al-Co-Cr} ternary system modelled by Liu \textit{et al.} \cite{Liu:2015aa} poses a challenge to thermodynamic equilibrium codes. In particular, it was shown that at temperature $T = 1523$  \si{\kelvin}, a ternary miscibility gap can be ignored when considering the metastable BCC phase only. The phase was modelled with a three-sublattice CEF model with the elements mixing on the first and second sublattices. Considering the challenges posed by the BCC phase in the system, the system was selected as a test problem with the system containing \SI{0.5}{\mole} of \ce{Al}, \SI{0.2}{\mole} of \ce{Co} and \SI{0.3}{\mole} of \ce{Cr} at $T = 1000$ \si{\kelvin} and $P=1$ \si{\atmosphere}. The global optimisation algorithm must identify the existence of a miscibility gap.
+		\begin{figure}[htbp]
+			\centering
+			\includegraphics[width=0.6\textwidth]{figures/chapter-6/System_AlCoCr.pdf}
+			\caption[Global optimisation test problem E: BCC phase \ce{Al-Co-Cr} ternary system with the miscibility gap.]{\ce{Al-Co-Cr} phase diagram calculated with Thermo-Calc version 2018b with an increased point density. With only BCC phase enabled, the existence of the miscibility gaps is shown in the central portion but as shown by Otis \textit{et al.} \cite{Otis:2017ab}, the miscibility gap is lost using the default Thermo-Calc parameters.}
+			\label{fig:testE}
+		\end{figure} 
+	
+	\item	\emph{Problem F}\\
+		The quinary \ce{Mo-Pd-Tc-Ru-Rh} system from Kaye \textit {et al.} \cite{Kaye07} is considered as the sixth test problem for comparing global optimisation algorithms. The system is relevant to nuclear reactor accident simulations as the components are noble metal fission products and their behaviour is critical to source term analyses. The system includes ideal gas, non-ideal liquid and four solid solution phases with face centred cubic (FCC), body centred cubic (BCC), hexagonal closed packed (HCP) and tetragonal crystal structures in addition to several stoichiometric phases. The liquid and solid solution phases were all modelled using substitutional solution models and, as in \cite{Piro16}, the system contains \SI{1}{\mole} of each component and is maintained at a temperature $T = 1000$ \si{\kelvin} and hydrostatic pressure $P=1$ \si{\atmosphere}. Examining the HCP phase only, the HCP--\ce{Mo9Pd11} phase combination is assumed to be stable and the global optimisation algorithms must identify the presence of a miscibility gap which yields a lower integral Gibbs energy of the system. The stable phase assemblage should be HCP--HCP miscibility gap co-existing with \ce{Mo9Pd11}.
+	
+	\item	\emph{Problems G \& H}\\
+		The cases until now considered relatively simpler and smaller systems which are easily visualisable and verifiable but a true representation of nuclear materials must consider a large number of system components. The last two test problems have been designed to test the global optimisation methods for a very large number of species. The fictive phases constructed for the high-dimensional tests are modelled using a three-sublattice CEF model with the first sublattice consisting of a large number of cations and the other two sublattices consisting of two anionic constituents mixing together. This results in two problems with 100 end members and 400 end members and is representative of irradiated molten salts. The fictive phases were constructed following the methodology of Piro and Simunovic \cite{Piro16}. The phases were assumed to have 10 and 30 components with 1-4 constituents per component. The cations were assigned a charge of +2 or +3 and the anions were assigned a charge of -1 (halides) or 0 (vacancy). The reference molar Gibbs energy of each end member was $g_i^\circ = \mathcal{U}(200, 450)$ \si{\kilo \joule \per \mole}. As in \cite{Piro16}, excess mixing parameters were created such that one cation would mix with the following cation in the list of constituents on the first sublattice with a mixing parameters ${^0}L = \mathcal{U}(-100000, 100000)$ and ${^1}L = \mathcal{U}(-1000, 1000)$.			
+	\end{enumerate}
 
+	\subsection{Grid Sampling}
+		Sampling from a equispaced grid has been widely adopted in thermodynamic equilibrium codes as a strategy for testing equilibria by performing numerous evaluations of the objective function at regular intervals in the domain \cite{Shobu09,Sundman85,Sundman15,Chen93a,Chen93b}. The method was developed in the 1970s and 1980s as a brute force method to verify global minimum for phase diagram construction problems and does not scale well for large systems. As shown in figure~\ref{fig:Grid_cons}, in the grid construction method, the surface of $\Delta G_\phi$ is discretised with each point treated as a stoichiometric compound and the ensemble of these compounds collectively approximates the driving force surface \cite{Piro16}. In the example figure, the arbitrary binary system consists of a solution phase and a stoichiometric phase and the domain for the solution phase has been sampled at nine equispaced grid points.
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.65\textwidth]{figures/chapter-6/System_AB_grid.pdf}
+		\caption{Demonstration of the grid construction method for fictive binary system in test problem A. The domain has been sampled at nine equispaced grid points and the pure stoichiometric phase \ce{A3B2} is found to be in equilibrium with the solution phase giving a false positive.}
+		\label{fig:Grid_cons}
+	\end{figure}
+
+The discretisation of the grid plays a key role in the efficacy of this method and it has been shown by Chen \textit{et al.} \cite{Chen93b} that the grid must be sufficiently resolved to avoid missing critical features such as the minimum between grid points $\alpha_8$ and $\alpha_9$ in figure~\ref{fig:Grid_cons}. However, this requirement leads to performance concerns as too small a grid leads to an increase in the computational cost while too large a grid can lead to false positives in the optimisation process.  Piro and Simunovic \cite{Piro16} have demonstrated how uniformly spaced grid for a phase $\phi$ in $N_\phi$ dimensional Euclidean phase (each dimension corresponds to a species in phase $\phi$) can result in an enormously large number of grid points depending on the grid size. In the example with nine grid points, it becomes clear from figure~\ref{fig:Grid_cons} that global minimum would not be found but increasing the number of grid points will lead to an exponential increase in the cost. In conclusion, the rapid increase in the computational cost with the reduction in grid size and a questionable performance in terms of reaching a global maximum tilts the scales against this method. Despite the fact, this method was tested with three separate grid spacings ($\delta = 0.1, \, 0.01, \,\text{and}\, 0.001$) to serve as benchmarks and to numerically show the rapid increase in computational time.
+	
+	\subsection{Spatial Branch \& Bound (sBB)}
+		The Branch and Bound (BB or B\&B), attributed to Land and Doig \cite{Land:1960aa} who introduced it in 1960 for discrete programming, is a widely used algorithmic paradigm for finding optimal solutions to optimisation problems. As illustrated in \ref{fig:BB},the algorithm systematically enumerates all the candidate solutions by sequentially pruning out non-feasible solution candidates through a recursive approach of partitioning the domain and finding an upper and a lower bound for each subdomain. In 1969, Falk and Soland \cite{Falk69} proposed one of the first BB algorithms that could be applied to an continuous objective function with separable concave portions with a closed and convex set of constraints and a bounded feasibility region.
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.65\textwidth]{figures/chapter-6/BB.pdf}
+		\caption[Illustration of Branch and Bound (BB) class of algorithms.]{Illustration of the Branch and Bound (BB) class of algorithms. At each step, the domain is partitioned into a set of unexplored subdomains (denoted as nodes in a dynamic tree) which represent potential regions of optimal solution. By estimating the upper and lower bound on each subdomain, regions of infeasibility can be eliminated.}
+		\label{fig:BB}
+	\end{figure}
+The BB algorithm involves two procedures to solve global optimisation problems:
+	\begin{enumerate}
+		\item \emph{Branching}: The domain $S$ is partitioned into two or more smaller disjoint domains $S_1,S_2,\dots,$ such that $S = S_1 \cup S_2 \cup \dots$ Thus, the partitioned objective function can be considered a convex approximation of the objective function within the subdomain $S_i$.
+		\item \emph{Bounding}: The upper and lower bound of the objective function are found within a subset of the domain $S$. In the classical Branch and Bound method, a subdomain can be removed from the analysis if the lower bound of the objective function in it is greater than the upper bound of the objective function in any other subdomain.
+	\end{enumerate}
+McDonald and Floudas \cite{McDonald95} applied the BB algorithm to solve thermochemical equilibrium problems and Piro and Simunovic \cite{Piro16} proposed a modified version of the classical BB for the thermochemistry library {Thermochimica} which uses a different initialisation procedure and relaxation scheme for the bounds. Furthermore, instead of relying on pruning, every subdomain is evaluated till stopping criteria are met and if necessary, recursive partitioning technique is applied. The approach adopted by Piro and Simunovic \cite{Piro16} partitions the domain for each phase $\phi$ into $N_\phi$ subdomains and the driving force $\Delta G_\phi$ given by equation~\eqref{eq:DrivingForceLagrangian} is minimised in each subdomain. Their approach results in a Hessian which can be represented as a symmetric arrow matrix and by exploiting the structure of this matrix, the combination of $x_i$ that minimises $\Delta G_\phi$ can be easily determined. To solve the matrix, Gaussian elimination can be performed on the just the bottom row followed by back substitution. Furthermore, instead of storing a Hessian, the diagonal vector and a scalar representing the far right column can be stored. However, the implementation of this method warrants the use of an appropriate line search algorithm to ensure that the Wolfe conditions are satisfied and that the local system stays within the feasible region $0 < x_i <1$ . In addition, the step length must be suitably constrained to avoid missing any local minimums \cite{Piro16}. While the method works reasonably well, there are situations where it fails to correctly identify the true global minimum.
+
+One of the best known method for solving non-convex nonlinear programming (NLP) problems is the \emph{spatial Branch and Bound (sBB)} \cite{Smith:1996aa,Tawarmalani:2013aa}. The branching, as already mentioned, is done by taking a continuous variable $v_i \in \left[v_i^l , v_i^u \right]$ and choosing $\beta \; (v_i^l \leq \beta \leq v_i^u)$ to create two subproblems with domains $\left[v_i^l , \beta \right]$ and $\left[\beta , v_i^u \right]$. When solving either subproblem, the original lower and upper bounds can be replaced by tighter bounds by taking the advantage of the reduced domain. This process, from McCormick \cite{McCormick:1976aa}, is called \emph{spatial branching}.
+In this work, a \emph{Symbolic Reformulation sBB} \cite{Smith:1996aa,Smith:1997ab,Smith:1999aa} has been used through the Couenne (Convex Over and Under ENvelopes for Nonlinear Estimation) open-source software \cite{Belotti:2009aa,Belotti:2022aa}. Couenne has been developed to solve global optimisation problems $(\mathbf{P})$  of the form \cite{Belotti:2009aa}:
+\begin{equation} \label{eq:couenne_prob}
+\begin{aligned}
+	\min \quad &f(x)			& \\
+	\text{s.t.} \quad &g_j(x) \leq 0  	& &\forall j \in M \\
+	&x_i^l \leq x_i \leq x_i^u	& &\forall i \in N_0 \\
+	& x_i \in \mathbb{Z}		& &\forall i \in N_i^0 \subseteq N_0,
+\end{aligned}
+\end{equation}
+where $f : \mathbb{R}^n \rightarrow \mathbb{R}$ and, $\forall j \in M$, $g_j : \mathbb{R}^n \rightarrow \mathbb{R}$ are multivariate functions, $n = \left|N_0\right|$ is the number of variables, and $x = (x_i)_{i \in N_0}$ is the n-vector variables. In the context of equilibrium thermodynamics, the problem in the form conformant to the above equation is as follows:
+\begin{equation}
+\begin{aligned}
+	\min \; & \Delta G_\phi(x_i) = \sum_{i=0}^{N_\phi} \left( \tilde{\mu}_i - \sum_{j=1}^{C} \nu_{ij}\tilde{\Gamma}_j \right)		& \\
+	\text{s.t.} \; &\sum_{i=1}^{N_\phi} x_i = 1  	& &\forall i \in N_\phi \\
+			&\sum_{i=1}^{N_\phi} \nu_{i{e^-}} x_i = 0 & &\forall i \in N_\phi \\
+	&0 \leq x_i \leq 1	& & \forall i \in N_\phi.
+\end{aligned}
+\end{equation}
+Couenne implements linearisation, branching, heuristics and bound reduction and reformulates the problem by introducing a set of auxiliary variables. The reformulation of problem represented by equation~\eqref{eq:couenne_prob} results in the following form $(\mathbf{P'})$ \cite{Belotti:2009aa}: 
+\begin{equation} \label{eq:couenne_reform}
+\begin{aligned}
+	\min \quad &x_{n+q}			& \\
+	\text{s.t.} \quad &x_i = \vartheta_i \left(x \right)  	& &\forall i \in \{{n+1}, {n+2}, \dots, {n+q} \} \\
+	&x_i^l \leq x_i \leq x_i^u	& &\forall i \in N \\
+	& x_i \in \mathbb{Z}		& &\forall i \in N_i \subseteq N,
+\end{aligned}
+\end{equation}
+where $N = \{{1}, {2}, \dots, {n+q} \}$ is the new variable index set which is a union of the original index set $\{{1}, {2}, \dots, {n} \}$ and the auxiliary index set $\{{n+1}, {n+2}, \dots, {n+q} \}$. $N_i$ denotes the index set of integer variables and the value of the last auxiliary variable, $x_{n+q}$, is the value of the objective function.
+
+sBB algorithms rely on the generation of rigorous lower and upper bounds for the objective function value over any given variable subdomain. Generation of a upper bound is relatively simple as any feasible point of problem $(\mathbf{P})$ serves as an upper bound to the function at global minimum. In practice, it is best to chose the local minimiser of equation~\eqref{eq:couenne_prob} as the upper bound. When the reformulated problem $(\mathbf{P'})$ is in factorable form, the feature can be used to derive valid bounds and exact solution or one can use linear and quadratic approximations of $f$ and $g_j$. Detailed descriptions of sBB algorithms are found in literature \cite{Smith:1999aa,Liberti:2006aa} and the specifics to implementation in Couenne are described in \cite{Belotti:2009aa} but the method, illustrated in algorithm~\ref{alg:sBB}, is briefly described here. 
+	
+\SetKwComment{Comment}{/* }{ */}
+\RestyleAlgo{ruled}
+\begin{algorithm}[ht!]
+	\caption[sBB algorithm for the MINLP problem $(\mathbf{P})$]{sBB algorithm for the MINLP problem $(\mathbf{P})$  \cite{Belotti:2009aa}}
+	\label{alg:sBB}
+	\KwIn{Problem $(\mathbf{P})$}
+	\BlankLine
+	Define set $L$ of subproblems, $L \gets \{\mathbf{P}\}$\;
+	Define upper bound $z^u$ for $\mathbf{P}$,  $z^u \gets \infty$\;
+	\While{$L \neq \emptyset$}{
+		Choose $\mathbf{P}_k \in L$\;
+		$L \gets L \setminus \{\mathbf{P}_l\}$\;
+		Apply bound tightening to $\mathbf{P}_k$\ \Comment*[r]{Bound tightening}
+		\If{$\mathbf{P}_k$ is feasible after bound tightening}{
+  			Generate a linear relaxation $\mathbf{LP}_k$ of $\mathbf{P}_k$\ \Comment*[r]{Linearisation}
+    			\Repeat{$\bar{x}^k$ is feasible for  $\mathbf{P}_k$ or  $\bar{z}^k$ does not improve}{
+				Solve $\mathbf{LP}_k$ to get an optimum $\bar{x}^k$ with objective value $\bar{z}^k$\;
+				Refine linearisation  $\mathbf{LP}_k$\;}
+			\If{$\bar{x}^k$ is feasible for  $\mathbf{P}_k$}{$z^u \gets \min{\{z^u, \bar{z}^k\}}$\;}
+    			Find a local optimum $\hat{z}^k$ of $\mathbf{P}_k$\ \Comment*[r]{Upper bound calculation}
+			$z^u \gets \min{\{z^u, \hat{z}^k\}}$\;
+			\If{$\bar{z}^k \leq z^u - \epsilon$}{
+			Choose a variable $x_i$\ \Comment*[r]{Branching variable selection}
+			Choose a branching point $x_i^b$\ \Comment*[r]{Branching point selection}
+			Create subproblems:\\
+				$\quad\mathbf{P}_{k-}$ with $x_i \leq x_i^b$,\\
+				$\quad\mathbf{P}_{k+}$ with $x_i \geq x_i^b$\;
+			$L \gets L \cup \{\mathbf{P}_{k-}, \mathbf{P}_{k+}\}$\;				
+			}
+  		}
+  	}
+	\BlankLine
+	\KwOut{$z_\text{out} \gets z^u$, an optimal solution of $(\mathbf{P})$}
+\end{algorithm}
+	
+\begin{enumerate}
+	\item \emph{Reformulation}\\
+		A general method for allowing the formation of convex relaxation for any continuous twice differentiable function was given in \cite{Androulakis:1995aa,Adjiman:1996aa,Adjiman:1997aa} and a tighter relaxation framework was developed by Smith and Pantelides \cite{Smith:1999aa}. The goal of reformulation is to construct an equivalent formulation $\mathbf(P')$ to problem $\mathbf(P)$ such that it contains only linear constraints and special non-linear definitions. Since convex relations of many transcendental functions (such as logarithms, exponentials, etc.) exist and most algebraic expressions, including the ones encountered in equilibrium thermodynamics, are made up of binary operations of arithmetic and the unary operators, it is possible to construct convex relaxations of any algebraic expression. For doing this, additional variables can be introduced in the problem. For example, in test problem A, the non-linear terms in the excess mixing part can be reformulated as a linear problem by introducing variables $w_1 = x_A x_B$ and $w_2 = x_A x_B^2$. Such a process can be generalised and automated using the standard binary tree representation of algebraic expressions \cite{Smith:1996aa}. The reformulated problem $\mathbf(P')$ is equivalent to the original problem $\mathbf(P)$ but all the non-linearities are described by sets corresponding to bilinear product, linear fractional, simple exponentiation and univariate function terms. Because the two problems are equivalent, a convex relaxation of $\mathbf(P')$ is also a valid relaxation of $\mathbf(P)$. Hence, reformulation allows constructing a convex relaxation of any problem and the sBB determined optimal solution of $\mathbf(P')$ is also the optimal solution to $\mathbf(P)$.
+	
+	\item \emph{Linearisation}\\
+		If one considers the constraint $x_j = \vartheta_j(x)$ created during reformulation and set $B = [x^l, x^u]$ defining bounds on the variables, a $\vartheta_j$-linearisation is a system of linear inequalities $A^j x \geq b^j$ such that $X_\text{LP} := {x \in B : A^j x \geq b^j} \supseteq {x \in B : x_j = \vartheta_j(x)}$. If a $\vartheta_j$-linearisation is created for each constraint $x_j$, a linear problem $\mathbf{LP}_k := \min{x_{n+q} : Ax \geq b}$ is a linear relaxation of $\mathbf{P}_k$ where $\mathbf{P}_k$ is a root node of $\mathbf{P}$ obtained through branching. The optimal solution $\bar{x}$ of $\mathbf{LP}_k$ provides a lower bound for the problem. If the solution of $\mathbf{LP}_k$ becomes infeasible for $\mathbf{P}_k$, the lower bound can be improved by either branching or refinement of $\mathbf{LP}_k$, i.e. by amending linearisation inequalities \cite{Belotti:2009aa}. Couenne uses a variant of the projection error rule for refinement \cite{Belotti:2009aa}.
+		
+	\item \emph{Bound tightening}\\
+	According to Smith and Pantelides \cite{Smith:1999aa}, sBB can  achieve convergence without any bound tightening but the rate of convergence can be improved by using it. The goal of bound tightening is to reduce the interval $[x_i^l, x_i^u]$ without causing the optimal value of the problem to change and it allows reduction of the feasible set and an improved linearisation. One way of propagating the effects of constraints to variable bounds in optimality-based bounds tightening (OBBT) \cite{Liberti:2006aa,Quesada:1995aa,Smith:1996aa} but faster-feasibility bounds tightening (FBBT) are also available albeit resulting in weaker bounds \cite{Liberti:2006aa,Smith:1996aa,Shectman:1998aa,Sahinidis:2003aa}. In OBBT, two convex optimisation problems are solved:
+	\begin{align}
+		x_i^l = \min_x x_i, \quad \text{subject to convex relaxation constraints}, \quad x^l \leq x \leq x^u, \\
+		x_i^u = \max_x x_i, \quad \text{subject to convex relaxation constraints}, \quad x^l \leq x \leq x^u.
+	\end{align}
+OBBT can be applied to every variable $x_i$ separately and when feasible the convex relaxation constraints can be updated but at each iteration it will solve $2N$ optimisation problems making it extremely expensive and suitable only for initial bound tightening steps \cite{Smith:1999aa}. FBBT, on the other hand, considers each constraint of the  reformulated problem individually \cite{Shectman:1998aa}. At any sBB node $k$, if the local minimum $\hat{x}^k \in \left[x^l, x^u\right]$ of the convex relaxed problem $\mathbf{CP}_k$ is known, FBBT is applied to fictitious bounding box $B \cap {x \in \mathbb{R}^{n+q} : x_i \leq \tilde{x}_i}$, where $\tilde{x}_i \in \left(x_i^l, \hat{x}_i^k\right)$ is suitably chosen. If the resulting problem become infeasible or if its lower bound becomes larger than the best upper bound, then $\left[\tilde{x}_i^k, x_i^u\right]$ is a valid tightening . On the other hand, if $\tilde{x}_i \in \left(\hat{x}_i^k, x_i^u\right)$ is chosen and FBBT applied to the analogous bounding box results in infeasibility, then $\left[x_i^l, \tilde{x}_i^k\right]$ is valid.
+	
+	\item \emph{Branching}\\
+		Branching is critical to the performance of sBB and an effective strategy can help minimise the size of the sBB tree. The goal of branching is to choose a branch variable and corresponding branch point to be use to partition the domain. In doing so, the goal must be to improve the lower bound of the resulting subproblems and to eliminate as large an infeasible region as possible. In doing so, one must also try to keep the sBB balanced and together the three requirements are often conflicting and the implementations can be optimised to emphasise on one aspect or the other. Branching may be required when the lower bound $\bar{x}_{n+q}^k$ of an sBB node $\mathbf{P}_k$ is smaller than the best known feasible solution and the relaxation $\mathbf{LP}_k$ cannot be further refined. To objectively select the branching variable and point, Belotti \textit{et al.} \cite{Belotti:2009aa} define the $\vartheta_i$-\textit{infeasibility} of auxiliary variable $x_i$ at node $k$ as $U_i\left(\bar{x}^k\right) = \left|\bar{x}_i^k - \vartheta_i\left(\bar{x}^k\right) \right| \slash \left(1 + \left \Vert \nabla \vartheta_i(\bar{x}^k)  \right \Vert_2\right)$. The scaling of the error term in numerator with the norm of the gradient avoids selecting a variable $x_i$ with a small bound interval $[x_i^l, x_i^u]$ but with a large $\left|\bar{x}_i^k - \vartheta_i\left(\bar{x}^k\right) \right|$ as it is unlikely to improve linearisation if used for branching.
+		\begin{enumerate}
+			\item	Branching variable selection\\
+				In Couenne, integer variables have higher priority than continuous variable but since the driving force function results in a strictly NLP problem, continuous variables become the only candidate for branching. Defining the \emph{dependence set}, $D(x_i)$, as the set of variables in $\vartheta_i(x)$ (these are the variables in $x$ that $x_i$ directly depends on), the infeasibility of variable $x_i$ can be propagated to $D(x_i)$. In Couenne, Belotti \textit{et al.} \cite{Belotti:2009aa} define the non-linear infeasibility as:
+				\[
+					\Omega_i^N(\bar{x}^k) = \mu_1 \sum_{j\in E(i)} U_j(\bar{x}^k) +  \mu_2 \max_{j\in E(i)} U_j(\bar{x}^k) +  \mu_3 \min_{j\in E(i)} U_j(\bar{x}^k),
+				\]
+				where for variable ${x}_i$, the set $E(i) = {j \in N \; : \; x_i \in D(x_j)}$. Parameter $\mu_k \geq 0, \, k = 1, 2, 3 $\footnote{Parameters $\mu_k$ defined here have no correlation to the chemical potential $\mu_i$.} and $\mu_1 + \mu_2 > 0$ ensures that $\bar{x}^k$ is infeasible if and only if $\Omega_i^N(\bar{x}^k) > 0$ for at least one variable $x_i$. In Couenne $(\mu_1, \mu_2, \mu_3) = (0.1, 1.3, 0.8)$ \cite{Belotti:2009aa}. The strategy, however, can often be ineffective and Couenne also has implementations of \emph{Violation Transfer} proposed by Tawarmalani and Sahinidis \cite{Tawarmalani:2004aa} and an extension of the \emph{reliability branching} technique introduced by Achterberg \textit{et al.} \cite{Achterberg:2005aa}. In violation transfer, violations of non-convexities by the current solution are assigned to problem variables followed by transfer of violations to $D(x_i)$.  The. violations are then weighted to account for branching priorities and potential for convex relaxation improvement. The variable that leads to the maximum weighted violation is selected as the branching variable \cite{Tawarmalani:2004aa}. Since, the reliability branching strategy was not used in {\GEM}, a discussion of it is omitted and can be found in \cite{Belotti:2022aa}.
+			\item Branching point selection\\
+				For a continuous variable $x_i$ appearing in a single expression $x_j = \vartheta_j(x_i)$, the goal of sBB is to keep the resulting tree balanced. This makes areas of the linearisations a reasonable metric for selecting the branching point as shown in figure~\ref{fig:branching_pt}. In Couenne, three branching point selection strategies are implemented.
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=\textwidth]{figures/chapter-6/branching_point}
+					\caption[Strategies for selecting a branching point]{Strategies for selecting a branching point as implemented in Couenne: (a) branching on current LP solution $\bar{x}_i^k$, (b) Convex combination of LP point $\bar{x}_i^k$ and midpoint of bound interval, (c) Balancing the areas of the two resulting linearisations. Figure from Belotti \textit{et al.} \cite{Belotti:2009aa}, used with permission.}
+			\label{fig:branching_pt}
+			\end{figure}
+		
+		In the \emph{LP-based strategy}, the branching point is set so that $\bar{x}^k$ can become infeasible in both the subproblems. While simple to implement, as shown in subfigure (a) of figure~\ref{fig:branching_pt}, it can result in unbalanced subproblems. To avoid this, for variable $x_i \in [x_i^l, x_i^u]$, the branching point can be set as a convex combination of $\bar{x}_i^k$ and the midpoint of bound interval, $x_i^m = (x_i^l + x_i^u) / 2$ (see subfigure (b) of figure~\ref{fig:branching_pt}). Hence, a selection strategy guaranteeing a minimum distance from variable bounds is as follows \cite{Tawarmalani:2013aa}:
+		\[
+			x_i^b = \max \left \{x_i^l +b, \min \left \{x_i^u -b, \alpha \bar{x}_i^k + \left(1-\alpha\right)x_i^m \right \} \right \},
+		\]
+		where $0 < \alpha < 1$ and $b = \beta(x_i^u - x_i^l)$ for $0 < \beta < 0.5$ and $\alpha$ and $\beta$ are set to \num{0.25} and \num{0.2} respectively \cite{Belotti:2009aa} and  the strategy tries to balance the half-intervals of $x_i$. Alternatively, if a local minimum $\hat{x}^k$ is known, $\hat{x}_i^k$ can be chosen as a branching point since the resulting convexification will return a solution $\bar{x}^k$ that is very close to $\hat{x}^k$ \cite{Shectman:1998aa}.
+		
+	In \emph{expression-based strategies}, one can aim to reduce the sum of the areas of the resulting convexifications as shown in subfigure (c) of figure~\ref{fig:branching_pt}. Several methods for such strategy can be adopted \cite{Kalantari:1987aa,Liu:1996aa} but a balanced strategy implemented in Couenne finds the branching point using a binary search on the interval $[x_i^l, x_i^u]$ that minimises the difference between the maximum area $u'(x_i)$ and maximum area $u''(x_i)$ \cite{Belotti:2009aa}:
+	\[
+		x_i^b \in argmin \left | \max_{x_i \in [x_i^l, x_i^b]} u'(x_i) - \max_{x_i \in [x_i^b, x_i^u]} u''(x_i) \right|,
+	\]
+	where $u'$ and $u''$ are the distance between the upper envelope line of $\vartheta_j$ and $(x_i, \vartheta_j(x_i))$ on the subdomains LP' and LP'' resulting from branching. The method balances the maximum distance between the points on $\vartheta_j(\cdot)$ and the upper envelope \cite{Belotti:2022aa}.
+		\end{enumerate}	
+\end{enumerate}
+
+	  Together, the reformulation of the problem and the sBB algorithm result in a rigorous solution framework for global optimisation problem. Since the driving force functions are smooth and differentiable, they are well formulated for the method. Though the reformulation results in an increase in the size of the problem, it doesn't become a major issue for determining the minimum of the driving force.
+	  
+	
 	\subsection{Particle Swarm Optimisation}
 	Particle Swarm Optimisation (PSO) has been inspired by the swarm like behaviour in the animal kingdom such the migration of swarm of bees \cite{Kennedy95}. In this method, a population of candidate solutions, dubbed particles, moves around the search space as function of the position and velocity of the particle. the movement of each particle is influenced by it's best known local position and guided towards the best global position as other particles find better solutions.
 
@@ -546,103 +766,13 @@ The component set is represented by the index set $C = \{i\}$ and the elements t
 		\|\mathbf{v}\| \leq v_{min} + \frac{v_{max}-v_{min}}{m_{max} - 1} (m-1)
 	\end{equation}
 	where, $v_{max}$ and $v_{min}$ are the pre-specified maximum and minimum velocity magnitudes respectively and $m_{max}$ is the maximum number of iteration allowed in PSO. Thereby, the optimisation neighbourhood gradually increases in size as the iteration cycle progresses.
-
-	\subsection{Grid Construction}
-	Grid construction has been widely adopted in thermodynamic equilibrium codes as a strategy for testing equilibria by performing numerous evaluations of the objective function at regular intervals in the domain \cite{Shobu09,Sundman85,Sundman15,Chen93a,Chen93b}. The method was developed in the 1970s and 1980s as a brute force method to verify global minimum for phase diagram construction problems and does not scale well for large systems. As shown in figure~\ref{fig:Grid_cons}, in the grid construction method, the surface of $\pi_\lambda$ is discretised with each point treated as a stoichiometric compound and the ensemble of these compounds collectively approximates the driving force surface \cite{Piro16}. In the example figure, the arbitrary binary system consists of a solution phase and a stoichiometric phase and the domain for the solution phase has been divided into 11 grid points.
-	\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.65\textwidth]{figures/Grid_const}
-		\caption{Demonstration of the grid construction method for an arbitrary binary system at constant temperature and pressure. The domain has been discretised into 11 grid points and the pure stoichiometric phase \ce{A3B2} is found to be in equilibrium with the solution phase giving a false positive \cite{Piro16}.}
-		\label{fig:Grid_cons}
-	\end{figure}
-
-The discretisation of the grid plays an important role in the efficacy of this method and it has been shown by Chen \textit{et al.} \cite{Chen93b} that the grid must be sufficiently resolved to avoid missing critical features such as the minimum between $\alpha_1$ and $\alpha_2$ in  fig.~\ref{fig:Grid_cons}.  However, this requirement leads to commercial concerns as too small a grid leads to an increase in the computational cost while too large a grid can lead to false positives in the optimisation process.  Piro and Simunovic \cite{Piro16} have demonstrated how uniformly spaced grid for a solution phase $\lambda$ in $N_\lambda$ dimensional Euclidean phase (each dimension corresponds to a species in phase $\lambda$) can result in an enormously large number of grid points depending on the grid size. While Chen \textit{et al.} \cite{Chen93a} and the open-source code \texttt{OpenCalphad} \cite{Sundman:2015aa} use 8 grid points, it becomes clear from figure~\ref{fig:Grid_cons} that global minimum would not be found. Therefore, the rapid increase in the computational cost with the reduction in grid size and a questionable performance in terms of reaching a global maximum tilts the scales against this method.
-
-	\subsection{Branch and Bound}
-	The Branch and Bound (B\&B) algorithm was proposed to solve constrained optimisation problems for non-convex functions by solving a sequence of problems in each of which the objective function is convex \cite{Falk69}. The algorithm involves two procedures to solve global optimisation problems:
-	\begin{enumerate}
-		\item \textbf{Branching}: The domain $D$ is partitioned into two or more smaller disjoint domains $D_1,D_2,\dots,$ such that $D = D_1 \cup D_2 \cup \dots$ Thus, the partitioned objective function can be considered a convex approximation of the objective function within the subdomain $D_i$.
-		\item \textbf{Bounding}: The upper and lower bound of the objective function are found within a subset of the domain $D$. In the classical Branch and Bound method, a subdomain can be removed from the analysis the lower bound of the objective function in it is greater than the upper bound of the objective function in any other subdomain.
-	\end{enumerate}
-
-	 While the B\&B method was originally applied to mixed integer linear programming (MINLP) problems \cite{Jaulin01}, McDonald and Floudas \cite{McDonald95} applied it to solve thermochemical equilibrium problems. Piro and Simunovic \cite{Piro16} proposed a modified version of the classical B\&B for \texttt{Thermochimica} which uses a different initialisation procedure and relaxation scheme for the bounds. Furthermore, instead of relying on pruning, every subdomain is evaluated till stopping criteria are met and if necessary, recursive partitioning technique is applied.
-
-	 The approach adopted by Piro and Simunovic \cite{Piro16} partitions the domain for each solution phase $\lambda$ into $N_\lambda$ subdomains and the driving force $\pi_\lambda$ is minimised in each subdomain. The Lagrangian function of the driving force of the solution phase $\lambda$ can be defined as follows \cite{Piro16}:
-	 \begin{equation}
-	 	L_\lambda = \sum_{i=1}^{N_\lambda} x_{i(\lambda)}\left( \mu_{i(\lambda)} - \sum_{j=1}^{C} \nu_{i,j}\Gamma_j \right) - \pi_{\lambda}\left( \sum_{i=1}^{N_\lambda} x_{i(\lambda)} -  1 \right)
-	 \end{equation}
-	 In the branch and bound method, the local variables (mole fraction of species, $x_{i(\lambda)}$, and driving force $\pi_{\lambda}$) are optimised while holding the global variables (element potentials i.e. $\Gamma_j$) constant. This results in a system of $N_{\lambda} + 1$ equations for a particular phase $\lambda$. To find the minimum, differentiating $L_\lambda$ with respect to $x_{i(\lambda)}$ and $\pi_{\lambda}$ and applying the Gibbs-Duhem equation:
-	 \begin{gather}
-	 	\frac{\partial L_\lambda}{\partial x_{i(\lambda)}} = \mu_{i(\lambda)} - \sum_{j=1}^{C} \nu_{i,j}\Gamma_j + 1 - \pi_{\lambda} \\
-		\frac{\partial L_\lambda}{\partial \pi_{\lambda}} = 1- \sum_{i=1}^{N_\lambda} x_{i(\lambda)}
-	 \end{gather}
-
-	 Taking a second order Taylor approximation of the Lagrangian function,
-	 \begin{equation}
-	 	\nabla^2 L_\lambda \delta y =  - \nabla L_\lambda
-	 \end{equation}
-	 where the column vector of unknown variables $\delta y = [\delta x, \delta \pi]^T$. The second order partial derivatives are equal to:
-	  \begin{gather}
-	 	\frac{\partial^2 L_\lambda}{\partial x_{i(\lambda)}^2} = \frac{1}{x_{i(\lambda)}} \mspace{50mu} \frac{\partial^2 L_\lambda}{\partial x_{i(\lambda)} \partial x_{j(\lambda)}} = 0 \\
-		\frac{\partial^2 L_\lambda}{\partial \pi_{\lambda} \partial x_{i(\lambda)}} = 0 \mspace{50mu}  \frac{\partial^2 L_\lambda}{\partial \pi_{\lambda}^2} = 0
-	 \end{gather}
-
-	 The discussion can be extended to incorporate charge neutrality constraints through the following equation:
-	 \begin{equation}
-		L_\lambda = \sum_{i=1}^{N_\lambda} x_{i(\lambda)}\left( \mu_{i(\lambda)} - \sum_{j=1}^{C} \nu_{i,j}\Gamma_j \right) - \pi_{\lambda}\left( \sum_{i=1}^{N_\lambda} x_{i(\lambda)} -  1 \right) - \pi_e \left( \sum_{i=1}^{N_\lambda} \nu_{i,e} x_{i(\lambda)} -  1\right)
-	\end{equation}
-	where $\pi_e$ denotes the Lagrange multiplier of the electronic component.
-
-	Solving the first order partial differential gives:
-	\begin{equation}
-	\frac{\partial L_\lambda}{\partial \pi_e} = 1 - \sum_{i=1}^{N_\lambda} \nu_{i,e} x_{i(\lambda)}
-	\end{equation}
-
-	The second order terms are the following:
-	\begin{equation}
-	\frac{\partial^2 L_\lambda}{\partial \pi_e^2} = 0 \mspace{50mu} \frac{\partial^2 L_\lambda}{\partial \pi_e \partial x_i} = -\nu_{i,e}
-	\end{equation}
-
-
-	 The Hessian in the above system of equations can be represented as a symmetric arrow matrix:
-	 \begin{equation}\label{eq:BB_mat}
-        		\mathbf{H} =
-        		\begin{bmatrix}
-            		\frac{1}{x_{1(\lambda)}} & {} & {} & {} & -1 \\
-		 	{} & \frac{1}{x_{1(\lambda)}} & {} & {} & -1 \\
-			{} & {} & {\ddots} & {} & \vdots \\
-			{} & {} & {} & \frac{1}{x_{N(\lambda)}} & -1 \\
-			{-1} & {-1} & {\dots} & {-1} & 0
-        		\end{bmatrix}
-   	\end{equation}
-
-	Therefore, by exploiting the structure of this matrix, the combination of ${x_{i(\lambda)}}$ that minimises ${\pi_{\lambda}}$ can be easily determined. To solve the above matrix, Gaussian elimination can be performed on the just the bottom row followed by back substitution. Furthermore, instead of storing a Hessian, the diagonal vector and a scalar representing the far right column can be stored. However, the implementation of this method warrants the use of an appropriate line search algorithm to ensure that the Wolfe conditions are satisfied and that the local system stays within the feasible region $0 < x_{i(\lambda)}<1$ . In addition, the step length must be suitably constrained to avoid missing any local minimums \cite{Piro16}.
-
-	The application of the branch and bound method to the arbitrary binary problem presented before has been illustrated in figure~\ref{fig:BB_1}. Piro and Simunovic implemented an iterative technique where the domain was initially divided into 2 subdomains with the initialisation of each sub-domain at the corners. To improve numerical stability, the bounds of each subdomain were relaxed while the domain bounds were strictly enforced. The stopping criteria within a subdomain was convergence to local minimum or departure of the local minimiser from the subdomain. In case multiple minima were encountered within a subdomain, the subdomain was further split at the next iteration.
-
-	\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.65\textwidth]{figures/BB1}
-		\caption{Demonstration of the branch and bound method for an arbitrary binary system at constant temperature and pressure. The domain has been partitioned into 2 subdomains \cite{Piro16}.}
-		\label{fig:BB_1}
-	\end{figure}
-
-	The branch and bound method was able to identify the local minima in both the domains and subsequently the predicted phase assemblage was found to be at the global minimum as shown in figure~\ref{fig:BB_2}
-
-		 \begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.65\textwidth]{figures/BB2}
-		\caption{Refinement of the subdomains in branch and bound method and the subsequent convergence to global minimum \cite{Piro16}.}
-		\label{fig:BB_2}
-	\end{figure}
-
-	  All global optimisation methods have their advantages and disadvantages and no global optimisation method is universally superior to others. While the deterministic methods are good at converging to a local minimum, they are often prone to high computational expenses. The stochastic methods, on the other hand, tend to cover the search space more effectively but face difficulty at finding the global minimum \cite{Piro16}. The global optimisation methods discussed in literature have mostly been problem centric and there has been a lack of a comprehensive and rigorous analysis of these methods applied to a variety of thermodynamic equilibrium problems. Therefore, apart from the non-linear solver, this work will also focus on a quantitative comparison of global optimisation methods in terms of application to thermodynamic equilibrium calculations. This comparison will be based on evaluating the reliability, capability and performance of the methods and some preliminary details of the methodology will be discussed in section~\ref{sec:workplan}
-
-
-\section{Integration in multiphysics codes}
-	The thermodynamic solver is being developed with the primary aim of being incorporated within the  finite element multiphysics framework \texttt{MOOSE}. The first level of integration of the thermodynamic solver within \texttt{Yellowjacket} will be coupling thermodynamic equilibrium calculations with kinetics and phase field modules being developed by at the Idaho National Laboratory and the University of Florida. This would involve procedures to transfer information between the thermodynamic solver and the other modules. Though  \texttt{MOOSE} contains the tools required to enable such computations with minimum effort, there always remains a probability of conflicts arising during coupling, such as conflicting variables, etc. Also, different \texttt{MOOSE} apps have different requirements from the thermodynamic equilibrium solver. While \texttt{Marmot} and \texttt{Bison} computations are mostly require partial derivatives of Gibbs energies (chemical potential, driving force, etc.) and assemblages, other codes might require quantities such as the heat capacity, thermal conductivity, etc.  Therefore, though the procedures have not yet been finalised, complete integration of the thermodynamic solver in \texttt{MOOSE} will be a major focus towards the end of this project.
-
-
+	
+	
+	\subsection{Implementation and analyses}
+	All global optimisation methods have their advantages and disadvantages and no global optimisation method is universally superior to others. While the deterministic methods are good at converging to a local minimum, they are often prone to high computational expenses. The stochastic methods, on the other hand, tend to cover the search space more effectively but face difficulty at finding the global minimum \cite{Piro16}. The global optimisation methods discussed in literature have mostly been problem centric and there has been a lack of a comprehensive and rigorous analysis of these methods applied to a variety of thermodynamic equilibrium problems. Therefore, apart from the non-linear solver, this work will also focus on a quantitative comparison of global optimisation methods in terms of application to thermodynamic equilibrium calculations. 
+	
+%\section{Integration in multiphysics codes}
+%	The thermodynamic solver is being developed with the primary aim of being incorporated within the  finite element multiphysics framework \texttt{MOOSE}. The first level of integration of the thermodynamic solver within \texttt{Yellowjacket} will be coupling thermodynamic equilibrium calculations with kinetics and phase field modules being developed by at the Idaho National Laboratory and the University of Florida. This would involve procedures to transfer information between the thermodynamic solver and the other modules. Though  \texttt{MOOSE} contains the tools required to enable such computations with minimum effort, there always remains a probability of conflicts arising during coupling, such as conflicting variables, etc. Also, different \texttt{MOOSE} apps have different requirements from the thermodynamic equilibrium solver. While \texttt{Marmot} and \texttt{Bison} computations are mostly require partial derivatives of Gibbs energies (chemical potential, driving force, etc.) and assemblages, other codes might require quantities such as the heat capacity, thermal conductivity, etc.  Therefore, though the procedures have not yet been finalised, complete integration of the thermodynamic solver in \texttt{MOOSE} will be a major focus towards the end of this project.
 
 \section{Summary}
 	A number of algorithms for different parts of a thermodynamic equilibrium solver were presented in this chapter. Many of these algorithms have already been implemented in other codes available in the literature and GEM and levelling are relatively mature algorithms with little to no scope of improvement. This is evident from the fact that most of the development efforts since the original GEm method has relied on auxiliary operations such as initialisation, etc. However, this does not mean that improvements can not be made.  The development of an advanced thermodynamic solver leaves the door open for incremental gains on many of these algorithms.

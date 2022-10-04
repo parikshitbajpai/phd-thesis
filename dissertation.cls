@@ -79,34 +79,34 @@
     %% and Tahoma (sans-serif) for text. Apart from these, we use Courier New
     %% for monospace and Cambria for math.
     \RequirePackage{unicode-math}
-    \setmainfont[
-        Path = fonts/,
-        Extension = .ttf,
-        BoldFont = *-Bold,
-        ItalicFont = *-Italic,
-        BoldItalicFont = *-BoldItalic
-    ]{BookmanOldStyle}
-    \setsansfont[
-        Path = fonts/,
-        Extension = .ttf,
-        BoldFont = *-Bold,
-        ItalicFont = *,
-        ItalicFeatures = FakeSlant,
-        BoldItalicFont = *-Bold,
-        BoldItalicFeatures = FakeSlant
-    ]{Tahoma}
-    \setmonofont[
-        Path = fonts/,
-        Extension = .ttf,
-        UprightFont = *MT,
-        BoldFont = *-BoldMT,
-        ItalicFont = *-ItalicMT,
-        BoldItalicFont = *-BoldItalicMT
-    ]{CourierNewPS}
-    \setmathfont[
-        Path = fonts/,
-        Extension = .ttf
-    ]{CambriaMath}
+%    \setmainfont[
+%        Path = fonts/,
+%        Extension = .ttf,
+%        BoldFont = *-Bold,
+%        ItalicFont = *-Italic,
+%        BoldItalicFont = *-BoldItalic
+%    ]{BookmanOldStyle}
+%    \setsansfont[
+%        Path = fonts/,
+%        Extension = .ttf,
+%        BoldFont = *-Bold,
+%        ItalicFont = *,
+%        ItalicFeatures = FakeSlant,
+%        BoldItalicFont = *-Bold,
+%        BoldItalicFeatures = FakeSlant
+%    ]{Tahoma}
+%    \setmonofont[
+%        Path = fonts/,
+%        Extension = .ttf,
+%        UprightFont = *MT,
+%        BoldFont = *-BoldMT,
+%        ItalicFont = *-ItalicMT,
+%        BoldItalicFont = *-BoldItalicMT
+%    ]{CourierNewPS}
+%    \setmathfont[
+%        Path = fonts/,
+%        Extension = .ttf
+%    ]{CambriaMath}
     %% The default style for text is Tahoma (sans-serif).
     \renewcommand*\familydefault{\sfdefault}
     %% The default style for titles is Bookman Old Style (serif).

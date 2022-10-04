@@ -34,7 +34,7 @@ The laws that govern all material systems can be expressed in two seemingly simp
 		dU = dQ + dW + \sum H_i dN_i,
 	\end{equation}
 	where $dN_i$ denotes the amount of component $i$ exchanged with the surroundings and $H_i$ is the unit energy of component $i$in the surroundings, and the summation is for all the independent components in the system. Since the systems of interest in thermodynamics of materials are closed, there is no exchange of matter between the system and the surroundings and the first law of thermodynamics takes the following form:
-	\begin{equation}\label{eqn:flot}
+	\begin{equation}\label{eqn:flot1}
 		dU = dQ + dW,
 	\end{equation}
 	where both $dQ$ and $dW$ depend on the thermodynamic process and hence do not qualify as state functions.
@@ -134,8 +134,8 @@ The laws that govern all material systems can be expressed in two seemingly simp
 			G_{i} = \left(\Delta H_{i}^\circ + \int_{T_0}^{T} C_{p,i}dT \right) - T\left( S_{i}^\circ  + \int_{T_0}^{T} \frac{C_{p,i}}{T}dT \right) + \int_{P_0}^{P} V_i dP,
 	\end{equation}
 	where $\Delta H_{i^\circ}$ [\si{\joule \per \mole}] and $S_{i^\circ}$ [\si{\joule \per \mole \per \kelvin}] are the standard enthalpy of formation and entropy respectively at standard temperature ($T_0 = 298.15$ [\si{\kelvin}]) and pressure ($P_0 = 1$ [\si{atm}]). The superscript / subscript $\circ$ represents a quantity at standard temperature and pressure, a notation that is used hereafter. $C_{p,i}$ [\si{\joule \per \mole \per \kelvin}]  denotes the molar heat capacity at constant pressure, $P$ [\si{atm}] is the absolute pressure and $V_i$ [\si{\meter \cubed \per \mole}] denotes the molar volume. For an ideal gas, from the gas law, the last term in equation~\eqref{eqn:Gibbs_der2} can be written as $RT \ln{\left(P/P_0\right)}$, where $R = 8.314462$ [\si{\joule \per \mole \per \kelvin}] is the ideal gas constant. For a pure ideal gas species $i$, the standard Gibbs energy is:
-	\begin{equation} \label{eqn:Gibbs_der2}
-			G_{i} = \left(\Delta H_{i}^\circ + \int_{T_0}^{T} C_{p,i}dT \right) - T\left( S_{i}^\circ  + \int_{T_0}^{T} \frac{C_{p,i}}.{T}dT  - R \ln{\left(\frac{P}{P_0}\right)}\right)
+	\begin{equation} \label{eqn:Gibbs_der_id}
+			G_{i} = \left(\Delta H_{i}^\circ + \int_{T_0}^{T} C_{p,i}dT \right) - T\left( S_{i}^\circ  + \int_{T_0}^{T} \frac{C_{p,i}}.{T}dT  - R \ln{\left(\frac{P}{P_0}\right)}\right).
 	\end{equation}
 
 	The fact that Gibbs energies are relative quantities and can be numerically adjusted as long as the elemental differences are preserved is of practical importance and is often used in thermodynamic equilibrium calculation. Chemical potential of species $i$ in phase $\lambda$, $\mu_{i(\lambda)}$ [\si{\joule \per \mole}], is a measure of the change of the Gibbs energy of the system by the introduction of species $i$ and incorporates  the reference Gibbs energy of pure species, $g_{i}^\circ$, and the entropic contribution due to mixing as a function of its mole fraction. Mathematically, the chemical potential of a species $i$ is defined as \cite{Zemansky81}:
@@ -169,7 +169,7 @@ The laws that govern all material systems can be expressed in two seemingly simp
 	\begin{equation}\label{eq:elempot}
         		G_\text{sys} = \sum_{j=1}^{C} \Gamma_j b_j,
     	\end{equation}
-	where, $C$ denotes the number of system components which is normally the number of elements in the system. The mixing models used in materials modelling are briefly described in the following section.
+	where $C$ denotes the number of system components which is normally the number of elements in the system. The mixing models used in materials modelling are briefly described in the following section.
 
 	\subsection{Excess mixing models for Gibbs energy}
 	A number of different models for excess mixing component of Gibbs energy have been proposed in literature. The different models are suitable for different materials, for example the Compound Energy Formalism (CEF) is often used for \ce{UO2} fuels while the Modified Quasichemical Model (MQM) is the state of the art model used to describe molten salts which are of prime interest in the development of MSRs. However, only the relevant equations for some of the most commonly used models are shown here.
@@ -260,6 +260,6 @@ where $N_p$ denotes the number of excess mixing parameters (note: $N_p \ge N_s$)
 
 	MQM is of particular interest in this work because it is the preferred model for thermodynamic modelling of molten salts. However, from the computational perspective, many a times, the MQM phases pose a unique challenge in that the Hessian matrix resulting from the GEM process can be rank-deficient. Therefore, any attempt to solve the corresponding system of linear equations will fail. Note that in practice it is possible that the system of equations can be solved with a sufficient numerical error associated with machine precision, which will yield some mathematically meaningless results. In this case, one must rely heavily on the quality and robustness of the linear equation solver employed \cite{Piro:2019aa}. %A solution to this problem has been proposed by Piro \textit{et al.} and the paper has been attached in the publications section at the end of this proposal \cite{Piro:2019aa}.
 	\subsection{Chemical potential expressions for excess mixing models}
-	Pertinent to the development of a Gibbs energy minimiser are the chemical potential expressions for the different species in phases represented by each of the excess mixing models. These expressions have been published by Bajpai \textit{et al.}\cite{Bajpai:2021aa} and Poschmann \textit{et al.}\cite{POSCHMANN2021102341}. The following pages show the chemical potential expressions for the substitutional solution models and the CEF in the paper titled \textit{Derivations of useful partial molar excess Gibbs energy of mixing expressions of common thermodynamic models} and the expressions for the MQM in section 2 of the paper titled \textit{Recent developments for molten salt systems in Thermochimica}. 
+	Pertinent to the development of a Gibbs energy minimiser are the chemical potential expressions for the different species in phases represented by each of the excess mixing models. These expressions have been published by Bajpai \textit{et al.} \cite{Bajpai:2021aa} and Poschmann \textit{et al.} \cite{POSCHMANN2021102341}. The following pages show the chemical potential expressions for the substitutional solution models and the CEF in the paper titled \textit{Derivations of useful partial molar excess Gibbs energy of mixing expressions of common thermodynamic models} and the expressions for the MQM in section 2 of the paper titled \textit{Recent developments for molten salt systems in Thermochimica}. 
 	\includepdf[pages=-]{publications/Bajpai_2021_JPED.pdf}
 	\includepdf[pages=-]{publications/Poschmann_2021_abridged.pdf}
