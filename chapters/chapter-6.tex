@@ -9,7 +9,7 @@
 	\end{figure}
 
 %\section{Opportunities for Novel Contributions}
-%Before delving into the details of a thermodynamic solver, a number of opportunities for novel contributions are presented here. The first and the foremost is integration of the thermodynamic solver within multiphysics framework \texttt{MOOSE}. \texttt{MOOSE} based applications currently leverage the thermochemistry library \texttt{Thermochimica} to perform thermodynamic equilibrium calculations. However, since \texttt{Thermochimica} was developed in FORTRAN and wasn't developed within the \texttt{MOOSE} framework, coupling it requires writing wrapper classes for every intended application. Not only does this lead to waste of time and resources, it also needs a lot of effort to maintain reliability and achieve desired performance. The new thermodynamic sover will be built within the \texttt{MOOSE} framework and will eliminate the need to write multiple wrapper classes. Furthermore, since it will use the same software quality assurance practices as \texttt{MOOSE}, it will be able to meet the desired performance standards.
+%Before delving into the details of a thermodynamic solver, a number of opportunities for novel contributions are presented here. The first and the foremost is integration of the thermodynamic solver within multiphysics framework {MOOSE}. {MOOSE} based applications currently leverage the thermochemistry library {Thermochimica} to perform thermodynamic equilibrium calculations. However, since {Thermochimica} was developed in FORTRAN and wasn't developed within the {MOOSE} framework, coupling it requires writing wrapper classes for every intended application. Not only does this lead to waste of time and resources, it also needs a lot of effort to maintain reliability and achieve desired performance. The new thermodynamic sover will be built within the {MOOSE} framework and will eliminate the need to write multiple wrapper classes. Furthermore, since it will use the same software quality assurance practices as {MOOSE}, it will be able to meet the desired performance standards.
 %
 %	In addition to coupling, the development of the new thermodynamic code will try to achieve performance gain through advanced algorithm development. While the GEM method has little scope of improvement in itself, the performance of thermodynamic equilibrium codes can be significantly improved by improving the initialisation routines and focussing on strategies for updating the estimated phase assemblage. The strategies to achieve this goal have been presented in the following sections. Novel contributions can also be made towards global optimisation routines for thermodynamic equilibrium solvers. As shown in section~\ref{sec:opt_theory}, ensuring that a global minimum of Gibbs energy has been achieved is a challenging task and the global optimisation methods available in the literature have mostly been problem specific. Since a thermodynamic equilibrium solver needs to perform well for different kinds of problems, significant contributions can be made by implementing robust global optimisation algorithms. These strategies are discussed in the following sections.
 
@@ -19,11 +19,11 @@
 	\begin{figure}[htbp]
 	 	\centering
 	   	\includegraphics[width=\textwidth]{figures/NiKF.pdf}
-	   	\caption{A marked-up example of a ChemSage data file of the \ce{Ni-K-F} system \cite{OcadizFlores18}}
+	   	\caption[A marked-up example of a ChemSage data file of the \ce{Ni-K-F} system.]{A marked-up example of a ChemSage data file of the \ce{Ni-K-F} system \cite{OcadizFlores18}}
 	   	\label{fig:datfile}
 	\end{figure}
 
-	The data file parser for the thermodynamic equilibrium part of \texttt{Yellowjacket} has been developed in C++ and it performs the extraction of free energy expressions from *.dat thermodynamic database files (ChemSage format) and exports a list of free energy terms for each phase (or a user specified subset of phases). The data-file parser has the following capabilities:
+	The data file parser for the thermodynamic equilibrium part of {Yellowjacket} has been developed in C++ and it performs the extraction of free energy expressions from *.dat thermodynamic database files (ChemSage format) and exports a list of free energy terms for each phase (or a user specified subset of phases). The data-file parser has the following capabilities:
 \begin{itemize}
 \itemsep-0.5em
     \item Extract system information from *.dat files and ensure that the data is consistent with the inputs and appropriate for consideration.
@@ -31,7 +31,7 @@
     \item Store the Gibbs energy terms to ensure that terms corresponding to each phase can be selectively and conveniently retrieved.
 \end{itemize}
 
-	Another requirement for Gibbs energy minimisation is physical parameters of the system, namely, the temperature, pressure and composition. Within a multiphysics framework, these informations are required for each finite element at every time-step. In the context of the proposed Gibbs energy minimiser, the system inputs are provided by \texttt{MOOSE} which passes the information at the time the Gibbs energy minimiser is called. For standalone applications, this information can be provided as an input through the \texttt{MOOSE} input file.
+	Another requirement for Gibbs energy minimisation is physical parameters of the system, namely, the temperature, pressure and composition. Within a multiphysics framework, these informations are required for each finite element at every time-step. In the context of the proposed Gibbs energy minimiser, the system inputs are provided by {MOOSE} which passes the information at the time the Gibbs energy minimiser is called. For standalone applications, this information can be provided as an input through the {MOOSE} input file.
 
 \section{Initialisation}
 	Much like any other optimisation problem, the choice of initial estimate plays a critical role in reducing the amount of computational time required for the solution to converge to a minimum. This need for providing initial estimates of the number of moles of phases and the mole fractions of the species in those phases creates a significant challenge. Many early softwares  created for the purpose of estimating thermodynamic equilibrium, for example SOLGASMIX, required the user to input an initial estimate. Providing such initial estimates relied on the intuition of the user and was often very inconvenient for the user, especially when working with complex systems and/or systems where finding estimates from intuition was not straightforward.
@@ -173,50 +173,50 @@
 	\end{figure}
 
 
-	\subsection{Temporal series estimate}
-	While in most cases levelling and post-levelling methods can provide initial assemblages close to the final assemblage, using the assemblage from a previous time step in multiphysics codes can often provide much closer estimates to the final assemblage. In time-dependent multiphysics simulations, this can result in significant performance gains as has been recently shown through the implementation of this strategy in \texttt{Thermochimica} \cite{Poschmann:2019aa}. These performance gains can be attributed to the fact that the convergence of the non-linear solver can be significantly accelerated by providing initial estimates close enough to the final assemblage. This temporal initialisation strategy has been illustrated in figure~\ref{fig:temp_init}
-	\begin{figure}
-		\centering
-		\begin{tikzpicture}[auto,
-    			block_center/.style ={rectangle, draw=black, thick, fill=white, text width=0.2\textwidth, text centered, minimum height=2em},
-    			block_side/.style ={rectangle, draw=black, thick, fill=white, text width=0.2\textwidth, text centered, minimum height=2em},
-			block_noborder/.style ={rectangle, draw=none, thick, fill=none, text width=0.2\textwidth, text centered, minimum height=0.5em},
-			block_small/.style ={rectangle, draw=none, thick, fill=none, text width=0.1\textwidth, text centered, minimum height=0.5em},
-			line/.style ={draw, thick, -stealth}]
-    			% Outlining the flowchart using the PGF/TikZ matrix funtion
-    			\matrix [column sep=0.15\textwidth,row sep=3em] {
-      				\node [block_center] (00) {Start at initial time}; & {} & {}\\
-      				\node [block_center] (10) {Levelling}; & {} & {}\\
-				\node [block_center,yshift=-1cm] (20) {Non-linear solver}; &  \node [block_side,yshift=-1cm] (21) {Save assemblage in memory}; & \node [block_side,yshift=-1cm] (22) {Reinitialise with saved assemblage};\\
-      				\node [block_side] (30) {Solution found}; & {} & {}\\
-    			};	% end matrix
-    			% connecting nodes with paths
-    			\begin{scope}[every path/.style=line]
-      				\path (00) edge (10);
-     				\path (10) edge (20);
-      				\path (20) edge node[block_noborder,anchor=east]{\footnotesize{Stop time reached}} (30);
-      				\path (20) edge (21);
-      				\path (21) edge node[block_noborder,anchor=south]{\footnotesize{Timestep}} (22);
-      				\path[-] (22.90) edge[bend right] node[block_noborder,anchor=west,shift={(0.75cm,0.25cm)}]{\footnotesize{Temporal reinitialisation failed}} (10);
-      				\path[-] (22) edge[bend right] (20);
-    			\end{scope}
- 		\end{tikzpicture}
-  		\caption{Illustration of the temporal series initialisation algorithm.}
-  		\label{fig:temp_init}
- 	\end{figure}
-
-	The details of the implementation of the temporal initialisation strategy in \texttt{Yellowjacket} have not yet been set in stone but, based on \texttt{Thermochimica} acceleration results obtained by Poschmann et al. \cite{Poschmann:2019aa} , a significant performance gain is foreseen which justifies the use of this strategy especially in coupled multiphysics problems where thermodynamic equilibrium calculations are impediment to significant performance gains. However, this might also lead to a drastic increase in memory requirement and a compromise must be made between  computing time gains and increased memory requirements.
-
-	\subsection{Boundary value estimate}
-	For the case where Gibbs energy minimisation is performed on a 2D/3D mesh, very good initial estimates can conceivably be provided to the non-linear solver by exploiting the results from the neighbouring solutions in space at the same time step. As an example, the final assemblage of element A on the finite element mesh shown in figure~\ref{fig:BV_Illustration} can be used as the initial assemblage for element B. This initialisation scheme relies on the principles of continuum between adjacent cells, i.e., if the mesh is sufficiently resolved, the difference between system potentials (temperature, pressure and chemical potentials) between two neighbouring cells must be small.
-	\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.35\textwidth]{figures/BV_FEM}
-		\caption{Illustration of the boundary value initialisation on a finite element mesh \cite{Piro17}.}
-		\label{fig:BV_Illustration}
-	\end{figure}
-
-	While this approach is well suited to simulations on finite element meshes and reduces the need to re-evaluate the estimated assemblage of stable phases, it might lead to a less than optimal estimate for elements close to a moving interface (for example, close to a melting boundary). Also, this approach does not lend itself well to parallel computing using MPI and thus might actually be ineffective for large problems where MPI can significantly speed up calculations. However, the approach is a potential avenue that can be explored but is not the primary focus.
+%	\subsection{Temporal series estimate}
+%	While in most cases levelling and post-levelling methods can provide initial assemblages close to the final assemblage, using the assemblage from a previous time step in multiphysics codes can often provide much closer estimates to the final assemblage. In time-dependent multiphysics simulations, this can result in significant performance gains as has been recently shown through the implementation of this strategy in {Thermochimica} \cite{Poschmann:2019aa}. These performance gains can be attributed to the fact that the convergence of the non-linear solver can be significantly accelerated by providing initial estimates close enough to the final assemblage. This temporal initialisation strategy has been illustrated in figure~\ref{fig:temp_init}
+%	\begin{figure}
+%		\centering
+%		\begin{tikzpicture}[auto,
+%    			block_center/.style ={rectangle, draw=black, thick, fill=white, text width=0.2\textwidth, text centered, minimum height=2em},
+%    			block_side/.style ={rectangle, draw=black, thick, fill=white, text width=0.2\textwidth, text centered, minimum height=2em},
+%			block_noborder/.style ={rectangle, draw=none, thick, fill=none, text width=0.2\textwidth, text centered, minimum height=0.5em},
+%			block_small/.style ={rectangle, draw=none, thick, fill=none, text width=0.1\textwidth, text centered, minimum height=0.5em},
+%			line/.style ={draw, thick, -stealth}]
+%    			% Outlining the flowchart using the PGF/TikZ matrix funtion
+%    			\matrix [column sep=0.15\textwidth,row sep=3em] {
+%      				\node [block_center] (00) {Start at initial time}; & {} & {}\\
+%      				\node [block_center] (10) {Levelling}; & {} & {}\\
+%				\node [block_center,yshift=-1cm] (20) {Non-linear solver}; &  \node [block_side,yshift=-1cm] (21) {Save assemblage in memory}; & \node [block_side,yshift=-1cm] (22) {Reinitialise with saved assemblage};\\
+%      				\node [block_side] (30) {Solution found}; & {} & {}\\
+%    			};	% end matrix
+%    			% connecting nodes with paths
+%    			\begin{scope}[every path/.style=line]
+%      				\path (00) edge (10);
+%     				\path (10) edge (20);
+%      				\path (20) edge node[block_noborder,anchor=east]{\footnotesize{Stop time reached}} (30);
+%      				\path (20) edge (21);
+%      				\path (21) edge node[block_noborder,anchor=south]{\footnotesize{Timestep}} (22);
+%      				\path[-] (22.90) edge[bend right] node[block_noborder,anchor=west,shift={(0.75cm,0.25cm)}]{\footnotesize{Temporal reinitialisation failed}} (10);
+%      				\path[-] (22) edge[bend right] (20);
+%    			\end{scope}
+% 		\end{tikzpicture}
+%  		\caption{Illustration of the temporal series initialisation algorithm.}
+%  		\label{fig:temp_init}
+% 	\end{figure}
+%
+%	The details of the implementation of the temporal initialisation strategy in {Yellowjacket} have not yet been set in stone but, based on {Thermochimica} acceleration results obtained by Poschmann et al. \cite{Poschmann:2019aa} , a significant performance gain is foreseen which justifies the use of this strategy especially in coupled multiphysics problems where thermodynamic equilibrium calculations are impediment to significant performance gains. However, this might also lead to a drastic increase in memory requirement and a compromise must be made between  computing time gains and increased memory requirements.
+%
+%	\subsection{Boundary value estimate}
+%	For the case where Gibbs energy minimisation is performed on a 2D/3D mesh, very good initial estimates can conceivably be provided to the non-linear solver by exploiting the results from the neighbouring solutions in space at the same time step. As an example, the final assemblage of element A on the finite element mesh shown in figure~\ref{fig:BV_Illustration} can be used as the initial assemblage for element B. This initialisation scheme relies on the principles of continuum between adjacent cells, i.e., if the mesh is sufficiently resolved, the difference between system potentials (temperature, pressure and chemical potentials) between two neighbouring cells must be small.
+%	\begin{figure}[htbp]
+%		\centering
+%		\includegraphics[width=0.35\textwidth]{figures/BV_FEM}
+%		\caption{Illustration of the boundary value initialisation on a finite element mesh \cite{Piro17}.}
+%		\label{fig:BV_Illustration}
+%	\end{figure}
+%
+%	While this approach is well suited to simulations on finite element meshes and reduces the need to re-evaluate the estimated assemblage of stable phases, it might lead to a less than optimal estimate for elements close to a moving interface (for example, close to a melting boundary). Also, this approach does not lend itself well to parallel computing using MPI and thus might actually be ineffective for large problems where MPI can significantly speed up calculations. However, the approach is a potential avenue that can be explored but is not the primary focus.
 
 \section{Non-linear solver}
 	The linear solver can often provide estimates close to the final assemblage of the system and in certain circumstances, such as for systems with only pure 	stoichiometric species, it might be able to predict the equilibrium assemblage. However, almost always, further computations are required to arrive at the final assemblage especially in cases where the phases have more than one species with significant contribution to the Gibbs energy. This situation arises more often than not and a non-linear solver is required to handle the non-linearities arising from the logarithmic term in the compositional component of the chemical potentials.
@@ -233,138 +233,7 @@
 		\item The number of moles of any species must be positive.
 		\item The sum of mole fractions must be one (inherent in the Gibbs energy method).
 	\end{enumerate}
-
-	The GEM method presented by White \textit{et al.} \cite{White:58} can constrain conditions 1 and 2 while optimising condition 3.  The subsidiary condition B is inherent in the method and is always satisfied but care must be taken to ensure that subsidiary condition A is met. However, in most cases, condition 1 is not initially satisfied and GEM optimises conditions 1 and 3 simultaneously \cite{Eriksson71}. The derivation of the GEM method is  given below \cite{Piro11b}.
-
-	The quantity to be minimised,  the integral Gibbs energy of the system, depends on the molar amounts $n_i$ of the species in the system, which are subject to the mass balance constraints given by the individual components in the system. In dimensionless form, the Gibbs energy can be represented as:
-	\begin{equation}
-		G^m = \sum_{\lambda=1}^{\Lambda} \left(\frac{\mu_{i(\lambda)}^m}{RT}\right)n_{i(\lambda)}^m + \sum_{\omega=1}^{\Omega}\left(\frac{\mu_{\omega}^m}{RT}\right)n_{i(\omega)}^m
-	\end{equation}
-	where, the variable $G^m$ represents the Gibbs energy at iteration $m$ and is expressed in the dimensionless form as by doing so we can avoid the division by $RT$ at every iteration step, thus increasing efficiency. It must be noted that the chemical potential of the stoichiometric phase, ${\mu_{i(\omega)}^m}$, is by definition fixed but the superscript has been retained for the uniformity of notation.  The mass balance for component $j$ is given as:
-	\begin{equation}
-		b_j^m = \sum_{\lambda=1}^{\Lambda} n_{i(\lambda)}^m \nu_{i,j} + \sum_{\omega=1}^{\Omega}n_{\omega}^m \nu_{\omega ,j}
-	\end{equation}
-	where $b_j^m$ is the estimated molar quantity and not the true mass of element $j$ in the system \cite{Piro11b}. The mass constraint (condition A) requires that
-	\begin{equation}
-		b_j - b_j^m = 0
-	\end{equation}
-	To arrive at the quadratic approximation of the Gibbs energy function, a Taylor expansion is performed:
-	\begin{equation}
-		\begin{aligned}
-		Q^{m+1} = G^m &+ \left. \sum_{\omega=1}^{\Omega} \delta_{\omega} \frac{\partial G^m}{\partial n_{\omega}^m}\right\vert_{n_{\omega}^m = n_{\omega}^{m+1}} \\
-				&+ \left. \sum_{\lambda=1}^{\Lambda} \delta_{i} \frac{\partial G^m}{\partial n_{i(\lambda)}^m}\right\vert_{n_{i(\lambda)}^m = n_{i(\lambda)}^{m+1}} \\
-				&+ \frac{1}{2} \left. \sum_{\omega=1}^{\Omega} \delta_{\omega}^2 \frac{\partial^2 G^m}{\partial \left(n_{\omega}^m\right)^2}\right\vert_{n_{\omega}^m = n_{\omega}^{m+1}} \\
-				&+ \frac{1}{2} \left. \sum_{\lambda=1}^{\Lambda} \sum_{i=1}^{N_{\lambda}} \sum_{l=1}^{N_{\lambda}} \delta_{i} \delta_{l} \frac{\partial^2 G^m}{\partial n_{i(\lambda)}^{m} \partial n_{l(\lambda)}^{m}} \right\vert_{n_{i(\lambda)}^m = n_{i(\lambda)}^{m+1}}
-		\end{aligned}
-	\end{equation}
-	where $\delta_i  = n_{i(\lambda)}^{m+1} - n_{i(\lambda)}^m$ and $\delta_{\omega}  = n_{\omega}^{m+1} - n_{\omega}^m$. By the definition of chemical potential, the first order derivatives take the following form:
-	\begin{gather}
-		\frac{\partial G^m}{\partial n_{i(\lambda)}^{m}} = \frac{\mu_{i(\lambda)}^{m}}{RT} \\
-		\frac{\partial G^{\omega}}{\partial n_{\omega}^{m}} = \frac{\mu_{\omega}^{m}}{RT}
-	\end{gather}
-	and the second order derivatives can be represented as:
-	\begin{gather}
-		\frac{\partial^2 G^m}{\partial \left(n_{i(\lambda)}^{m}\right)^2} = \frac{1}{n_{i(\lambda)}^{m}} - \frac{1}{n_{\lambda}^{m}}\\
-		\left. \frac{\partial^2 G^m}{\partial n_{i(\lambda)}^{m} \partial n_{l(\lambda)}^{m}}\right\vert_{l\neq i} =  - \frac{1}{n_{\lambda}^{m}} \\
-		\frac{\partial^2 G^m}{\partial \left(n_{\omega}^{m}\right)^2} = 0
-	\end{gather}
-
-	Substituting these expressions into the Taylor expansion results in the following:
-	\begin{equation}\label{eq:Taylor_Obj}
-		\begin{aligned}
-		Q^{m+1} = G^m &+  \sum_{\omega=1}^{\Omega} \delta_{\omega} \frac{\mu_{\omega}^{m}}{RT}\\
-				&+ \sum_{\lambda=1}^{\Lambda} \delta_{i} \frac{\mu_{i(\lambda)}^m}{RT}\\
-				&+ \frac{1}{2} \sum_{\lambda=1}^{\Lambda} \sum_{i=1}^{N_{\lambda}} n_{i(\lambda)}^{m} \left(\frac{\delta_i}{n_{i(\lambda)}^{m}} - \frac{\delta_{\lambda}}{n_{\lambda}^{m}} \right)^2
-		\end{aligned}
-	\end{equation}
-	where, $\delta_{\lambda} = n_{\lambda}^{m+1} - n_{\lambda}^m$
-
-	 To find the next approximation to the desired solution, we can minimise $Q^{m+1}$ subject to the mass balance constraint and restricting $n$ to positive values \cite{White:58}. The constrained optimisation problem can be solved using the Lagrange method of undetermined multipliers \cite{Nocedal06} where the Lagrangian function in terms of the objective function and the constraints is written as follows:
-	 \begin{equation}
-	 	L = Q^{m+1} + \sum_{E}^{j=1} \pi_{m+1}^{j}\left( b_j - b_j^{m}\right)
-	 \end{equation}
-	 where the undetermined Lagrange multipliers are denoted by $\pi_{m+1}^{j}$. This formulation allows for the mass balances to be corrected when the initial estimates of mole numbers do not satisfy the mass balance constraints thereby helping in simultaneously minimising the Gibbs energy of the system and residuals of the mass constraints \cite{Piro11b}. The minimum of the Lagrangian can be found by finding the points where the partial derivatives of the Lagrangian with respect to the molar amounts and the Lagrange multiplier are zero. This results in the following system of equations:
-	 \begin{gather}
-			\frac{\partial L}{\partial n_{i(\lambda)}^{m}} = \frac{\mu_{i(\lambda)}^{m}}{RT} - \sum_{j=1}^{E} \nu_{i,j} \pi_j^{m+1} + \left(\frac{n_{i(\lambda)}^{m+1}}{n_{i(\lambda)}^{m}} - \frac{n_{\lambda}^{m+1}}{n_{\lambda}^{m}}\right) = 0\\
-			\frac{\partial L}{\partial n_{\omega}^{m}} = \frac{\mu_{\omega}^{m}}{RT} - \sum_{j=1}^{E} \nu_{\omega,j}\pi_{m+1}^{j} = 0
-	\end{gather}
-	Rearranging and solving the above equation gives:
-	\begin{equation}
-			n_{i(\lambda)}^{m+1} = n_{i(\lambda)}^{m} \left( -\frac{\mu_{i(\lambda)}^{m}}{RT} +  \frac{n_{\lambda}^{m+1}}{n_{\lambda}^{m}} + \sum_{j=1}^{E} \nu_{i,j} \pi_j^{m+1} \right)
-	\end{equation}
-	 and using the mass balance:
-	 \begin{equation}
-			b_j = \sum_{\lambda=1}^{\Lambda} \sum_{i=1}^{N_\lambda} \left( -\frac{\mu_{i(\lambda)}^{m}}{RT} +  \frac{n_{\lambda}^{m+1}}{n_{\lambda}^{m}} + \sum_{j=1}^{E} \nu_{i,j} \pi_j^{m+1} \right)n_{i(\lambda)}^{m} \nu_{i,j} + \sum_{\omega=1}^{\Omega}n_{\omega}^{m} \nu_{\omega,j}
-	\end{equation}
-
-	The above equation can be rearranged to arrive at the form used by Eriksson and Ros\'en \cite{Eriksson73}:
-	\begin{equation}\label{eq:GEM1}
-		\sum_{j=1}^{E} r_{j,k}\pi_{j}^{m+1} + \sum_{\lambda=1}^{\Lambda}\pi_{\lambda}^{m+1} \varphi_{\omega,j}^{m} + \sum_{\omega=1}^{\Omega}n_{\omega}^{m} \nu_{\omega,j}
-		= b_j + \sum_{\lambda=1}^{\Lambda} \sum_{i=1}^{N_\lambda} \left( \frac{\mu_{i(\lambda)}^{m}}{RT} -1 \right)n_{i(\lambda)}^{m} \nu_{i,j}
-	\end{equation}
-	where, $$r_{j,k} = \sum_{\lambda=1}^{\Lambda} \sum_{i=1}^{N_\lambda} n_{i(\lambda)}^{m} \nu_{i,j}\nu_{i,k}$$ $$\varphi_{\omega,j}^{m} = \sum_{i=1}^{N_\lambda} n_{i(\lambda)}^{m} \nu_{i,j}$$ $$\pi_{\lambda}^{m+1} = \left(\frac{n_{\lambda}^{m+1}}{n_{\lambda}^{m}}\right) -1$$
-
-	The  form of the minimisation problem in equation~\eqref{eq:GEM1} is relevant to programming since the set of the undetermined Lagrange multipliers $\pi_{j}^{m+1}$ are in fact the chemical potentials and the mass balance can be enforced using the undetermined Lagrange multipliers $\pi_{\lambda}^{m+1}$. The chemical potential of the elements can then be computed using:
-	\begin{equation}\label{eq:GEM2}
-		\sum_{j=1}^{E} \pi_{j}^{m+1} \varphi_{\lambda,j}^{m} = \sum_{i=1}^{N_\lambda} \left(\frac{\mu_{i(\lambda)}^{m}}{RT}\right)n_{i(\lambda)}^{m}
-	\end{equation}
-	 Conversely, the chemical potential of the system components can be constrained since the chemical potential of pure stoichiometric phases is fixed \cite{Piro11b}:
-	 \begin{equation}\label{eq:GEM3}
-		\frac{\mu_{\omega}^{m}}{RT} = \sum_{j=1}^{E} \nu_{\omega,j} \pi_{j}^{m+1}
-	\end{equation}
-
-	\subsection{Matrix representation}
-	The system of $(E+\Lambda+\Omega)$ linear equations formed by equations~\eqref{eq:GEM1}, \eqref{eq:GEM2} and \eqref{eq:GEM3} contains $(E+\Lambda+\Omega)$ variables and can conveniently be represented in the matrix representation as follows:
-	\begin{equation}\label{eq:GEM_mat}
-		\mathbf{H}\cdot\boldsymbol{\pi} = \boldsymbol{\zeta}
-	\end{equation}
-	where the Hessian matrix ($\mathbf{H}$) can be written as:
-	\begin{equation}\label{eq:Hessian_mat}
-        \mathbf{H} =
-        \begin{bmatrix}
-            r_{j=1,k=1} & \dots & r_{j=1,k=C} & \phi_{j=1,\lambda=1} & \dots & \phi_{j=1,\lambda=\Lambda} & \nu_{j=1,\omega=1} & \dots & \nu_{j=1,\omega=\Omega} \\
-            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
-            r_{j=C,k=1} & \dots & r_{j=C,k=C} & \phi_{j=C,\lambda=1} & \dots & \phi_{j=C,\lambda=\Lambda} & \nu_{j=C,\omega=1} & \dots & \nu_{j=C,\omega=\Omega} \\
-            \phi_{\lambda=1,j=1} & \dots & \phi_{\lambda=1,j=C} & 0 & \dots & 0 & 0 & \dots & 0 \\
-            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
-            \phi_{\lambda=\Lambda,j=1} & \dots & \phi_{\lambda=\Lambda,j=C} & 0 & \dots & 0 & 0 & \dots & 0 \\
-            \nu_{\omega=1,j=1} & \dots & \nu_{\omega=1,j=C} & 0 & \dots & 0 & 0 & \dots & 0 \\
-            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
-            \nu_{\omega=\Omega,j=1} & \dots & \nu_{\omega=\Omega,j=C} & 0 & \dots & 0 & 0 & \dots & 0
-        \end{bmatrix}
-    \end{equation}
-    and $\boldsymbol{\pi}$ and $\boldsymbol{\zeta}$ which denote the unknown and constraint vectors respectively take the following forms:
-    \begin{equation}\label{eq:LagMult_mat}
-        \boldsymbol{\pi} =
-        \begin{bmatrix}
-            \pi_{j=1}^{m+1} \\
-            \vdots \\
-            \pi_{j=E}^{m+1} \\
-            \pi_{\lambda=1}^{m+1} \\
-            \vdots \\
-            \pi_{\lambda=\Lambda}^{m+1} \\
-            \pi_{\omega=1}^{m+1} \\
-            \vdots\\
-            \pi_{\omega=\Omega}^{m+1}
-        \end{bmatrix}
-    \end{equation}
-
-     \begin{equation}\label{eq:Constraint_mat}
-        \boldsymbol{\zeta} =
-        \begin{bmatrix}
-            b_{j=1} +  \sum_{\lambda=1}^{\Lambda} \sum_{i=1}^{N_\lambda} \left( \frac{\mu_{i(\lambda)}^{m}}{RT} -1 \right)n_{i(\lambda)}^{m} \nu_{i,j=1}\\
-            \vdots \\
-            b_{j=E} +  \sum_{\lambda=1}^{\Lambda} \sum_{i=1}^{N_\lambda} \left( \frac{\mu_{i(\lambda)}^{m}}{RT} -1 \right)n_{i(\lambda)}^{m} \nu_{i,j=E}\\
-            \sum_{i=1}^{N_{\lambda=1}} \left( \frac{\mu_{i(\lambda=1)}^{m}}{RT} -1 \right)n_{i(\lambda=1)}^{m} \\
-            \vdots \\
-            \sum_{i=1}^{N_{\lambda=\Lambda}} \left( \frac{\mu_{i(\lambda=\Lambda)}^{m}}{RT} -1 \right)n_{i(\lambda=\Lambda)}^{m} \\
-            \frac{\mu_{\omega=1}^{m}}{RT} \\
-            \vdots\\
-            \frac{\mu_{\omega=\Omega}^{m}}{RT} \\
-        \end{bmatrix}
-    \end{equation}
-
-The unknown column vector $\boldsymbol{\pi}$ is computed through a linear equation solver and used to update the molar quantities of each species and phase at each  iteration. The matrix $\mathbf{H}$ being a Hessian is necessarily square and symmetric and solving equation~\eqref{eq:GEM_mat} can be viewed as solving the Karush-Kahn-Tucker (KKT) optimality condition via Newton's method \cite{Nocedal06}.
+	
 	\subsection{Numerical implementation}
 	The system of non-linear equations can be solved using either the Newton-Raphson method. Newton-Raphson method depends on solving  equation~\eqref{eq:GEM_mat} and is an $\mathcal{O}(N^3)$ operation.
 	An integral component of the solver is an appropriate line-search algorithm to determine how far the system should progress along the direction vectors. The functional norm of the Lagrangian is an effective choice to ensure convergence and is defined as \cite{Piro17}:
@@ -536,7 +405,7 @@ The unknown column vector $\boldsymbol{\pi}$ is computed through a linear equati
 	\end{align}
 	The sufficient condition for equilibrium requires that the driving force $\Delta G_{\phi}$ computed with equation~\eqref{eq:drivingforce} is positive for all phases believed to be metastable and zero for all the stable phases. According to Hillert \cite{Hillert81}, the driving force of metastable phases can be evaluated at each iteration to determine whether or not it should be added into the system. However, this function can be non-convex and requires the evaluation of a global minimum. Though the open literature on computing these methods appears rather exhaustive, few authors have discussed generalised global minimisation schemes for the phase equilibria problem. The majority of articles focus either on relatively small systems, such as liquid-vapour equilibria, or are aimed at only a handful of calculations. Some notable exceptions to this include those of Hillert \cite{HILLERT198131}, Lukas \textit{et al.}\cite{LUKAS1982229}, Sundman \cite{Sundman15}, Piro and Simunovic \cite{Piro16}, and Otis \textit{et al.} \cite{Otis:2017ab}. Since both the robustness and computational efficiency of {\GEM} are of concern, a number of global optimisation methods were tested through a set of carefully constructed test problems representative of some common scenarios in equilibrium thermodynamics. Though no global optimisation method can guarantee the ability to find the true global minimum, sufficient confidence can be achieved for the problem under consideration under well-defined parameters.
 	
-	\subsection{Test Problems}
+	\subsection{Test Problems} \label{sec:test_global}
 	To objectively test the reliability and performance of various global optimisation algorithms, the methods must be benchmarked against a set of test problems representative of the requirements from the solver. While most of the open  literature focusses on a single problem and tries to optimise the algorithm for the problem, such an approach is not ideal for the development of {\GEM}. Instead the focus here has been to select an algorithm that can work reasonably well for wide variety of problems with a large number of components. The reasoning behind such an approach is that a wide variety of excess mixing models are encountered in computational thermodynamics applied to nuclear materials. To test the algorithms under consideration, eight test cases representing different thermodynamic models and system sizes, and are summarised in table~\ref{tab:test_cases}.
 	\begin{table}[htbp]
 		\centering
@@ -573,7 +442,7 @@ The unknown column vector $\boldsymbol{\pi}$ is computed through a linear equati
 		The binary  \ce{Pd-Rh} system from Kaye \textit{et al.} \cite{Kaye07} has been selected as the second test problem. It consists of a shallow miscibility gap in the FCC phase which is assumed to be properly identified by the solver but the global optimisation algorithm must confirm that the driving force, $\Delta G_\text{FCC}$, of the miscibility gap phase is indeed zero. The phase is represented by a substitutional solution model with the reference Gibbs energies of the components being $g_{\ce{Pd}}^\circ = -16480 + 9.02T$ \si{\joule \per \mole}, $g_{\ce{Rh}}^\circ = -26568 + 11.88 T$ \si{\joule \per \mole} and the excess energy given by $g_\text{FCC}^\text{ex} = x_{\ce{Pd}}x_{\ce{Rh}} \left(21247 + 2199 x_{\ce{Rh}} - (2.74 - 0.56x_{\ce{Rh}})T\right)$. The temperature of the system was fixed at $T = 1100$ \si{\kelvin} and the pressure at $P=1$ \si{\atmosphere}.
 		\begin{figure}[htbp]			
 			\centering
-			\includegraphics[width=0.6\textwidth]{figures/chapter-6/System_PdRh.pdf}
+			\includegraphics[width=0.675\textwidth]{figures/chapter-6/System_PdRh.pdf}
 			\caption[Global optimisation test problem B: FCC phase miscibility gap in \ce{Pd-Rh} binary system.]{FCC phase miscibility gap in \ce{Pd-Rh} binary system from Kaye \textit{et al.} \cite{Kaye07} shows a correctly identified miscibility gap which must be verified by the global optimisation algorithm.}
 			\label{fig:testB}
 		\end{figure}
@@ -617,7 +486,7 @@ The unknown column vector $\boldsymbol{\pi}$ is computed through a linear equati
 
 The discretisation of the grid plays a key role in the efficacy of this method and it has been shown by Chen \textit{et al.} \cite{Chen93b} that the grid must be sufficiently resolved to avoid missing critical features such as the minimum between grid points $\alpha_8$ and $\alpha_9$ in figure~\ref{fig:Grid_cons}. However, this requirement leads to performance concerns as too small a grid leads to an increase in the computational cost while too large a grid can lead to false positives in the optimisation process.  Piro and Simunovic \cite{Piro16} have demonstrated how uniformly spaced grid for a phase $\phi$ in $N_\phi$ dimensional Euclidean phase (each dimension corresponds to a species in phase $\phi$) can result in an enormously large number of grid points depending on the grid size. In the example with nine grid points, it becomes clear from figure~\ref{fig:Grid_cons} that global minimum would not be found but increasing the number of grid points will lead to an exponential increase in the cost. In conclusion, the rapid increase in the computational cost with the reduction in grid size and a questionable performance in terms of reaching a global maximum tilts the scales against this method. Despite the fact, this method was tested with three separate grid spacings ($\delta = 0.1, \, 0.01, \,\text{and}\, 0.001$) to serve as benchmarks and to numerically show the rapid increase in computational time.
 	
-	\subsection{Spatial Branch \& Bound (sBB)}
+	\subsection{Spatial branch \& bound (sBB)}
 		The Branch and Bound (BB or B\&B), attributed to Land and Doig \cite{Land:1960aa} who introduced it in 1960 for discrete programming, is a widely used algorithmic paradigm for finding optimal solutions to optimisation problems. As illustrated in \ref{fig:BB},the algorithm systematically enumerates all the candidate solutions by sequentially pruning out non-feasible solution candidates through a recursive approach of partitioning the domain and finding an upper and a lower bound for each subdomain. In 1969, Falk and Soland \cite{Falk69} proposed one of the first BB algorithms that could be applied to an continuous objective function with separable concave portions with a closed and convex set of constraints and a bounded feasibility region.
 		\begin{figure}[htbp]
 		\centering
@@ -740,7 +609,7 @@ OBBT can be applied to every variable $x_i$ separately and when feasible the con
 		
 	In \emph{expression-based strategies}, one can aim to reduce the sum of the areas of the resulting convexifications as shown in subfigure (c) of figure~\ref{fig:branching_pt}. Several methods for such strategy can be adopted \cite{Kalantari:1987aa,Liu:1996aa} but a balanced strategy implemented in Couenne finds the branching point using a binary search on the interval $[x_i^l, x_i^u]$ that minimises the difference between the maximum area $u'(x_i)$ and maximum area $u''(x_i)$ \cite{Belotti:2009aa}:
 	\[
-		x_i^b \in argmin \left | \max_{x_i \in [x_i^l, x_i^b]} u'(x_i) - \max_{x_i \in [x_i^b, x_i^u]} u''(x_i) \right|,
+		x_i^b \in \argmin \left | \max_{x_i \in [x_i^l, x_i^b]} u'(x_i) - \max_{x_i \in [x_i^b, x_i^u]} u''(x_i) \right|,
 	\]
 	where $u'$ and $u''$ are the distance between the upper envelope line of $\vartheta_j$ and $(x_i, \vartheta_j(x_i))$ on the subdomains LP' and LP'' resulting from branching. The method balances the maximum distance between the points on $\vartheta_j(\cdot)$ and the upper envelope \cite{Belotti:2022aa}.
 		\end{enumerate}	
@@ -749,31 +618,133 @@ OBBT can be applied to every variable $x_i$ separately and when feasible the con
 	  Together, the reformulation of the problem and the sBB algorithm result in a rigorous solution framework for global optimisation problem. Since the driving force functions are smooth and differentiable, they are well formulated for the method. Though the reformulation results in an increase in the size of the problem, it doesn't become a major issue for determining the minimum of the driving force.
 	  
 	
-	\subsection{Particle Swarm Optimisation}
-	Particle Swarm Optimisation (PSO) has been inspired by the swarm like behaviour in the animal kingdom such the migration of swarm of bees \cite{Kennedy95}. In this method, a population of candidate solutions, dubbed particles, moves around the search space as function of the position and velocity of the particle. the movement of each particle is influenced by it's best known local position and guided towards the best global position as other particles find better solutions.
+	\subsection{Particle swarm optimisation}
+	
+	Particle swarm optimisation (PSO) is a stochastic search algorithm inspired by the flocking behaviour of birds. First proposed by Kennedy and Eberhart \cite{Eberhart:1995aa,Kennedy95}, PSO is a population based method which relies on the premise of social sharing of information among a bird flock seeking food. PSO is relatively simple to describe and implement and its apparent competence in finding optimal solutions in complex search spaces has made it a widely studied search algorithm \cite{Freitas:2020aa}. In PSO, a population of candidate solutions, dubbed particles, moves around the search space as a function of the position and velocity of the particle and the movement of each particle is influenced by its best known local position and guided towards the best global position as other particles find better solutions. 
 
-	The position vector of the particles at iteration $m$, $\mathbf{x_p^m}$, is updated based on the velocity vector, $\mathbf{v_p^m}$, by \cite{Piro16}:
-	\begin{gather}
-		\mathbf{v_p^m} = \psi \mathbf{v_p^{m-1}} + \phi_p r_p \left(\mathbf{x_p^*} - \mathbf{x_p^m}\right) + \phi_s r_s \left(\mathbf{x_s^*} - \mathbf{x_p^m}\right) \label{eq:PSO1}\\
-		\mathbf{x_p^{m+1}} = \mathbf{x_p^m} + \mathbf{v_p^m} \label{eq:PSO2}
-	\end{gather}
-	where, $x_p^*$ denotes the best known position of a particle (local minima) and $x_s^*$ denotes the best known position of the swarm (global maximum). The first term in the above equation can be interpreted as the inertia term while the second and the third terms act as the driving force towards the local minima and global minimum respectively. These terms are weighted by the parameters $\psi$, $\phi_p$ and $\psi_s$ which can be tuned according to the problem. These parameters affect the behaviour and efficacy of the PSO algorithm. Finally, randomly generated numbers $r_p, \; r_s \in (0,1)$ influence the movement of the swarm towards the local or global optima.
-
-	The implementation of PSO is an iterative process where $N_\lambda$ are initially released at $N_\lambda$ corners in domain and and allowed to traverse the domain with the velocity and position being updated through \eqref{eq:PSO1} and \eqref{eq:PSO2} respectively. At each iteration, the velocity vector must also be scaled to ensure that the particle stays within the feasible region, i.e, $0 < x_{i(\lambda)}<1$ \cite{Piro16}.
-
-	A challenge in the implementation of the PSO algorithm will be to tune the parameters $\psi$, $\phi_p$ and $\psi_s$ to achieve a compromise between good convergence rate and thoroughness in traversing the search space. Piro and Simunovic \cite{Piro16} have found that $\psi=0.5$, $\phi_p=2$ and $\psi_s=2$ provides the desired behaviour and that the parameters can be tuned effectively by progressively relaxing the constraints imposed on the velocity magnitude using the following equation \cite{Nocedal06}:
-	\begin{equation}\label{eq:PSOvel}
-		\|\mathbf{v}\| \leq v_{min} + \frac{v_{max}-v_{min}}{m_{max} - 1} (m-1)
+	At each iteration $t$, the velocity vector of particle $i$ in the swarm gets updated according to the following equation \cite{Bonyadi:2017aa}:
+	\begin{equation} \label{eq:PSO_vel}
+		\mathbf{v}_i^{t+1} = \omega \mathbf{v}_i^{t} + \psi_i {R_1}_i^t \left( \mathbf{p}_i^{t} - \mathbf{x}_i^{t} \right) +\psi_i {R_2}_i^t \left( \mathbf{g}^{t} - \mathbf{x}_i^{t} \right),
 	\end{equation}
-	where, $v_{max}$ and $v_{min}$ are the pre-specified maximum and minimum velocity magnitudes respectively and $m_{max}$ is the maximum number of iteration allowed in PSO. Thereby, the optimisation neighbourhood gradually increases in size as the iteration cycle progresses.
+	where $\mathbf{v}_i^t$ and $\mathbf{x}_i^t$ are the velocity and position at iteration $t$. The inertia weight is given by $\omega$ and $\psi_1$ and $\psi_2$ are real acceleration coefficients known as cognitive weight and inertia weight respectively. Together, the weights control the impact of global and individual best positions on the particle's velocity and trajectory. Kennedy and Eberhart \cite{Kennedy95} originally assigned the same value of \num{2} to social and cognition parts but fine-tuning the parameters is critical to performance and convergence of PSO, particularly when dealing with multimodal problems \cite{Carlisle:2001aa,Trelea:2003aa,van-den-Bergh:2006aa}. $R_1$ and $R_2$ are uniformly distributed vectors used to maintain an adequate level of diversity in the swarm population and $\mathbf{p}_i^{t}$ and $\mathbf{g}^{t}$ represent the best known position of particle $i$ and the global best position of the swarm at iteration $t$. In turn, the position of each particle $i$ at every iteration $t$ can be updated according to the following equation \cite{Bonyadi:2017aa}:
+	\begin{equation}  \label{eq:PSO_pos}
+		\mathbf{x}_i^{t+1} = \mathbf{x}_i^{t} + \mathbf{v}_i^{t}.
+	\end{equation}
 	
+	\SetKwComment{Comment}{/* }{ */}
+\RestyleAlgo{ruled}
+\begin{algorithm}[ht!]
+	\caption[PSO algorithm for objective function $f : \mathbb{R}^n \rightarrow \mathbb{R}$]{PSO algorithm for objective function $f : \mathbb{R}^n \rightarrow \mathbb{R}$}
+	\label{alg:PSO}
+	\KwIn{Objective function $f$, Search space $\mathbf{x}_i = \left[\mathbf{x}_i^l, \mathbf{x}_i^u\right]$, Number of particles $N_p$}
+	\BlankLine
+	\For{Particle $i \in \{1, 2, \dots, N_p\}$}{
+		Initialise initialise position, $\mathbf{x}_i \gets \mathcal{U}\left(\mathbf{x}_i^l, \mathbf{x}_i^u\right)$\;
+		Initialise particle's best known position, $\mathbf{p}_i \gets \mathbf{x}_i$\;
+		\If{$f(\mathbf{p}_i) < f(\mathbf{g})$}{
+			Update global best position, $\mathbf{g}_i \gets \mathbf{p}_i$\;
+		}
+		Initialise the particle velocity, $\mathbf{v}_i \gets \mathcal{U}\left( - \left | \mathbf{x}_i^u - \mathbf{x}_i^l \right |, \left | \mathbf{x}_i^u - \mathbf{x}_i^l \right | \right)$\; 
+	}
+	\While{Termination criteria is not met}{
+		\For{Particle $i \in \{1, 2, \dots, N_p\}$}{
+			Pick random vectors, $\mathbf{R}_1, \mathbf{R}_2 \gets \mathcal{U}\left(0, 1\right)^n$\;
+			Update particle velocity, $\mathbf{v}_i^{t+1} \gets \omega \mathbf{v}_i^{t} + \psi_i {R_1}_i^t \left( \mathbf{p}_i^{t} - \mathbf{x}_i^{t} \right) +\psi_i {R_2}_i^t \left( \mathbf{g}^{t} - \mathbf{x}_i^{t} \right)$\;
+			Update particle position, $\mathbf{x}_i^{t+1} = \mathbf{x}_i^{t} + \mathbf{v}_i^{t}$\;
+			\If{$f(\mathbf{x}_i^{t+1}) < f(\mathbf{p}_i) $}{
+				Update particle's best known position, $\mathbf{p}_i^t \gets \mathbf{x}_i^{t+1}$\;
+				\If{$f(\mathbf{p}_i^t) < f(\mathbf{g})$}{
+				Update global best position, $\mathbf{g}^t \gets \mathbf{p}_i^t$\;
+			}	
+		}
+	}
+	}
+	\BlankLine
+	\KwOut{$x_\text{out} \gets \mathbf{g}^t$, an optimal solution of $f$}
+\end{algorithm}
+
+	The PSO algorithm, illustrated algorithm~\ref{alg:PSO}, has several advantages compared to other continuous optimisation methods. First, PSO is a problem independent algorithm which only needs the objective function to evaluate the fitness of each candidate solution. In doing so, PSO does not make any assumptions about the continuity and differentiability of the objective function. Second, the evolution of particles is random and therefore the gradients of the objective function need not be calculated. Lastly, PSO does not need a good initial estimate or a-priori knowledge of the objective function search space \cite{Freitas:2020aa}. These factors have led PSO to gain a widespread appeal and it has shown good performance in several domains like function optimisation, artificial neural network training, fuzzy system control, etc. Unfortunately, for complex multimodal problems, the conventional PSO algorithm can get trapped in local optima, considerably compromising the convergence rate. This leads to poor performance and accuracy, and imposes restrictions on applicability to a wide range of practical problems \cite{Xu:2013aa,Harrison:2018aa}. While a-priori tuning can help improve performance, it is a time-intensive process but also assume that the optimal parameter configuration does not change over time. However, as shown by Leonard and Engelbrecht \cite{Leonard:2013aa}, the parameter values well-suited for exploration are not well-suited for exploitation and vice-versa. To achieve the two fold characteristic of good convergence speed and to avoid stagnating in local optima, several variations of PSO have been developed \cite{Shi:1998aa,Ratnaweera:2004aa,Chatterjee:2006aa,Fan:2007aa,van-den-Bergh:2001aa}. Another limitation of PSO is in constrained optimisation problem as it lacks an explicit constraint-handling mechanism. Several methods such as penalty function, feasibility-based rules method and the constraint-preserving method have been proposed with the penalty method being the most commonly used \cite{Sun:2011aa,Jordehi:2015aa}. While detailed discussions on handling these problems are available in open literature, the specific approach in the context of this work is discussed in the following text. 	
 	
-	\subsection{Implementation and analyses}
-	All global optimisation methods have their advantages and disadvantages and no global optimisation method is universally superior to others. While the deterministic methods are good at converging to a local minimum, they are often prone to high computational expenses. The stochastic methods, on the other hand, tend to cover the search space more effectively but face difficulty at finding the global minimum \cite{Piro16}. The global optimisation methods discussed in literature have mostly been problem centric and there has been a lack of a comprehensive and rigorous analysis of these methods applied to a variety of thermodynamic equilibrium problems. Therefore, apart from the non-linear solver, this work will also focus on a quantitative comparison of global optimisation methods in terms of application to thermodynamic equilibrium calculations. 
+	\begin{enumerate}
+		\item \emph{Constraint handling}\\
+			As previously stated, several strategies have been explored to impose the constraints in PSO. One of the simplest constraint-handling mechanism is that of reseting the particles that escape the feasible region \cite{Hu:2002aa,Guo:2004aa,Sun:2009aa}. Minimisation of a non-stationary multi-stage assignment penalty function was proposed by Parsopoulos and Vrahatis \cite{Parsopoulos:2005aa} and the results were promising albeit at the cost of a very complex process for determining penalty. In the feasibility-based approaches such as that by Pulido and Coello \cite{Pulido:2004aa}, a candidate solution is chosen leader based on Deb's comparison rules \cite{Deb:2000aa}. The constraint handling strategy implemented in {\GEM} is based on the method by Hu and Eberhart \textit{et al.} \cite{Hu:2002aa}. To make the solution more plausible, all the equality constraints are modified into inequality constraints to specified tolerance, i.e., the constraints on sum of mole fractions and the charge neutrality constraints are reformulated as:
+			\begin{gather}
+				\left | \sum_{i=1}^{N_\phi} x_i - 1 \right | <  \epsilon_1,\\
+				\left | \sum_{i=1}^{N_\phi} \nu_{i{e^-}} x_i \right | < \epsilon_2.
+			\end{gather} 
+			The initialisation step is then modified to impose the constraints and once a feasible initial solution is found, the algorithm can progress. At every iteration $t$, each particle is checked for feasibility. If the updated position $x_i^{t+1}$ results in the bounds being violated, the step length is updated based on the following equation:
+			\begin{equation}  \label{eq:PSO_pos}
+				\mathbf{x}_i^{t+1} = \mathbf{x}_i^{t} + \alpha \mathbf{v}_i^{t},
+			\end{equation}
+			where $\alpha \in \mathcal{U} (0.1, 0.9)$ is a randomly generated constriction vector used to scale the step length. Handling the constraints, however is less straightforward. Once the position of each particle has been updated, the feasibility of each particle is verified and if it is found to violate the feasibility condition, Deb's comparison rules \cite{Deb:2000aa} are applied as follows:
+			\begin{enumerate}
+				\item	If all candidate solutions are infeasible, the candidate closest to feasibility is selected as the best candidate and the remaining particles are restored to previous feasible position. The best known position of these particles is not changed.
+				\item If some candidates are feasible, their personal best is updated and the global best solution is selected from the feasible particles. The particles in infeasible regions are restored to the previous feasible solution.
+				\item If all candidates are feasible, the same process as usual is followed.
+			\end{enumerate}
+			
+		\item \emph{Particle initialisation}\\
+			One of the parameters in PSO that can potentially affect the convergence rate is the number of particles and their initial positions. While the particle position $x_i$ is often initialised randomly from a uniform sampling in $\left[ x_i^l, x_i^u\right]$, it has been shown by Woronow \cite{Woronow:1993aa} that, when compared to normalised exponential distribution, normalised uniform distributions produce a poorer coverage of composition space. Otis \textit{et al.} \cite{Otis:2017ab} employed a set of different sampling strategies such as Halton sequence, Sobol sequence and their variations to come come up with an efficient sampling strategy for PyCalphad. Furthermore, Piro and Simunovic \cite{Piro16} found that PSO often fails to capture the optimal solutions located close to the domain edges and special considerations must be taken when the optimal solution may exist close to the boundaries. To best see the effect of particles' initial position on the performance of PSO, a number of different options were tested. First, the number of particles, $N_p$, was selected from a finite set $\left\{ N_\phi, 2N_\phi\right\}$ and second, the particles were initialised using both normalised uniform and normalised exponential sampling. In addition, when $N_p = 2N_\phi$, a hybrid strategy was also used where $N_\phi$ particles were initialised using the sampling methods while the remaining $N_\phi$ particles were fixed at the corners of the domain. The reasoning behind this approach is that the particles closer to the edges should enable the spare closer to the edges to be properly explored. Also, more advanced sampling methods were not selected as, with well-tuned hyperparameters, PSO is expected to efficiently scan the domain unlike when only sampling is used and one must make sure that the features are not missed if the samples are not well picked. 
+
+		\item \emph{Particle dynamics}\\
+			Parameter tuning can have a significant impact on the performance of PSO and a large number of \emph{Adaptive PSO} (APSO) algorithms have been proposed in literature to overcome the problem of a-priori tuning of the parameters. A comparative analysis of many such algorithms has been performed by Harrison \textit{et al.} \cite{Harrison:2018aa}. Amongst one of the promising APSO algorithms is \emph{APSO based on velocity information} (APSO-VI) proposed by Xu \cite{Xu:2013aa} which adapts the inertia weight based on the current velocity of the particles. The concept of APSO-VI is borrowed from Yasuda \textit{et al.} \cite{Yasuda:2008aa} and aims to evolve the velocity to be close to an \emph{ideal} velocity. In APSO-VI the average velocity of swarm is defined as \cite{Xu:2013aa}:
+			\begin{equation}
+				\bar{v}^t = \frac{1}{n N_p} \sum_{i=1}^{N_p} \sum_{i=1}^{n} \left | v_{ij}^t \right |,
+			\end{equation}
+			where $n$ and $N_p$ represent the problem dimension and the number of particles in the swarm respectively. The size of the average velocity reflects the size of the particle search space and to better explore the search space, one should maintain a larger average velocity with longer time, during the early stage of the optimisation. On the other hand, during the latter stage, it is important to keep a small average velocity to find the optimum solution efficiently \cite{Xu:2013aa}. One can then define an ideal velocity at iteration $t$, which decreases with time, as follows:
+			\begin{equation}
+				{v}_\text{ideal}^t = v_s \left(\frac{1 + \cos\left (\frac{\pi t}{T_\text{end}} \right )}{2} \right),
+			\end{equation}
+			where $v_s = (x^u - x^l) / 2$ is the initial ideal velocity, $T$ is the maximum number of iterations and $T_\text{end} = 0.95 T$ is the time in which 95\% of search is completed. As visualised in figure~\ref{fig:APSO-ideal_v}, the ideal velocity profile matches the requirements for an effective exploration of the search space.
+			\begin{figure}[htbp]
+				\centering
+				\includegraphics[width=0.75\textwidth]{figures/chapter-6/APSO-VI}
+				\caption{Schematic of ideal velocity profile in APSO-VI.}
+				\label{fig:APSO-ideal_v}
+			\end{figure}
+			The inertia weight can then be dynamically adapted at each iteration based on the average velocity in relation to the ideal velocity \cite{Harrison:2018aa} using:
+			\begin{equation}
+				\omega^{t+1} =  \begin{cases}
+								\max \left\{ \omega^t - \Delta \omega, \, \omega_\text{min}\right\}& \text{if } \bar{v}^t \geq  {v}_\text{ideal}^{t+1}\\
+								\min \left\{ \omega^t - \Delta \omega, \, \omega_\text{max}\right\}& \text{if } \bar{v}^t <  {v}_\text{ideal}^{t+1}
+							\end{cases},
+			\end{equation}
+			where $\omega_\text{min}$ and $\omega_\text{max}$ are the minimum and maximum inertia weights and $\Delta \omega$ is the inertia weight step size. It has been shown by Harrison \textit{et al.} \cite{Harrison:2016aa} that decreasing the ideal velocity decrease the inertia weight such that it remains within convergent range. Xu fixed the parameters $\omega_\text{min} = 0.3$, $\omega_\text{max} = 0.9$, $\Delta \omega = 0.1$, and $\psi_1 = \psi_2 = 1.49$ \cite{Xu:2013aa} and, in this work, APSO-VI has been adopted, albeit with slightly different parameter values. In {\GEM}, the APSO-VI hyperparameters were selected to be $\omega_\text{min} = 0.2$, $\omega_\text{max} = 0.9$, $\Delta \omega = 0.1$, $\psi_1 = 1.5$ and  $\psi_2 = 2$. These values provided good convergence rates while reasonably exploring the search space and are similar to those previously used in thermodynamic equilibrium application such as by Piro and Simunovic \cite{Piro16} and Myint \textit{et al.} \cite{Myint:2021aa}.
+	\end{enumerate}
+
 	
-%\section{Integration in multiphysics codes}
-%	The thermodynamic solver is being developed with the primary aim of being incorporated within the  finite element multiphysics framework \texttt{MOOSE}. The first level of integration of the thermodynamic solver within \texttt{Yellowjacket} will be coupling thermodynamic equilibrium calculations with kinetics and phase field modules being developed by at the Idaho National Laboratory and the University of Florida. This would involve procedures to transfer information between the thermodynamic solver and the other modules. Though  \texttt{MOOSE} contains the tools required to enable such computations with minimum effort, there always remains a probability of conflicts arising during coupling, such as conflicting variables, etc. Also, different \texttt{MOOSE} apps have different requirements from the thermodynamic equilibrium solver. While \texttt{Marmot} and \texttt{Bison} computations are mostly require partial derivatives of Gibbs energies (chemical potential, driving force, etc.) and assemblages, other codes might require quantities such as the heat capacity, thermal conductivity, etc.  Therefore, though the procedures have not yet been finalised, complete integration of the thermodynamic solver in \texttt{MOOSE} will be a major focus towards the end of this project.
+	\subsection{Implementation and analysis}
+	All global optimisation methods have their advantages and disadvantages and no global optimisation method is universally superior to others. While the deterministic methods are good at converging to a local minimum, they are often prone to high computational expenses. The stochastic methods, on the other hand, tend to cover the search space more effectively but face difficulty at finding the global minimum \cite{Piro16}. The global optimisation methods discussed in literature have mostly been problem centric and there has been a lack of a comprehensive and rigorous analysis of these methods applied to a variety of thermodynamic equilibrium problems. 	Since the global optimisation methods are critical to the performance of {\GEM}, an experimental approach was adopted to select method to be used. While the goal of the global minimiser can be restricted to identifying whether or not a phase has a negative driving force, in terms of comparison, the aim was to correctly identify the minimum of driving force in each of the eight test cases described in section~\ref{sec:test_global}.  
+	
+	Since, the convergence criteria for Couenne and the APSO-VI implementation differ, they must be clarified. In Couenne, the convergence is based on the feasibility tolerance. If a constraint $g_i(x) \leq 0$ within this tolerance, it is deemed satisfied \cite{Belotti:2022aa}. The Couenne solve requires several options to be specified. The ones of particular concern here were that related to branching for which violation transfer was selected and FBBT was applied to bound tightening. Since OBBT is computationally expensive, it was disabled and Couenne was allowed to use heuristics through interior point optimisation. The tolerance was left to the default value of ${10^{-6}}$.
+	
+	In APSO-VI, the convergence criterion is more complicated due to the stochastic nature of the algorithm. Guaranteeing that all the particles will converge to the same value is impossible without significantly compromising performance. Apart from a preset maximum number of iterations $T = 100$, the algorithm is deemed to converge if 95\% of the particles converge to a small distance of the global best position. For this, the Euclidean distance of each particle from the best known global solution is calculated using $S_i^t = \left \Vert x_i^t - g^t\right \Vert$ and if $S_i^t \leq 10-6$ for $0.95 N_p$ particles, the algorithm is terminated as converged. For calculating the Euclidean distance, only feasible solutions are considered and if a feasible global best is not identified, the algorithm is marked as failed.
+	
+	For comparison, each implementation of the method was executed a hundred times on a 2020 M1 MacBook Air with 8 GB of memory. The methods were alternated in ABC...ABC... pattern to avoid bias and the total time for all the runs was considered. The average time of all the times in the interquartile range was selected as the performance metric while the number of times the algorithm correctly identified the minimum or absence of negative driving force was the metric of reliability. No runs were discarded for the reliability metric. The results of a comparative analysis are shown in figures~\ref{fig:res_time} and \ref{fig:res_rel}. The results demonstrate that the equispaced grid sampling method is only effective with very small resolutions leading to a very rapid increase in the cost. On the other hand, the APSO is a lot more robust but they do show that a larger number of particles can better scan the space. Despite their efficiency, the robustness of the APSO is slightly lower than the sBB algorithm which converges to the correct results for each test case but does so at the cost of increase in computational time. 
+
+\begin{figure}
+     \centering
+     \includegraphics[width=0.6\textwidth]{figures/chapter-6/time.pdf}
+     \caption[Comparison of computational performance of different global optimisation algorithms.]{Comparison of computational performance of various global optimisation algorithms for the test cases. The wall clock time is the average time of the results in interquartile range for 100 calculations of each method and case combination}
+     \label{fig:res_time}
+ \end{figure}
+
+
+
+\begin{figure}
+         \centering
+         \includegraphics[width=0.6\textwidth]{figures/chapter-6/reliability.pdf}
+         \label{fig:res_rel}
+     	\caption[Comparison of reliability of different global optimisation algorithms.]{Comparison of reliability of various global optimisation algorithms for the test cases. The reliability is the number of times the correct results were shown by a method out of the 100 calculations.}
+ \end{figure}
+ 
+The grid sampling method was able to find the minimum in all the test cases albeit only when the grid resolution was increased to $\delta = 0.00$ and with a significant impediment on performance. In particular, one must be careful about the charge neutrality constraints with this approach. When dealing with ionic phases, many of the samples using this strategy will result in infeasibility due to the charge neutrality constraint getting violated. This can potentially compromise the method's reliability as a feasible point satisfying the charge constraint might never be found. In the implementation here, the objective function was evaluated at every sample point despite some of them being infeasible.
+
+Among the tested options, sBB proves to be the most reliable though at a cost to performance. This is expected for the well behaved driving force functions. One way of reducing the computational cost of sBB is to terminate the solver as soon as an upper bound becomes negative or a feasible solution with negative driving force has been identified. This however has not been implemented in {\GEM}. The stochastic methods on the other hand exhibit fairly good computational performance though with a slightly lower reliability. In the experiments, the loss of reliability is attributable to reaching maximum iterations and in a small number of cases to converging to an infeasible value. Moreover, the impact of the number of particles in the swarm is clearly visible. With $N_p = N_\phi$, the space is not sufficiently scanned leading to a lower overall reliability. In such a scenario, increasing the number of particles seems to be the best choice but one must take cognisance of the fact that this can increase the computational time and might also require adjusting the convergence criteria. Initialising the particles on the corners did not have as big an impact as the number of particles. This can be attributed to the test cases itself where the optimal solution in most cases was not close to any edge and therefore no significant benefit was obtained from the particles scanning the space closer to the boundaries.
+
+In the context of {\YJ}, both the sBB and APSO algorithms have been integrated into the code and the user will have the option of specifying the desired method. In cases where reliability is of the utmost and the system is deemed too complex, one could select sBB as the global optimisation algorithm while in cases where the system is deemed to be not very complicated or where there is a possibility of a-posteriori checking the results and / or augmenting global optimisation results with other information such as that from the grain information available in phase field.
+	
 
 \section{Summary}
 	A number of algorithms for different parts of a thermodynamic equilibrium solver were presented in this chapter. Many of these algorithms have already been implemented in other codes available in the literature and GEM and levelling are relatively mature algorithms with little to no scope of improvement. This is evident from the fact that most of the development efforts since the original GEm method has relied on auxiliary operations such as initialisation, etc. However, this does not mean that improvements can not be made.  The development of an advanced thermodynamic solver leaves the door open for incremental gains on many of these algorithms.
-For example, the post-levelling and temporal series estimates for initialisation will be more carefully analysed and implemented during this work in order to minimise the computational cost of the non-linear step. The work on non-linear step will focus on improving the convergence rate by focussing the attention on the line-search and phase update algorithms. Finally, two of the major areas that stand to benefit from this work are global optimisation methods and integration with multiphysics framework \texttt{MOOSE}. The rigorous application based study of global optimisation methods which will be performed during this work is expected to provide a definitive answer to the question of reliability, efficiency and robustness of various candidate methods for application to thermodynamic equilibrium problems. The optimum method will then be implemented to achieve the best possible performance. Regarding \texttt{MOOSE} integration, this work will try to minimise the costs associated with thermodynamic equilibrium calculations, which significantly impede performance of multiphysics simulations, by minimising thermodynamic computation costs themselves  and reducing overheads  related to coupling which also contribute towards the performance impediment.
+For example, the post-levelling and temporal series estimates for initialisation will be more carefully analysed and implemented during this work in order to minimise the computational cost of the non-linear step. The work on non-linear step will focus on improving the convergence rate by focussing the attention on the line-search and phase update algorithms. Finally, two of the major areas that stand to benefit from this work are global optimisation methods and integration with multiphysics framework {MOOSE}. The rigorous application based study of global optimisation methods which will be performed during this work is expected to provide a definitive answer to the question of reliability, efficiency and robustness of various candidate methods for application to thermodynamic equilibrium problems. The optimum method will then be implemented to achieve the best possible performance. Regarding {MOOSE} integration, this work will try to minimise the costs associated with thermodynamic equilibrium calculations, which significantly impede performance of multiphysics simulations, by minimising thermodynamic computation costs themselves  and reducing overheads  related to coupling which also contribute towards the performance impediment.

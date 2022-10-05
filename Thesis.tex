@@ -12,6 +12,7 @@
 \usepackage{nameref}
 \usepackage{xfrac}
 \usepackage{algorithm2e}
+%\usepackage{subfigure}
 
 \theoremstyle{definition}
 \newtheorem*{objective}{Objective}
@@ -20,7 +21,7 @@
 \newtheorem*{constraint}{Constraints}
 
 \newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
-
+ 
 \newcommand{\compresslist}{
 	\setlength{\itemsep}{1pt}
 	\setlength{\parskip}{0pt}
@@ -34,6 +35,12 @@
 
 \DeclareSIUnit{\atmosphere}{atm}
 \DeclareSIQualifier{\electric}{e}
+
+\DeclareMathOperator*{\argmin}{arg\,min} % thin space, limits underneath in displays
+\DeclareMathOperator*{\argmax}{arg\,max} % thin space, limits underneath in displays
+%\DeclareMathOperator*{\argmin}{argmin} % no space, limits underneath in displays
+%\DeclareMathOperator{\argmin}{arg\,min} % thin space, limits on side in displays
+%\DeclareMathOperator{\argmin}{argmin} % no space, limits on side in displays
 
 \input{macros}
 
@@ -88,7 +95,8 @@
 
 \cleardoublepage
 \listofalgorithms
-
+\addcontentsline{toc}{chapter}{List of Algorithms}
+\setheader{List of Algorithms}
 % \include{preface/preface}
 % \include{summary/summary}
 

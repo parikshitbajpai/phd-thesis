@@ -1,13 +1,13 @@
 \chapter{Literature Review} \label{chap:litreview}
 
-	Robust and fast methods for computing chemical equilibrium in complex systems are widely used in materials and chemical industries. While industrial applications essentially require calculation tools capable of discriminating between stable and unstable phases and converging to nontrivial solutions, numerical equilibrium calculations have historically focussed on representing dominant chemical reactions using the Law of Mass Action. It was only during and after the World War {II} that numerical approaches amenable to computer programming were developed. This chapter provides a literature review describes the main methods adopted for chemical equilibrium calculations and reviews the many existing thermodynamic equilibrium codes.
-
+	Robust and fast methods for computing chemical equilibrium in complex systems are widely used in materials and chemical industries. While industrial applications essentially require calculation tools capable of discriminating between stable and unstable phases and converging to nontrivial solutions, numerical equilibrium calculations have historically focussed on representing dominant chemical reactions using the Law of Mass Action. It was only during and after the World War {II} that numerical approaches amenable to computer programming were developed. Since then, there has been significant growth in the number of methods and softwares for solving the equilibrium thermodynamics problem.
+	
 \section{Numerical Methods for Thermodynamic Equilibrium}
 	Up until the 1940s, chemical equilibria computations were based on two different methods. The first relied heavily on the assumption that only a few molecular species would be present in the final equilibrium and the law of mass action could be applied to these systems and the resulting system of non-linear equations was solvable using the relatively unsophisticated techniques of the time. The second method relied on a tedious trial-and-error approach with the user's intuition playing a significant role \cite{vanZeggeren11}. It was only during the Second World War that, fuelled by the development of rockets, research towards developing computational methods for chemical equilibrium gained momentum. This research was mainly driven by the fact that an accurate knowledge of chemical equilibrium of the propellants was a requirement for the design of rockets. However, all the methods developed at the time were based on the law of mass action and the procedure was not scalable to very large systems where it would be difficult to account for all the possible reactions.
 
 	The first major breakthrough in computerising chemical equilibrium calculations was made after the Second World war. In 1946, Brinkley came up with a generalised scheme to approach equilibrium computation by giving an analytical criterion for the number of independent components in a multi-component system \cite{vanZeggeren11}. However, the most significant breakthrough in the calculation of thermodynamic equilibria was made at the RAND Corporation by White, Johnson and Dantzig  \cite{White:58}. Since then a few other methods have been proposed but none has found as much success as the method proposed by White \textit{et al.} In fact, even the method proposed by White \textit{et al.} has only undergone a few minor changes and more recent algorithm developments have focussed on other complimentary routines, such as initialisation, describes later. This section reviews the major methods that have been proposed to compute thermodynamic equilibria.
 
-	\subsection{Equilibrium Constants}
+	\subsection{Equilibrium constants}
 	The earliest computational method for finding thermodynamic equilibrium relied on the equilibrium constants of individual reactions and were primarily applied to gas phase equilibria. The equilibrium constant, $K$, is defined as follows:
 	\begin{equation}\label{eq:eqbconst}
 		K = \frac{\prod^{N_p} x_{i,p}^{\nu_i}}{\prod^{N_r} x_{i,r}^{\nu_i}}
@@ -18,7 +18,7 @@
 
 	Although Brinkley's method serves well for small systems suitable for hand calculations, it relies heavily on user intuition and prior knowledge of the reactions taking place. Furthermore, it neglects the effects of non-ideality and its derivatives due to mathematical difficulties \cite{Zeleznik:1968aa}. Eventually, owing to generalities and numerical superiorities of the Gibbs Energy Minimisation (GEM) method, the Brinkley method fell out of favour among the scientific community.
 
-	\subsection{Gibbs Energy Minimisation (GEM)}
+	\subsection{Gibbs energy minimisation (GEM)}
 	The numerical technique of minimising the Gibbs energy of the system was originally proposed by White, Johnson and Dantzig \cite{White:58} and is based on the method of steepest descent of second order and was therefore referred to as the \emph{Second Order Steepest Descent Method}. This methodology, now commonly described as \emph{Gibbs energy minimisation}, has also been called as the \emph{RAND method} owing to the employer of the developers of the method.
 
 	Gibbs energy minimisation is based on identifying a unique combination of species and phases that yield a minimum in the integral Gibbs of a closed isothermal isobaric system from amongst the many possible candidates. The selection of candidates is based on the first and second laws of thermodynamic and is subject to the conditions of thermochemical equilibrium - satisfaction of the Gibbs phase rule, conservation of mass. Numerically, this amounts to systematically adjusting the Lagrangian multipliers - some which represent the chemical potential of the system components - to change the estimated amount of each species, making the Gibbs energy of the system progressively more negative.
@@ -29,14 +29,14 @@
 
 	An impediment in numerically solving thermodynamic equilibria is the requirement of an initial estimate for the optimisation. Eriksson and Thompson \cite{Eriksson89} proposed a method called \emph{levelling}, which is capable of closely estimating the dominant species and their quantities in the phase assemblage. The process requires a relatively small number of iterations and the number of iterations to reach convergence does not rapidly increase with the number of species in the system. These characteristics of levelling are well suited to large systems, such as nuclear materials. Another problem that arises when using GEM method is the negative mole fraction arising due to the evaluation of logarithmic term while computing the chemical potentials. White \textit{et al.} proposed using a numerical dampening technique to avoid erroneous results. Finally, ensuring that the Gibbs energy of the system is at global minimum and not at one of the many local equilibria is a significant challenge that must be handled properly to ensure correct results. Despite the challenges, GEM has been shown to be the best available method for computing thermodynamic equilibrium and is the de-facto default solver in almost all the thermodynamic equilibrium codes.
 
-	\subsection{Partitioning of Gibbs Energy (PGE)}
-	The developer of Gibbs energy minimisation, W.B. White, proposed another numerical technique named \emph{Partitioning of Free Energy}  \cite{White67}, which is substantially different from the GEM method. In this method, the mass equations are differentiated with respect to Lagrange multipliers and though a number of numerical advantages were shown, the method was only applicable to homogeneous systems comprised of ideal gas and could not be used for heterogeneous systems involving pure stoichiometric phases and/or multiple solution phases \cite{White67,vanZeggeren11}. The significant disadvantages of this method compared to GEM led to it being mostly dismissed by the thermodynamic community until Piro \cite{Piro11b} reconsidered a modified form of the method by incorporating principles of the levelling method and employed it in the development of thermochemistry library \texttt{Thermochimica} \cite{Piro13}.
+	\subsection{Partitioning of Gibbs energy (PGE)}
+	The developer of Gibbs energy minimisation, W.B. White, proposed another numerical technique named \emph{Partitioning of Free Energy}  \cite{White67}, which is substantially different from the GEM method. In this method, the mass equations are differentiated with respect to Lagrange multipliers and though a number of numerical advantages were shown, the method was only applicable to homogeneous systems comprised of ideal gas and could not be used for heterogeneous systems involving pure stoichiometric phases and/or multiple solution phases \cite{White67,vanZeggeren11}. The significant disadvantages of this method compared to GEM led to it being mostly dismissed by the thermodynamic community until Piro \cite{Piro11b} reconsidered a modified form of the method by incorporating principles of the levelling method and employed it in the development of thermochemistry library {Thermochimica} \cite{Piro13}.
 
-	In the approach taken by Piro, constraints the Gibbs' phase rule and the Gibbs energy of the system while iterating to satisfy the mass balance constraint. The method constrains the chemical potential of the species and phases in terms of the chemical potentials of the system components, thus formally relating the mass balance to chemical potential of system components. The objective of the method is to partition the Gibbs energy of the system among the elements to minimise the residuals of the mass balances. Thus, in this method, the solver attempts to find the roots of the mass balance residual vector while the Gibbs criteria is inherently verified and need not be verified at every iteration thus simplifying the numerical approach. This approach can then be used for heterogeneous systems, which may include stoichiometric phases, ideal solution phases and even non-ideal solution phases.
+	Piro's approach \cite{Piro13} constraints the Gibbs' phase rule and the Gibbs energy of the system while iterating to satisfy the mass balance constraint. The method constrains the chemical potential of the species and phases in terms of the chemical potentials of the system components, thus formally relating the mass balance to chemical potential of system components. The objective of the method is to partition the Gibbs energy of the system among the elements to minimise the residuals of the mass balances. Thus, in this method, the solver attempts to find the roots of the mass balance residual vector while the Gibbs criteria is inherently verified and need not be verified at every iteration thus simplifying the numerical approach. This approach can then be used for heterogeneous systems, which may include stoichiometric phases, ideal solution phases and even non-ideal solution phases.
 
-	Numerically, GEM is an optimising procedure while PGE solves for the roots of a simultaneous system of linear equation \cite{vanZeggeren11}. As a result, the chemical potential terms for the solution phase are included in the GEM method but absent from the functional vectors in PGE. Additionally, the approaches differ in the computation of a new set of mole numbers, which must be positive. Computation of non-negative logarithmic terms can result in non-real numbers in GEM causing numerical difficulties and necessitating the use of numerical dampening which in turn reduces the rate of convergence. However, in PGE, additional  dampening is not required since the mole fractions, being defined as exponentials of real numbers, will always be positive.
+	Numerically, GEM is an optimisation procedure while PGE solves for the roots of a simultaneous system of linear equation \cite{vanZeggeren11}. As a result, the chemical potential terms for the solution phase are included in the GEM method but absent from the functional vectors in PGE. Additionally, the approaches differ in the computation of a new set of mole numbers, which must be positive. Computation of non-negative logarithmic terms can result in non-real numbers in GEM causing numerical difficulties and necessitating the use of numerical dampening which in turn reduces the rate of convergence. However, in PGE, additional dampening is not required since the mole fractions, being defined as exponentials of real numbers, will always be positive.
 
-	A disadvantage of the PGE method is that it requires moles fractions to be explicitly expressed as functions of chemical potentials of the species. As shown before, chemical potentials of the species can be uniquely expressed as a functions of mole fraction but not the other way around. Thus for non-ideal species, the PGE method fails in the absence of explicit functions of mole fractions in terms of chemical potentials. Despite all its numerical advantages, the PGE method proved to be less robust than the GEM approach and was eventually replaced by GEM in \texttt{Thermochimica}. Though promising, the method has since not been used in any other thermodynamic equilibrium solver.
+	A disadvantage of the PGE method is that it requires moles fractions to be explicitly expressed as functions of chemical potentials of the species. As shown before, chemical potentials of the species can be uniquely expressed as a functions of mole fraction but not the other way around. Thus for non-ideal species, the PGE method fails in the absence of explicit functions of mole fractions in terms of chemical potentials. Despite all its numerical advantages, the PGE method proved to be less robust than the GEM approach and was eventually replaced by GEM in Thermochimica. Though promising, the method has only been used in a limited number of other applications, a couple of them being by Riel \textit{et al.} \cite{Riel:2022aa} and by Kruskopf \cite{Kruskopf:2018aa}.
 
 	\subsection{Other Methods}
 	Several other numerical methods have been proposed for computing thermodynamic equilibria but none has received success like GEM. The most notable of these is the approach by Srinivas and Rangaiah which uses  the Random Tunnelling Algorithm (RTA) based on the concept of Terminal Repeller and Unconstrained Subenergy Tunnelling (TRUST) algorithm \cite{Srinivas06}. The TRUST algorithm is akin to the steepest descent method but differs in that the minimisation is performed in two stages - a local minimisation followed by global minimisation through tunnelling \cite{Nocedal06}.  However, the method is limited by the system size and shows satisfactory performance for relatively small systems of up to 10 variable \cite{Nocedal06}.
@@ -58,12 +58,94 @@
 \section{Gibbs Energy Minimisers}
 	Over the years, a number of codes have been developed to compute thermodynamic equilibria in complex systems and many of these codes are summarised in table~\ref{tab:gemreview}. The most noticeable of these codes include SOLGAS \cite{Eriksson71} and its successor SOLGASMIX \cite{Eriksson:1975aa}, which are well known for their versatility, computational efficiency and the widespread availability of source code. In fact, SOLGAS has been used as the solver in codes like HSC \cite{HSCSoftware:aa}, ChemSage \cite{Eriksson90} and FACT \cite{Thompson83}. FACT combined the thermodynamic equilibrium solver with a comprehensive thermodynamic database and, by implementing the levelling method, eliminated the need for the user to manually input initial estimates. This made FACT a popular choice in the thermodynamics community. FACT merged with ChemSage to create a new standalone software called FactSage \cite{Bale02}, which is the current version of the SOLGAS family. Another app in the family, called ChemApp \cite{Eriksson:2008aa,Petersen:2007aa}, is a software library that can be called from external codes and has similar capabilities as FactSage.
 
-	Another family of popular thermodynamic equilibria tools is ThermoCalc \cite{ANDERSSON2002273} and is widely used in thermodynamic model development, thermodynamic equilibrium calculations, and  phase diagram construction. It has been developed for complex heterogeneous interaction systems with strongly non-ideal solution phases and can be applied to any thermodynamic system in the fields of chemistry, metallurgy, material science, alloy development, geochemistry, semiconductors etc. depending on the kind of database it is connected to. A unique advantage of ThermoCalc compared to other thermodynamic codes is that it allows explicit conditions on individual phase compositions or configuration whereas most software can handle conditions on the overall composition only. For example, activities and chemical potentials of the components, volumes, enthalpies, entropies etc can also be set as conditions.  OpenCalphad \cite{Sundman:2015aa} is an open-source code led by Bo Sundmann, one of the original developers of ThermoCalc, and it aims to provide facilities for multicomponent equilibrium calculations using the Compound Energy Formalism (CEF) and other models both for interactive calculations and in application software. It has been designed to allow interested scientists to develop thermodynamic models and assess model parameters for thermodynamic databases to describe experimental data as well as theoretical results from DFT calculations to calculate phase equilibria and phase diagrams.
+	Another family of popular thermodynamic equilibria tools is ThermoCalc \cite{ANDERSSON2002273} and is widely used in thermodynamic model development, thermodynamic equilibrium calculations, and  phase diagram construction. It has been developed for complex heterogeneous interaction systems with strongly non-ideal solution phases and can be applied to any thermodynamic system in the fields of chemistry, metallurgy, material science, alloy development, geochemistry, semiconductors etc. depending on the kind of database it is connected to. A unique advantage of ThermoCalc compared to other thermodynamic codes is that it allows explicit conditions on individual phase compositions or configuration whereas most software can handle conditions on the overall composition only. For example, activities and chemical potentials of the components, volumes, enthalpies, entropies etc can also be set as conditions.  OpenCalphad \cite{Sundman:2015aa} is an open-source code led by Bo Sundmann, one of the original developers of ThermoCalc, and it aims to provide facilities for multicomponent equilibrium calculations using the Compound Energy Formalism (CEF) and other models both for interactive calculations and in application software. It has been designed to allow interested scientists to develop thermodynamic models and assess model parameters for thermodynamic databases to describe experimental data as well as theoretical results from DFT calculations to calculate phase equilibria and phase diagrams. Another notable code developed with the goal of enabling uncertainty quantification is PyCalphad developed by Otis \textit{et al.} \cite{Otis:2017aa}.
 
 	Amongst the many thermodynamic equilibrium codes available in the open literature, one of the common limitations pertains to the relatively small number of standalone calculations that these codes are designed to perform. While suitable for problem specific calculations, where a few failures in convergence would have no significant bearing on the performance, these codes cannot be integrated into multiphysics softwares. In addition, since the mathematical difficulty in achieving convergence increases with the number of phases that can coexist in the system, most of these softwares  limit the maximum number of phases and system components that can be simultaneously considered. While this has no bearing on applications such as combustion, the limited number of phases that can be solved creates a severe impediment for nuclear applications.
 
 	In the nuclear materials community, three code families have garnered particular attention - GEMINI \cite{Cheynet09}, ThermoCalc \cite{ANDERSSON2002273} and FactSage \cite{Bale02}. Due to their established reputation in the nuclear community, these codes have traditionally been applied in development of several thermodynamic treatments for nuclear fuels and materials. In fact these three codes offer a number of advantages over the other codes reviewed here, including the capability of handling a very large number of system components, phases and species, and the ability to use a wide range of sophisticated thermodynamic models.
-
+	
+{%\newgeometry{margin=1cm}
+%%\begin{landscape}
+%\pagestyle{empty}
+%		\begin{longtable}{p{0.15\textwidth} p{0.25\textwidth} p{0.1\textwidth} p{0.125\textwidth} p{0.125\textwidth} p{0.125\textwidth} p{0.125\textwidth}}
+\renewcommand{\arraystretch}{0.7}
+	\begin{longtable}{@{}lclcrcrcrcr@{}}
+		\caption{A review of the major thermodynamic equilibrium codes.}\\
+		\toprule
+		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Code / Author}}} &\phantom{} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{Method}}} &\phantom{} & \multicolumn{7}{c}{\textbf{Models}} \\
+		\cmidrule{5-11}
+		\multicolumn{1}{c}{} & \phantom{} & \multicolumn{1}{c}{} & \phantom{} & \multicolumn{1}{c}{\textbf{Stoich.}} & \phantom{} & \multicolumn{1}{c}{\textbf{Ideal}} & \phantom{} & \multicolumn{1}{c}{\textbf{Non-ideal}} & \phantom{} & \multicolumn{1}{c}{\textbf{Ionic}} \\
+		\midrule
+		\endfirsthead
+		\caption[]{A review of the major thermodynamic equilibrium codes (contd).}\\
+		\toprule
+		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Code / Author}}} &\phantom{} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{Method}}} &\phantom{} & \multicolumn{7}{c}{\textbf{Models}} \\
+		\cmidrule{5-11}
+		\multicolumn{1}{c}{} & \phantom{} & \multicolumn{1}{c}{} & \phantom{} & \multicolumn{1}{c}{\textbf{Stoich.}} & \phantom{} & \multicolumn{1}{c}{\textbf{Ideal}} & \phantom{} & \multicolumn{1}{c}{\textbf{Non-ideal}} & \phantom{} & \multicolumn{1}{c}{\textbf{Ionic}} \\
+		\midrule
+		\endhead
+		ANGE (SAGE) \cite{Baurens:2014aa} && GEM && Yes && Yes && Yes && Yes \\
+		CALMIX \cite{GREINER1988529} && GEM && Yes && Yes && Yes && No \\
+		Cantera \cite{Goodwin:aa} && GEM && No && Yes && Yes && No \\
+		Castier \textit{et al.} \cite{CASTIER1989237} && GEM && No && Yes && No && No \\
+		CatCalc \cite{Shobu09} &&GEM && Yes && Yes && Yes && No \\
+		CEA \cite{Gordon94} && GEM && Yes && Yes && No && No \\
+		ChemApp \cite{Eriksson:2008aa} && GEM && Yes && Yes && Yes && Yes\\
+		ChemSage \cite{Eriksson90} && GEM && Yes && Yes && Yes && Yes\\
+		ChemSheet \cite{Koukkari:2005aa} && GEM && Yes && Yes && Yes && Yes\\
+		COEXIST \cite{Ahafat:1992aa} && Levelling && Yes && No && No && No\\
+		Dantzig \textit{et al.} \cite{Dantzig:1958aa}&& Simplex && No && Yes && No && No\\
+		Ebel \textit{et al.} \cite{Ebel:2000aa} && BNR && Yes && Yes && No && No\\
+		ESP \cite{Rafal:2003aa} && LMA && No && Yes && No && No\\
+		FACT \cite{Thompson83} && GEM && Yes && Yes && Yes && Yes\\
+		FactSage \cite{Bale83} && GEM && Yes && Yes && Yes && Yes\\
+		GEMINI 1 \cite{Cheynet09} && GEM && Yes && Yes && No && No\\
+		GEMINI 2 \cite{Cheynet09} && GEM && Yes && Yes && Yes && Yes\\
+		GEM-Selektor \cite{Karpov:aa} && GEM && Yes && Yes && No && Yes\\
+		GEMIPM2K \cite{Karpov:aa} && GEM && Yes && Yes && No && Yes\\
+		Gibbs \cite{COOL2010393} && C-Hull && {} && Yes && Yes && {}\\
+		GLOPEQ \cite{MCDONALD19971} && GEM* && No && Yes && No && No\\
+		HALTA \cite{Sillen:1962aa} && LMA && No && Yes && No && No\\
+		HALTAFALL \cite{INGRI19671261} && LMA && Yes && Yes && No && No\\
+		Han \textit{et al.} \cite{HAN1998897} && LMA* && No && Yes && No && No\\
+		HSC \cite{HSCSoftware:aa} && GEM && Yes && Yes && Yes && Yes\\
+		Koukkari \textit{et al.} \cite{KOUKKARI200618} && Const. GEM && Yes && Yes && Yes && Yes\\
+		Kruskopf \cite{Kruskopf:2018aa} && PGE && Yes && Yes && Yes && Yes\\
+		Lantagne \textit{et al.} \cite{LANTAGNE1988589} && {GEM} && No && Yes && Yes && No\\
+		Lee \textit{et al.} \cite{PENGLEE19991183} && {GEM} && No && Yes && Yes && No\\
+		Lukas \textit{et al.} \cite{Lukas77} && {GEM} && Yes && Yes && Yes && No\\
+		MAGEMin \cite{Riel:2022aa} && {PGE} &&  && Yes && Yes && \\
+		MatCalc \cite{Kozeschnik:2001aa} && {GEM} &&  && Yes && Yes && \\
+		MTDATA  \cite{Davies02} && {GEM} && No && Yes && Yes && No\\
+		NUTS \cite{Loukusa:2014aa} && {GEM} && Yes && Yes && Yes && Yes\\
+		OpenCalphad \cite{Sundman:2015aa} && {GEM} && Yes && Yes && Yes && Yes\\
+		PANDAT \cite{Cao09} && {GEM} && Yes && Yes && Yes && Yes\\
+		Pereira \textit{et al.} \cite{PEREIRA20101} && {HEM} && No && Yes && No && No\\
+		PyCalphad \cite{Otis:2017aa} && {Lower C-Hull} && Yes && Yes && Yes && No\\
+		Rossi \textit{et al.} \cite{ROSSI20111226} && GEM && Yes && Yes && No && No\\
+		Schnedler \cite{SCHNEDLER1984265} && GEM && Yes && Yes && No && No\\
+		Smith and Missen \cite{Smith:1988aa} && GEM && No && Yes && No && No\\
+		SOLGAS \cite{Eriksson71} && GEM && No && Yes && No && No\\
+		SOLGASMIX \cite{Eriksson:1975aa} && GEM && Yes && Yes && Yes && No\\
+		SOLGASMIX-PV \cite{Besmann:1977aa} && GEM && Yes && Yes && Yes && No\\
+		SOLGASWATER \cite{ERIKSSON1979375} && GEM && Yes && Yes && Yes && Yes\\
+		Song \textit{et al.} \cite{SONG19912513} && GEM* && Yes && Yes && No && No\\
+		Srinivas \textit{et al.} \cite{Srinivas06} && GEM-RTA && No && Yes && No && No\\
+		STANJAN / EQUIL \cite{Reynolds86} && PGE && No && Yes && No && No\\
+		Storey \textit{et al.} \cite{Storey:1964aa} && GEM && Yes && Yes && No && No\\
+		THERIAK \cite{DECAPITANI19872639} && GEM && No && Yes && Yes && No\\
+		ThermoCalc \cite{ANDERSSON2002273} && GEM && Yes && Yes && Yes && Yes\\
+		Thermochimica \cite{Piro13} && GEM && Yes && Yes && Yes && Yes\\
+		ThermoSolver \cite{Piro11b} && PGE && Yes && Yes && Yes && Yes\\
+		VICTORIA \cite{Heams:1992aa} && LMA && Yes && Yes && No && No\\
+		White \textit{et al.} \cite{White58a} && GEM && No && Yes && No && No\\
+		NASA \cite{Zeleznik:1968aa} && NASA && No && Yes && No && No\\
+		\bottomrule\label{tab:gemreview}
+	\end{longtable}
+%%\end{landscape}
+%\restoregeometry
+}
+	
 	\section{Global Optimisation}
 	Calculation of thermodynamic equilibrium is a challenging problem since the objective functions are multivariable and can often be non-convex and highly non-linear. Furthermore, additional complexities arise near the phase boundaries, in the vicinity of critical points, etc. \cite{Wakeham04,TEH2002745}. Over the years, a number of different methods have been proposed to find the global minimum for non-convex problems in the applied mathematics community. These methods can be classified into stochastic and deterministic methods. However, even with a large number of different methods available in the literature, finding a method that can be applied to all types of problems has proven impractical. The success of every method is problem-specific and most of the methods reported in the literature have focussed on either relatively small systems, such as liquid-vapour equilibria, or perform relatively small number of calculations.
 
@@ -71,82 +153,9 @@
 	Deterministic optimisation methods exploit the analytical properties of the problem to generate a deterministic sequence of points converging to a global optimum \cite{PARDALOS2000209}. While these methods can provide a guaranteed global optimum, they require certain properties of objective function and constraints such a continuity and convexity. These methods include the \emph{Branch and Bound algorithm}, \emph{Homotopy Continuation Methods}  and \emph{Interval Analysis} \cite{Floudas99}.
 
 	The branch and bound algorithm is a class of adaptive partitioning strategies that iteratively apply partitioning, sampling and subsequent upper and lower bounding procedures to solve global optimisation problems \cite{Floudas99}.  These methods typically rely on some \textit{a priori} knowledge of the form of the objective function to  develop convex terms of the optimisation problem. However, they are often computationally expensive and slow \cite{Wakeham04,Nichita02} because the method recursively splits the search space into smaller subspaces and performs function evaluations within each subspace. The homotopy continuation method provides a smooth transition between an approximate solution (often linear) and the true solutions of a non-linear system of equations by gradually introducing the non-linearities through a scalar homotopy parameter \cite{B.-Riggs:1994aa,JALALI20082333}. As a result, the method is capable of finding all roots of a set of non-linear equations. While the method guarantees global convergence to a single solution, it does not guarantee global convergence to multiple solutions. Moreover, the method has been successfully demonstrated only for simple polynomials \cite{Zhang11}.
+For the case of thermodynamic equilibrium calculations, Piro and Simunovic \cite{Piro16} have shown that the branch and bound algorithm has proven to be the most promising of all deterministic methods
 
-	For the case of thermodynamic equilibrium calculations, Piro and Simunovic \cite{Piro16} have shown that the branch and bound algorithm has proven to be the most promising of all deterministic methods and will be discussed in more detail in chapter~\ref{chapter_5}.
 
-
-\newgeometry{margin=1cm}
-\begin{landscape}
-\pagestyle{empty}
-%		\begin{longtable}{p{0.15\textwidth} p{0.25\textwidth} p{0.1\textwidth} p{0.125\textwidth} p{0.125\textwidth} p{0.125\textwidth} p{0.125\textwidth}}
-	\begin{longtable}{@{}p{0.15\textwidth}cp{0.25\textwidth}clcrcrcrcr@{}}
-		\caption{A review of the major thermodynamic equilibrium codes.}\\
-		\ra{1.3}\\
-		\toprule
-		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Code / Author}}} &\phantom{} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{Applications}}} & \phantom{} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{Optimisation Method}}} &\phantom{} & \multicolumn{7}{c}{\textbf{Thermodynamic Models}} \\
-		\cmidrule{7-13}
-		\multicolumn{1}{c}{} & \phantom{} & \multicolumn{1}{c}{} & \phantom{} & \multicolumn{1}{c}{} & \phantom{} & \multicolumn{1}{c}{\textbf{Stoichiometric}} & \phantom{} & \multicolumn{1}{c}{\textbf{Ideal Solution}} & \phantom{} & \multicolumn{1}{c}{\textbf{Non-ideal Solution}} & \phantom{} & \multicolumn{1}{c}{\textbf{Charged}} \\
-		\midrule
-		\endhead
-		ANGE \cite{Baurens:2014aa} && {Used for coupled simulations of fission product elements. Formerly, SAGE.} && GEM && Yes && Yes && Yes && Yes \\
-		CALMIX \cite{GREINER1988529} && {} && GEM && Yes && Yes && Yes && No \\
-		Cantera \cite{Goodwin:aa} && {Used for applications including combustion, detonations, electrochemical energy conversion and storage, fuel cells, etc.} && GEM && No && Yes && Yes && No \\
-		Castier \textit{et al.} \cite{CASTIER1989237} && {Simultaneous chemical and phase equilibria in organic chemistry.} && GEM && No && Yes && No && No \\
-		CatCalc \cite{Shobu09} && {} && GEM && Yes && Yes && Yes && No \\
-		CEA \cite{Gordon94} && {Rocket design and combustion} && GEM && Yes && Yes && No && No \\
-		ChemApp \cite{Eriksson:2008aa} && {General purpose. Direct coupling to external softwares.} && GEM && Yes && Yes && Yes && Yes\\
-		ChemSage \cite{Eriksson90} && {General purpose standalone software} && GEM && Yes && Yes && Yes && Yes\\
-		ChemSheet \cite{Koukkari:2005aa} && {General purpose Microsoft Excel add-in for ChemApp} && GEM && Yes && Yes && Yes && Yes\\
-		COEXIST \cite{Ahafat:1992aa} && {Metallurgy} && Levelling && Yes && No && No && No\\
-		Dantzig \textit{et al.} \cite{Dantzig:1958aa}&& {Combustion} && Simplex && No && Yes && No && No\\
-		Ebel \textit{et al.} \cite{Ebel:2000aa}&& {Cosmic nebular gases enriched in dust} && BNR && Yes && Yes && No && No\\
-		ESP \cite{Rafal:2003aa}&& {Aqueous, corrosion, oil \& gas, pharmaceuticals} && LMA && No && Yes && No && No\\
-		FACT \cite{Thompson83} && {General purpose standalone software. Also capable of database development and phase diagram construction.} && GEM && Yes && Yes && Yes && Yes\\
-		FactSage \cite{Bale83} && {General purpose standalone software. Also capable of database development and phase diagram construction.} && GEM && Yes && Yes && Yes && Yes\\
-		GEMINI 1 \cite{Cheynet09} && {Inorganic chemistry} && GEM && Yes && Yes && No && No\\
-		GEMINI 2 \cite{Cheynet09} && {Metallurgy, inorganic chemistry, nuclear materials, etc.} && GEM && Yes && Yes && Yes && Yes\\
-		GEM-Selektor \cite{Karpov:aa}&& {Geology, nuclear waste management} && GEM && Yes && Yes && No && Yes\\
-		GEMIPM2K \cite{Karpov:aa} && {Direct coupling of GEM-Selektor to external software} && GEM && Yes && Yes && No && Yes\\
-		Gibbs \cite{COOL2010393}&& {Symbolic thermodynamics and phase diagram construction} && Convex hull && {} && Yes && Yes && {}\\
-		GLOPEQ \cite{MCDONALD19971} && {Oil and gas} && Modified GEM && No && Yes && No && No\\
-		HALTA \cite{Sillen:1962aa} && {Inorganic chemistry} && LMA && No && Yes && No && No\\
-		HALTAFALL \cite{INGRI19671261} && {Inorganic chemistry} && LMA && Yes && Yes && No && No\\
-		Han \textit{et al.} \cite{HAN1998897}&& {Distillation, chemical extraction} && Modified LMA && No && Yes && No && No\\
-		HSC \cite{HSCSoftware:aa} && {General (uses SOLGASMIX)} && GEM && Yes && Yes && Yes && Yes\\
-		Koukkari \textit{et al.} \cite{KOUKKARI200618} && {Modelling of chemical processes and materials. Also accounts for work terms and additional constraints.} && Constrained GEM && Yes && Yes && Yes && Yes\\
-		Lantagne \textit{et al.} \cite{LANTAGNE1988589} && {} && {GEM} && No && Yes && Yes && No\\
-		Lee \textit{et al.} \cite{PENGLEE19991183} && {Organic Chemistry} && {GEM} && No && Yes && Yes && No\\
-		Lukas \textit{et al.} \cite{Lukas77} && {Phase diagram construction} && {GEM} && Yes && Yes && Yes && No\\
-		MatCalc && {Metallurgy} \cite{Kozeschnik:2001aa} && {GEM} &&  && Yes && Yes && \\
-		MTDATA  \cite{Davies02} && {General purpose. Direct coupling to external softwares.} && {GEM} && No && Yes && Yes && No\\
-		NUTS \cite{Loukusa:2014aa} && {Nuclear fuels} && {GEM} && Yes && Yes && Yes && Yes\\
-		OpenCalphad \cite{Sundman:2015aa} && {General purpose, model development.} && {GEM} && Yes && Yes && Yes && Yes\\
-		PANDAT \cite{Cao09} && {Metallurgy, phase diagram construction} && {GEM} && Yes && Yes && Yes && Yes\\
-		Pereira \textit{et al.} \cite{PEREIRA20101} && {Fluid phase equilibria, liquid crystals} && {HEM} && No && Yes && No && No\\
-		pycalphad \cite{Otis:2017aa} && {Metallurgy, phase diagram construction} && {Lower convex hull} && Yes && Yes && Yes && No\\
-		Rossi \textit{et al.} \cite{ROSSI20111226} && {Organic chemical separation} && GEM && Yes && Yes && No && No\\
-		Schnedler \cite{SCHNEDLER1984265} && {Integration of thermodynamic equilibrium into finite element calculations and CFD.} && GEM && Yes && Yes && No && No\\
-		Smith and Missen \cite{Smith:1988aa}&& {Combustion} && GEM && No && Yes && No && No\\
-		SOLGAS \cite{Eriksson71} && {Mettalurgy} && GEM && No && Yes && No && No\\
-		SOLGASMIX \cite{Eriksson:1975aa} &&  {General purpose} && GEM && Yes && Yes && Yes && No\\
-		SOLGASMIX-PV \cite{Besmann:1977aa} && {General purpose} && GEM && Yes && Yes && Yes && No\\
-		SOLGASWATER \cite{ERIKSSON1979375} && {General purpose, aqueous} && GEM && Yes && Yes && Yes && Yes\\
-		Song \textit{et al.} \cite{SONG19912513} && {} && Modified GEM && Yes && Yes && No && No\\
-		Srinivas \textit{et al.} \cite{Srinivas06} && {} && GEM-RTA && No && Yes && No && No\\
-		STANJAN / EQUIL \cite{Reynolds86} && {Combustion} && PGE && No && Yes && No && No\\
-		Storey \textit{et al.} \cite{Storey:1964aa} && {Combustion} && First order GEM && Yes && Yes && No && No\\
-		THERIAK \cite{DECAPITANI19872639} && {Combustion, metallurgy, geology} && GEM && No && Yes && Yes && No\\
-		ThermoCalc \cite{ANDERSSON2002273} && {General purpose, model development, phase diagram construction} && GEM && Yes && Yes && Yes && Yes\\
-		Thermochimica \cite{Piro13} && {General purpose, integration in multiphysics codes} && GEM && Yes && Yes && Yes && Yes\\
-		ThermoSolver \cite{Piro11b} && {General purpose, integration in multiphysics codes} && PGE && Yes && Yes && Yes && Yes\\
-		VICTORIA \cite{Heams:1992aa} && {Fission gas release in nuclear fuels} && LMA && Yes && Yes && No && No\\
-		White \textit{et al.} \cite{White58a} && {Organic chemistry, combustion} && GEM && No && Yes && No && No\\
-		Zeleznik \textit{et al.} / NASA \cite{Zeleznik:1968aa} && {Combustion, rocket propellant} && NASA && No && Yes && No && No\\
-		\bottomrule
-		\label{tab:gemreview}
-	\end{longtable}
-\end{landscape}
-\restoregeometry
 
 
 	\subsection{Stochastic Methods}
@@ -205,7 +214,7 @@
 
 	Recently significant effort has been invested in integrating thermodynamic equilibrium computations in multiphysics codes.  To highlight the relevance of coupling thermodynamic equilibrium calculations in multiphysics codes, some of the notable works are discussed in this section.
 
-	Piro integrated the thermochemistry solver \texttt{Thermochimica} into the Advance Multi-Physics \texttt{AMP} code developed by Oak Ridge National Laboratory \cite{Piro11b}. This allowed the investigation of an irradiated fuel pellet by using isotopic evolution of irradiated nuclear fuel which was calculated through the software package \texttt{ORIGEN}. The integration of \texttt{Thermochimica} in \texttt{AMP} is shown in figure~\ref{fig:amp} and the capabilities of this simulation framework were demonstrated through a scenario that simulates the behaviour of highly irradiated \ce{UO2} fuel, results of which are shown in figure~\ref{fig:pirojnm}.
+	Piro integrated the thermochemistry solver {Thermochimica} into the Advance Multi-Physics {AMP} code developed by Oak Ridge National Laboratory \cite{Piro11b}. This allowed the investigation of an irradiated fuel pellet by using isotopic evolution of irradiated nuclear fuel which was calculated through the software package {ORIGEN}. The integration of {Thermochimica} in {AMP} is shown in figure~\ref{fig:amp} and the capabilities of this simulation framework were demonstrated through a scenario that simulates the behaviour of highly irradiated \ce{UO2} fuel, results of which are shown in figure~\ref{fig:pirojnm}.
 	\begin{figure}[htbp]
 		\begin{center}
 		\includegraphics[width=0.75\textwidth]{figures/AMP_TC.png}
@@ -222,19 +231,19 @@
 		\end{center}
 	\end{figure}
 
-	The software integration of \texttt{Thermochimica} with \texttt{Bison} was performed by Simunovic and Besmann \cite{Besmann16}. The \texttt{Thermochimica} implementation was demonstrated on modelling oxygen related phenomena in irradiated fuel, such as calculation of oxygen to metal ratio in the fluorite phase, oxygen partial pressure, oxygen chemical potential and oxygen transport. Experimental measurements from the open literature were used to validate the implemented models and illustrate functionality of the developed thermodynamics module. The calculations are based on chemical element inventory provided by neutronics, isotopic depletion, transmutation and decay calculations in the \cite{SCALE05} system.
+	The software integration of {Thermochimica} with {Bison} was performed by Simunovic and Besmann \cite{Besmann16}. The {Thermochimica} implementation was demonstrated on modelling oxygen related phenomena in irradiated fuel, such as calculation of oxygen to metal ratio in the fluorite phase, oxygen partial pressure, oxygen chemical potential and oxygen transport. Experimental measurements from the open literature were used to validate the implemented models and illustrate functionality of the developed thermodynamics module. The calculations are based on chemical element inventory provided by neutronics, isotopic depletion, transmutation and decay calculations in the \cite{SCALE05} system.
 
-	In France, 3D coupled multiphysics simulations of power ramps in Pressurised Water Reactors (PWR) were performed by Konarski \textit{et al.} \cite{KONARSKI2019104}. The fuel performance code \texttt{ALCYONE}, which is part of the computing environment \texttt{PLEIADES}, was coupled with the thermodynamics code \texttt{ANGE} to provide a description of irradiated fuel thermochemistry with oxygen transport taking into account thermodiffusion. Konarski \textit{et al.} also performed Pellet Cladding interaction (PCI) failure analyses, by coupling thermochemistry and thermo-mechanics to investigate both chemical and mechanical factors simultaneously. 3D thermochemical-mechanical simulations of PWR power ramps on \ce{Cr}-doped \ce{UO2} with the fuel performance code \texttt{ALCYONE} including oxygen transport were performed to study the impact of oxygen redistribution on irradiated fuel thermochemistry and on chemically reactive fission gas release.
+	In France, 3D coupled multiphysics simulations of power ramps in Pressurised Water Reactors (PWR) were performed by Konarski \textit{et al.} \cite{KONARSKI2019104}. The fuel performance code {ALCYONE}, which is part of the computing environment {PLEIADES}, was coupled with the thermodynamics code {ANGE} to provide a description of irradiated fuel thermochemistry with oxygen transport taking into account thermodiffusion. Konarski \textit{et al.} also performed Pellet Cladding interaction (PCI) failure analyses, by coupling thermochemistry and thermo-mechanics to investigate both chemical and mechanical factors simultaneously. 3D thermochemical-mechanical simulations of PWR power ramps on \ce{Cr}-doped \ce{UO2} with the fuel performance code {ALCYONE} including oxygen transport were performed to study the impact of oxygen redistribution on irradiated fuel thermochemistry and on chemically reactive fission gas release.
 
-	Recently, Poschmann \textit{et al.} \cite{Poschmann:2019aa} have demonstrated the acceleration of \texttt{Thermochimica} and coupled it with \texttt{Bison} to simulate oxygen diffusion in irradiated fuel rods. Figure~\ref{fig:ovac} shows the oxygen vacancy concentration obtained through coupled \texttt{Thermochimica}- \texttt{Bison} simulations. The figure represents the kind of multiphysics simulations that can be performed when thermodynamic equilibrium calculations are coupled with fuel performance  codes
+	Recently, Poschmann \textit{et al.} \cite{Poschmann:2019aa} have demonstrated the acceleration of {Thermochimica} and coupled it with {Bison} to simulate oxygen diffusion in irradiated fuel rods. Figure~\ref{fig:ovac} shows the oxygen vacancy concentration obtained through coupled {Thermochimica}- {Bison} simulations. The figure represents the kind of multiphysics simulations that can be performed when thermodynamic equilibrium calculations are coupled with fuel performance  codes
 	\begin{figure}[htbp]
 		\begin{center}
 		\includegraphics[width=\textwidth]{figures/O_M}
-		\caption{Oxygen vacancy concentration in \ce{UO2} fuel obtained by coupling \texttt{Thermochimica} with \texttt{Bison}  \cite{Poschmann:2019aa}.}
+		\caption{Oxygen vacancy concentration in \ce{UO2} fuel obtained by coupling {Thermochimica} with {Bison}  \cite{Poschmann:2019aa}.}
 		\label{fig:ovac}
 		\end{center}
 	\end{figure}
 
-	Fitzpatrick \textit{et al.} \cite{Fitzpatrick18} coupled \texttt{Thermochimica} with thermal-hydraulics code \texttt{COBRA-TF} and isotopic evolution code \texttt{ORIGEN} to demonstrate fission product transportation by coolant flow in molten salt reactors.
+	Fitzpatrick \textit{et al.} \cite{Fitzpatrick18} coupled {Thermochimica} with thermal-hydraulics code {COBRA-TF} and isotopic evolution code {ORIGEN} to demonstrate fission product transportation by coolant flow in molten salt reactors.
 
-	The presented works demonstrate the variety of problems which can benefit by coupling thermodynamic equilibrium calculations with other physical phenomena. Full integration of a thermodynamic equilibrium code in \texttt{MOOSE} would make such coupled calculations easy and allow high fidelity multiphysics simulations allowing much more realistic simulations of various problems.
+	The presented works demonstrate the variety of problems which can benefit by coupling thermodynamic equilibrium calculations with other physical phenomena. Full integration of a thermodynamic equilibrium code in {MOOSE} would make such coupled calculations easy and allow high fidelity multiphysics simulations allowing much more realistic simulations of various problems.
