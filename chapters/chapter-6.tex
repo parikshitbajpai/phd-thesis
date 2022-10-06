@@ -673,7 +673,7 @@ OBBT can be applied to every variable $x_i$ separately and when feasible the con
 				\left | \sum_{i=1}^{N_\phi} \nu_{i{e^-}} x_i \right | < \epsilon_2.
 			\end{gather} 
 			The initialisation step is then modified to impose the constraints and once a feasible initial solution is found, the algorithm can progress. At every iteration $t$, each particle is checked for feasibility. If the updated position $x_i^{t+1}$ results in the bounds being violated, the step length is updated based on the following equation:
-			\begin{equation}  \label{eq:PSO_pos}
+			\begin{equation}  \label{eq:PSO_pos_alpha}
 				\mathbf{x}_i^{t+1} = \mathbf{x}_i^{t} + \alpha \mathbf{v}_i^{t},
 			\end{equation}
 			where $\alpha \in \mathcal{U} (0.1, 0.9)$ is a randomly generated constriction vector used to scale the step length. Handling the constraints, however is less straightforward. Once the position of each particle has been updated, the feasibility of each particle is verified and if it is found to violate the feasibility condition, Deb's comparison rules \cite{Deb:2000aa} are applied as follows:
