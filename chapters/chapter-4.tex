@@ -1,4 +1,4 @@
-\chapter{Equilibrium Thermodynamics} \label{chap:equilibrium}
+\chapter{Equilibrium Thermodynamics} \label{chap:et al.}
 
 	The foundations of thermodynamic equilibrium calculations were laid down by American chemical physicist Josiah Willard Gibbs who originally published his work \emph{On the Equilibrium of Heterogeneous Substances} in a relatively obscure American journal, the Transactions of the Connecticut Academy of Arts and Sciences, in several parts, during the years 1875 to 1878. Thermodynamic equilibrium computations in isothermal, isobaric systems are aimed at identifying a unique combination of phases and species which minimises the integral Gibbs energy of the system while satisfying the necessary underlying conditions. Thermodynamics requires that a favourable change in a system must decrease the Gibbs energy of the system while respecting the mass constraints of the system components and the Gibbs' phase rule must be satisfied.
 	
@@ -102,7 +102,7 @@ where the symbols represent their usual variables mentioned before.
 As the conditions that must be satisfied at thermodynamic equilibrium have already been mentioned, the numerical procedures for  both the approaches can now be elaborated.
 
 \subsection{Method of Lagrange multipliers}
-White \textit{et al.} \cite{White:58} established a second order steepest descent method for Gibbs energy minimisation which is based on the method of Lagrange multipliers for constrained optimisation. The GEM approach simultaneously optimises mass balance constraint and Gibbs' criterion while fixing the system size through the Gibbs phase rule. The dimensionless form of Gibbs energy of the system can be expressed as a quadratic approximation obtained by the Taylor series expansion as follows:
+White et al. \cite{White:58} established a second order steepest descent method for Gibbs energy minimisation which is based on the method of Lagrange multipliers for constrained optimisation. The GEM approach simultaneously optimises mass balance constraint and Gibbs' criterion while fixing the system size through the Gibbs phase rule. The dimensionless form of Gibbs energy of the system can be expressed as a quadratic approximation obtained by the Taylor series expansion as follows:
   \begin{equation}\label{eq:GibbsTaylor}
     \begin{split}
       \tilde{Q}^{m+1} = \tilde{G}^{m} &+ \left .\sumstoichphase \Delta_{\omega} \pder{\tilde{G}^m}{\molestoich^m} \right \vert_{\molestoich^m = \molestoich^{m+1}} \\
@@ -318,7 +318,7 @@ At every iteration step, the direction vector is computed and the system is adju
 		\begin{equation}\label{eqn:conv1}
 			\Psi_G = \left \vert \frac{G_\text{sys}^{m} - G_\text{sys}^{m-1}}{G_\text{sys}^{m}} \right \vert < \epsilon,
 		\end{equation}
-		where $\epsilon$ denotes the specified tolerance and the superscripts refer to iteration $m$ and $m-1$ respectively. Using the interpretation of Lagrange multipliers in the Gibbs Energy Minimisation (GEM) method proposed by White \textit{et al.} \cite{White58a}, we can obtain a similar estimate of convergence. Since the Lagrange multipliers, $\pi_{j}$, denote the chemical potentials, they can be related to Gibbs energy of the system, $G_{sys}$. This can be mathematically expressed as:
+		where $\epsilon$ denotes the specified tolerance and the superscripts refer to iteration $m$ and $m-1$ respectively. Using the interpretation of Lagrange multipliers in the Gibbs Energy Minimisation (GEM) method proposed by White et al. \cite{White58a}, we can obtain a similar estimate of convergence. Since the Lagrange multipliers, $\pi_{j}$, denote the chemical potentials, they can be related to Gibbs energy of the system, $G_{sys}$. This can be mathematically expressed as:
 		\begin{equation}\label{eqn:conv2}
 			\Psi_{\pi} = \left \vert \frac{\pi_{j}^{m} - \pi_{j}^{m-1}}{\pi_{j}^{m}} \right \vert < \epsilon.
 		\end{equation}
@@ -332,7 +332,7 @@ At every iteration step, the direction vector is computed and the system is adju
 	 where $\hat{\mu}_{i}$ [\si{\joule \per g-at}] is the chemical potential and ${a_{i(T)}}$  is the total number of atoms in the formula mass. This method of defining chemical potentials allows an equivalent comparison of chemical potentials of compounds with different numbers of atoms per molar mass.
 
 	 At equilibrium, all $\hat{\mu}_{i}$ must lie on a hyper-plane at equilibrium in the $C$-dimensional Euclidean space, where $C$ represents the number of system components. This plane is called the \emph{Gibbs plane} and an example of it is shown in figure~\ref{fig:GibbsPlane} for a three dimensional space.
-	 \begin{figure}[htbp]
+	 \begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\textwidth]{figures/Gibbs_plane.jpg}
 		\caption[The Gibbs criteria is satisfied when the chemical potentials for all species represented per gram-atom lie on the Gibbs Plane within an acceptable tolerance.]{The Gibbs criteria is satisfied when the chemical potentials for all species represented per gram-atom lie on the Gibbs Plane within an acceptable tolerance \cite{Piro11a}.}
@@ -347,7 +347,7 @@ At every iteration step, the direction vector is computed and the system is adju
 	 \end{enumerate}
 	 
 \subsection{Choice of numerical algorithm}
-	Both GEM and PGE have advantages and disadvantages and the choice of the algorithm must be based on the applications and excess mixing models used in them. For {\GEM}, the Gibbs energy minimisation method was selected and the reasoning behind it has been explained by Bajpai \textit{et al.} \cite{Bajpai:2021ab}. While the paper, presented on the following pages, was written primarily for the thermochemistry library Thermochimica, the goal was also to pre-emptively justify the choice of the algorithm for {\GEM}. 
+	Both GEM and PGE have advantages and disadvantages and the choice of the algorithm must be based on the applications and excess mixing models used in them. For {\GEM}, the Gibbs energy minimisation method was selected and the reasoning behind it has been explained by Bajpai et al. \cite{Bajpai:2021ab}. While the paper, presented on the following pages, was written primarily for the thermochemistry library Thermochimica, the goal was also to pre-emptively justify the choice of the algorithm for {\GEM}. 
 	\includepdf[pages=-]{publications/Bajpai_2021_CMS.pdf}
 	 
 %==============================================================================================================================

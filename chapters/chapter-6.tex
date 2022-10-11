@@ -30,9 +30,9 @@
 
 	To overcome the need for user prescribed initial estimates, Eriksson and Thompson \cite{Eriksson89} proposed an initialisation algorithm called \emph{levelling} that has found widespread application in thermodynamic equilibrium softwares. {\GEM} implements this algorithm as the standard initialisation routine and the it is described in the following text.
 	
-	\subsection{Levelling}
+\subsection{Levelling}
 	The levelling algorithm was developed to accelerate the rate of convergence by eliminating the phases and species that have an insignificant contribution in the final phase assemblage. The algorithm is based on a temporary treatment of all species and phases in the system as pure stoichiometric phases. Mathematically, this amounts to temporarily converting the non-linear optimisation problem into a linear optimisation problem and the algorithm for the computational implementation has been illustrated in figure~\ref{fig:levelling}.
-	\begin{figure}[ht]
+	\begin{figure}[ht!]
 		\centering
 		\begin{tikzpicture}[auto,
     			block_center/.style ={rectangle, draw=black, thick, fill=white, text width=0.2\textwidth, text centered, minimum height=2em},
@@ -72,20 +72,16 @@
 		\hat{G}_i = \frac{G_j}{\sum_{j=1}^C \nu_{ij}}
 	\end{equation}
 
-	The levelling process determines the combination of phases yielding the lowest Gibbs energy by evaluating a combination of Gibbs energies on a relative basis. A phase that has a negative relative Gibbs energy with respect to the assemblage indicates that a phase in the assemblage must be replaced by the current phase to achieve a lower integral Gibbs energy.
-
-	Mathematically, levelling is achieved through an iterative process that systematically adjusts fixed combinations of phases, subject to the linear equality and inequality mass balance constraints, to progressively minimise the GIbbs energy of the system \cite{Piro12a}. At iteration $m+1$, the adjustment to be applied to the relative Gibbs energy of phase $i$ is defined by \cite{Eriksson89}:
+	The levelling process determines the combination of phases yielding the lowest Gibbs energy by evaluating a combination of Gibbs energies on a relative basis. A phase that has a negative relative Gibbs energy with respect to the assemblage indicates that a phase in the assemblage must be replaced by the current phase to achieve a lower integral Gibbs energy. Mathematically, levelling is achieved through an iterative process that systematically adjusts fixed combinations of phases, subject to the linear equality and inequality mass balance constraints, to progressively minimise the GIbbs energy of the system \cite{Piro12a}. At iteration $m+1$, the adjustment to be applied to the relative Gibbs energy of phase $i$ is defined by \cite{Eriksson89}:
 	\begin{equation} \label{eq:lev_adj}
 		\begin{aligned}
 			d \hat{G}_i^{m\rightarrow m+1} &= \sum_{j=1}^{C} c_{ij} d \Gamma_j^{m\rightarrow m+1}\\
 			\hat{G}_i^{m+1} &= \hat{G}_i^{m} - d \hat{G}_i^{m\rightarrow m+1}
 		\end{aligned}
 	\end{equation}
-	where, $c_{ij}$ denotes the atomic fraction of element $j$ in species $i$ and $d \Gamma_j^{m\rightarrow m+1}$ is the adjustment applied to the chemical potential of element $j$, which in turn is determined by the most stable phases found at iteration $m$.
-
-	In  matrix form, the overall mass balance constraint can be represented as \cite{Piro12a}
+	where, $c_{ij}$ denotes the atomic fraction of element $j$ in species $i$ and $d \Gamma_j^{m\rightarrow m+1}$ is the adjustment applied to the chemical potential of element $j$, which in turn is determined by the most stable phases found at iteration $m$. In  matrix form, the overall mass balance constraint can be represented as \cite{Piro12a}
 	\begin{equation} \label{eq:levMB_mat}
-		\mathbf{A^T} \mathbf{n}= \mathbf{b}
+		\mathbf{A^T} \mathbf{n}= \mathbf{b},
 	\end{equation}
 	where $\mathbf{A} \in \mathbb{R}^{E \times \Phi}$ represents the stoichiometric matrix, $\mathbf{n} \in \mathbb{R}^{\Phi }$ denotes the column vector of the number of moles of each phase, and $\mathbf{b} \in \mathbb{R}^{E}$ is the column vector with the total mass of each element in the system. When equation~\ref{eq:levMB_mat} is used in levelling, $\Phi = E$.
 
@@ -99,12 +95,10 @@
 
 	The next step in levelling is updating the phase assemblage in accordance with equation~\eqref{eq:lev_adj}. A  species with a positive $\hat{G}_i^{m+1}$ would yield a thermodynamically less stable assemblage and is left out along with phases with insignificant contributions to final equilibrium while the phase with the most negative $\hat{G}_i^{m+1}$ is introduced into the assemblage by replacing a phase in the previous assemblage. The phase assemblage at this stage must meet three requirements. First, the number of moles of all phase in $\mathbf{n}$ must be non-negative and real. Second, all the elements of the vector $\boldsymbol{\Gamma}$ must be real. Finally, the phase assemblage must not have been previously considered. If the phase assemblage does not meet any of these requirements, the phase with the second lowest relative Gibbs energy must be considered, and so on.
 
-	While the criteria for the phase to be added in the system was well established by Eriksson and Thompson, a criterion to select the phase to be replaced wasn't proposed and, typically, local iterations were performed to systematically traverse through the candidate phases until a particular combination yielded an entire set of non-negative and real mole numbers \cite{Eriksson89}. The number of these local iterations rapidly grows with the number of elements in the system and an alternative named \emph{Euclidean norm} was proposed by Piro and Simunovic \cite{Piro12a}. This method has been described in section~\ref{sec:Euclidean}
+	While the criteria for the phase to be added in the system was well established by Eriksson and Thompson, a criterion to select the phase to be replaced wasn't proposed and, typically, local iterations were performed to systematically traverse through the candidate phases until a particular combination yielded an entire set of non-negative and real mole numbers \cite{Eriksson89}. The number of these local iterations rapidly grows with the number of elements in the system and an alternative named \emph{Euclidean norm} was proposed by Piro and Simunovic \cite{Piro12a}. This method has been described in section~\ref{sec:Euclidean}.
 
 	Once the new phase has been exchanged with one of the existing phases and its acceptability has been determined, levelling step is repeated until no phases with negative absolute Gibbs energy remain in the system. At this stage, the assemblage can be passed on to a non-linear solver as the initial estimate.
-
-
-	\begin{figure}[htbp]
+	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=\textwidth]{figures/Levelling_illustration}
 		\caption[Illustration of the levelling process for a binary system of \ce{U-O} at each iteration (1 \si{\mole} \ce{U}, 2.2 \si{\mole} \ce{O}, 298.15 \si{\kelvin}, 1 \si{atm}).]{Illustration of the levelling process for a binary system of \ce{U-O} at each iteration (1 \si{\mole} \ce{U}, 2.2 \si{\mole} \ce{O}, 298.15 \si{\kelvin}, 1 \si{atm}) \cite{Piro11b}.}
@@ -119,21 +113,7 @@
 
 	Mathematically, the levelling  process always respects the Gibbs phase rule, mass balance and the Gibbs' criterion and the number of iterations required to achieve convergence is typically close to the number of elements. This results in significant computational advantage when considering exceeding large number of possible phase combinations as the number of elements in the system grow making levelling an excellent choice as an initialisation routine.
 
-%	\subsection{Post-levelling}
-%	Developed by Piro and Simunovic \cite{Piro12a}, the post-levelling method is an extension to the levelling method and can be used to refine the assemblage provided by the levelling method by accounting for the ideal mixing of the phases and relaxing the assumption that the phases are pure. Thus, post-levelling acts as an intermediate step between levelling and the non-linear solver. While post-levelling resembles the non-linear solver in the incorporation of compositional component in the chemical potential of the solution phase constituents, the primary distinction between them is that post-levelling considers only dominant phases identified by levelling as compared to the non-linear solver which considers all the constituents. Furthermore, the non-linear solver also considers non-ideal behaviour.
-%
-%		The chemical potential term in post-levelling takes the following form:
-%		\begin{equation}
-%			\begin{aligned}
-%				\mu_{i(\lambda} &= g_{i(\lambda)}^0 + RT \ln{(x_{i(\lambda)})} \\
-%				x_{i(\lambda)} &= \frac{n_{i(\lambda)}}{\sum_{k=1}^{N_{\lambda}}n_{k(\lambda)}}
-%			\end{aligned}
-%		\end{equation}
-%		where $N_{\lambda}$ is the number of constituents in solution phase $\lambda$ identified by levelling and is less than the actual constituents in the phase. The element potentials can then be computed using equation~\eqref{eq:levEP_mat} and an iterative process similar to levelling can be followed.
-%
-%		A demonstration of the post-levelling method in predicting the element potentials of combustion products from a coal fire shows that compared to levelling, post levelling calculations provide values much closer to the equilibrium values. As a result, the rate of convergence of the non-linear solver improves by a large factor.  While exact gains depend on the non-linear solver, line-search algorithm and the strategy for updating the estimated phase assemblage, relative performance gains can be easily envisaged even though post-levelling process incurs additional computational cost. This can be attributed to the fact that the cost of post-levelling is negligible in comparison to the cost of a single iteration in a non-linear solver \cite{Piro12a}.
-%
-	\subsection{Euclidean norm} \label{sec:Euclidean}
+\subsection{Euclidean norm} \label{sec:Euclidean}
 	The Euclidean norm method was proposed by Piro and Simunovic \cite{Piro12a}, to strategically rank the best candidate phases to accommodate a new phase change. The Gibbs phase rule requires that when the thermodynamic degree of freedom $F$ equals zero, a phase must be removed in order to introduce a new phase. Determining whether a candidate phase is feasible is the most expensive task within the global iteration cycles as it requires solution of a simultaneous equation to ensure that the Hessian matrix is non-singular \cite{Piro12a}. If there are multiple candidate phases, this iterative process must be repeated for each candidate.
 
 	The Euclidean norm method systematically ranks the best candidates to be withdrawn from the system without having to perform an exhaustive search. The method is based on the principle that the best candidate phase to be withdrawn from the current assemblage has the most similar atomic composition to the phase that has to be added to the system.
@@ -154,61 +134,6 @@
 	\end{equation}
 
 	The phase with the lowest Euclidean norm has the most similar composition to the phase to be introduced in the assemblage. In case the resulting assemblage does not meet the criterion to be a valid assemblage, the phase with the second lowest Euclidean norm can be introduced and so on.
-%
-%	As shown in figure~\ref{fig:PEA_gains}, the overall computational expense of thermodynamic calculations is significantly reduced when post-levelling and Euclidean norm methods are utilised \cite{Piro12a}. These performance gains can offer a significant advantage when considering multiphysics simulations where thermodynamic equilibrium is often the most computationally expensive calculation.
-%
-%	\begin{figure}[htbp]
-%		\centering
-%		\includegraphics[width=0.65\textwidth]{figures/PEA_Gains}
-%		\caption{Performance gains when employing post-levelling and Euclidean-norm algorithms \cite{Piro12a}.}
-%		\label{fig:PEA_gains}
-%	\end{figure}
-%
-
-%	\subsection{Temporal series estimate}
-%	While in most cases levelling and post-levelling methods can provide initial assemblages close to the final assemblage, using the assemblage from a previous time step in multiphysics codes can often provide much closer estimates to the final assemblage. In time-dependent multiphysics simulations, this can result in significant performance gains as has been recently shown through the implementation of this strategy in {Thermochimica} \cite{Poschmann:2019aa}. These performance gains can be attributed to the fact that the convergence of the non-linear solver can be significantly accelerated by providing initial estimates close enough to the final assemblage. This temporal initialisation strategy has been illustrated in figure~\ref{fig:temp_init}
-%	\begin{figure}
-%		\centering
-%		\begin{tikzpicture}[auto,
-%    			block_center/.style ={rectangle, draw=black, thick, fill=white, text width=0.2\textwidth, text centered, minimum height=2em},
-%    			block_side/.style ={rectangle, draw=black, thick, fill=white, text width=0.2\textwidth, text centered, minimum height=2em},
-%			block_noborder/.style ={rectangle, draw=none, thick, fill=none, text width=0.2\textwidth, text centered, minimum height=0.5em},
-%			block_small/.style ={rectangle, draw=none, thick, fill=none, text width=0.1\textwidth, text centered, minimum height=0.5em},
-%			line/.style ={draw, thick, -stealth}]
-%    			% Outlining the flowchart using the PGF/TikZ matrix funtion
-%    			\matrix [column sep=0.15\textwidth,row sep=3em] {
-%      				\node [block_center] (00) {Start at initial time}; & {} & {}\\
-%      				\node [block_center] (10) {Levelling}; & {} & {}\\
-%				\node [block_center,yshift=-1cm] (20) {Non-linear solver}; &  \node [block_side,yshift=-1cm] (21) {Save assemblage in memory}; & \node [block_side,yshift=-1cm] (22) {Reinitialise with saved assemblage};\\
-%      				\node [block_side] (30) {Solution found}; & {} & {}\\
-%    			};	% end matrix
-%    			% connecting nodes with paths
-%    			\begin{scope}[every path/.style=line]
-%      				\path (00) edge (10);
-%     				\path (10) edge (20);
-%      				\path (20) edge node[block_noborder,anchor=east]{\footnotesize{Stop time reached}} (30);
-%      				\path (20) edge (21);
-%      				\path (21) edge node[block_noborder,anchor=south]{\footnotesize{Timestep}} (22);
-%      				\path[-] (22.90) edge[bend right] node[block_noborder,anchor=west,shift={(0.75cm,0.25cm)}]{\footnotesize{Temporal reinitialisation failed}} (10);
-%      				\path[-] (22) edge[bend right] (20);
-%    			\end{scope}
-% 		\end{tikzpicture}
-%  		\caption{Illustration of the temporal series initialisation algorithm.}
-%  		\label{fig:temp_init}
-% 	\end{figure}
-%
-%	The details of the implementation of the temporal initialisation strategy in {Yellowjacket} have not yet been set in stone but, based on {Thermochimica} acceleration results obtained by Poschmann et al. \cite{Poschmann:2019aa} , a significant performance gain is foreseen which justifies the use of this strategy especially in coupled multiphysics problems where thermodynamic equilibrium calculations are impediment to significant performance gains. However, this might also lead to a drastic increase in memory requirement and a compromise must be made between  computing time gains and increased memory requirements.
-%
-%	\subsection{Boundary value estimate}
-%	For the case where Gibbs energy minimisation is performed on a 2D/3D mesh, very good initial estimates can conceivably be provided to the non-linear solver by exploiting the results from the neighbouring solutions in space at the same time step. As an example, the final assemblage of element A on the finite element mesh shown in figure~\ref{fig:BV_Illustration} can be used as the initial assemblage for element B. This initialisation scheme relies on the principles of continuum between adjacent cells, i.e., if the mesh is sufficiently resolved, the difference between system potentials (temperature, pressure and chemical potentials) between two neighbouring cells must be small.
-%	\begin{figure}[htbp]
-%		\centering
-%		\includegraphics[width=0.35\textwidth]{figures/BV_FEM}
-%		\caption{Illustration of the boundary value initialisation on a finite element mesh \cite{Piro17}.}
-%		\label{fig:BV_Illustration}
-%	\end{figure}
-%
-%	While this approach is well suited to simulations on finite element meshes and reduces the need to re-evaluate the estimated assemblage of stable phases, it might lead to a less than optimal estimate for elements close to a moving interface (for example, close to a melting boundary). Also, this approach does not lend itself well to parallel computing using MPI and thus might actually be ineffective for large problems where MPI can significantly speed up calculations. However, the approach is a potential avenue that can be explored but is not the primary focus.
 
 \section{Non-linear solver}
 	The linear solver can often provide estimates close to the final assemblage of the system and in certain circumstances, such as for systems with only pure 	stoichiometric species, it might be able to predict the equilibrium assemblage. However, almost always, further computations are required to arrive at the final assemblage especially in cases where the phases have more than one species with significant contribution to the Gibbs energy. This situation arises more often than not and a non-linear solver is required to handle the non-linearities arising from the logarithmic term in the compositional component of the chemical potentials.
@@ -227,7 +152,7 @@
 	\end{enumerate}
 	
 	\subsection{Numerical implementation}
-	The system of non-linear equations can be solved using either the Newton-Raphson method. Newton-Raphson method depends on solving  equation~\eqref{eq:GEM_mat} and is an $\mathcal{O}(N^3)$ operation.
+	The system of non-linear equations can be solved using the Newton-Raphson method. Newton-Raphson method depends on solving equation~\eqref{eq:GEM_mat} and is an $\mathit{O}(N^3)$ operation where $N$ is the size of the system. 
 	An integral component of the solver is an appropriate line-search algorithm to determine how far the system should progress along the direction vectors. The functional norm of the Lagrangian is an effective choice to ensure convergence and is defined as \cite{Piro17}:
 	\begin{equation}
 	\begin{aligned}
@@ -235,9 +160,9 @@
 		&+ \sum_{\lambda=1}^{\Lambda} \left(\sum_{i=1}^{N_\lambda} x_{i(\lambda)}\left\vert\mu_{i(\lambda)} - \sum_{j=1}^{C}\nu_{ij} \Gamma_j \right\vert \right)^2 + \sum_{\omega=1}^{\Omega}\left(g_\omega - \sum_{j=1}^{C}\nu_{\omega,j} \Gamma_j \right)^2
 		\end{aligned}
 	\end{equation}
-	where the first term on the right represents the mass balance residuals, the second represents the absolute sum of chemical potential residuals of solution species and the third represents the chemical potential residuals of stoichiometric phases. By enforcing the Wolfe/Armijo condition \cite{Nocedal06}, a sufficient step length can be decided.
+	where the first term on the right represents the mass balance residuals, the second represents the absolute sum of chemical potential residuals of solution species and the third represents the chemical potential residuals of stoichiometric phases. By enforcing the Wolfe/Armijo condition \cite{Nocedal06}, a sufficient step length is decided.
 
-	Each iteration step in the minimisation problem involves approximately solving the subproblem
+	Each iteration step in the minimisation problem involves approximately solving the subproblem:
 	\begin{equation}
 		\min_\alpha f\left(\mathbf{x}^m + \alpha \mathbf{p}^m\right)
 	\end{equation}
@@ -253,22 +178,17 @@
 		- \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m + \alpha^m \mathbf{p}^m\right) \leq - c_2 \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m \right)
 	\end{equation}
 	with $0 < c_1 < c_2 < 1$. The first inequality, known as the Armijo condition ensures that the step length $\alpha^m$ decreases $f$ sufficiently, and the second inequality known as the curvature condition ensures that the slope has been reduced sufficiently. Together, the two inequalities provide upper and lower bounds for the step lengths \cite{Nocedal06}.
-
-	\subsection{Adding/Removing phases}
-		Updating the estimated assemblage plays a significant role in the convergence of thermodynamic solvers. Inadequate strategies for updating the assemblage might lead to inefficient global iterations (i.e., iterations in which changes are made to the system such as addition/removal of phases while the Newton iterations described above can be referred to as local iteration since they are aimed at finding the minimum of a problem with a fixed system) and might even prevent convergence. Though the number of phases that can be added into or removed from the system is constrained by the Gibbs' phase rule, proper care must be taken to ensure that any change to the system drives it towards convergence and not hold it back. To ensure that the phase assemblage updating does not result in undesired behaviour, the strategy proposed by Piro \cite{Piro17} will be adopted. This strategy has been illustrated in figure~\ref{fig:assemblage}
-
-	\subsection{Convergence criterion}
-	The convergence of the solver is tested in accordance with conditions for convergence described in chapter~\ref{chapter_3}. The relative error of the mass balance and Gibbs' criterion is calculated  and the solver converges when both of these are within the specified tolerance. In addition, it must be tested that the mole numbers are not negative for any species in the system. The charge neutrality constraint must also be respected.  To minimise the computational cost, it is also possible to test convergence only when the functional norm has been satisfied to a specified tolerance.
-
-	Two issues that can prevent convergence are foreseen for a thermodynamic equilibrium solver. First, when the objective function has multiple roots, for example due to miscibility gap, and second when the slope of the objective function is extremely small or zero. These two issues can result in non-real numbers or divergence and possible failure of the iterative solver.
-
-	The numerical dampening through Wolfe/Armijo conditions and the use of levelling as an initialisation method can help in avoiding the ill-behaviour and promotes numerical stability and enhances performance characteristics. The proposed algorithm of the thermodynamic solver with both local and global iterations has been presented in figure~\ref{fig:gem_illus}
-
+	
+	{\GEM} uses the state-of-the-art non-linear solvers in PETSc to solve the non-linear system. The \texttt{SNESNEWTONLS} is a Newton based nonlinear solver that uses line search and has been used as the default solver in this work. 
+	
+	
+\subsection{Adding/Removing phases}
+		Updating the estimated assemblage plays a significant role in the convergence of thermodynamic solvers. Inadequate strategies for updating the assemblage might lead to inefficient global iterations (i.e., iterations in which changes are made to the system such as addition/removal of phases while the Newton iterations described above can be referred to as local iteration since they are aimed at finding the minimum of a problem with a fixed system) and might even prevent convergence. Though the number of phases that can be added into or removed from the system is constrained by the Gibbs' phase rule, proper care must be taken to ensure that any change to the system drives it towards convergence and not hold it back. To ensure that the phase assemblage updating does not result in undesired behaviour, the strategy proposed by Piro \cite{Piro17} has been adopted. This strategy has been illustrated in figure~\ref{fig:assemblage}.
 \newgeometry{margin=1cm}
 \begin{landscape}
 \thispagestyle{empty}
 
-		\begin{figure}
+		\begin{figure}[ht]
 		\centering
 		\begin{tikzpicture}[auto,
     			block_center/.style ={rectangle, draw=black, thick, fill=white, text width=0.25\textwidth, text centered, minimum height=2em},
@@ -304,18 +224,23 @@
 				\path (41) edge node[block_noborder,rotate=90,anchor=south]{\footnotesize{Passed}}(51);
 			\end{scope}
  		\end{tikzpicture}
-  		\caption[Illustration of the proposed methodology for updating the phase assemblage.]{Illustration of the proposed methodology for updating the phase assemblage. Adapted from Piro \cite{Piro17}.}
+  		\caption[Illustration of the methodology for updating the phase assemblage.]{Illustration of the methodology for updating the phase assemblage. Adapted from Piro \cite{Piro17}.}
   		\label{fig:assemblage}
 	\end{figure}
 
 \end{landscape}
 \restoregeometry
 
+\subsection{Convergence criterion}
+	The convergence of the solver is tested in accordance with conditions for convergence described in chapter~\ref{chap:equilibrium}. The relative error of the mass balance and Gibbs' criterion is calculated  and the solver converges when both of these are within the specified tolerance. In addition, it must be tested that the mole numbers are not negative for any species in the system. The charge neutrality constraint must also be respected.  To minimise the computational cost, it is also possible to test convergence only when the functional norm has been satisfied to a specified tolerance.
+
+	Two issues that can prevent convergence were foreseen for a thermodynamic equilibrium solver. First, when the objective function has multiple roots, for example due to miscibility gap, and second when the slope of the objective function is extremely small or zero. These two issues can result in non-real numbers or divergence and possible failure of the iterative solver.
+The numerical dampening through Wolfe/Armijo conditions and the use of levelling as an initialisation method helps in avoiding the ill-behaviour and promotes numerical stability and enhances performance characteristics. The proposed algorithm of the thermodynamic solver with both local and global iterations has been presented in figure~\ref{fig:gem_illus}
 \newgeometry{margin=1cm}
 \begin{landscape}
 \thispagestyle{empty}
 
-	\begin{figure}
+	\begin{figure}[ht]
 		\centering
 		\begin{tikzpicture}[auto,
     			block_center/.style ={rectangle, draw=black, thick, fill=white, text width=0.25\textwidth, text centered, minimum height=2em},
@@ -360,13 +285,18 @@
 				\path[-] (22.180) edge[bend right=30] node[block_noborder,anchor=south,rotate=90]{\footnotesize{Already tested}} (62.175);
 			\end{scope}
  		\end{tikzpicture}
-  		\caption{Illustration of the proposed Gibbs energy minimisation algorithm}
+  		\caption[Illustration of the Gibbs energy minimisation algorithm.]{Illustration of the Gibbs energy minimisation algorithm. After Loukusa \cite{Loukusa:2014aa}.}
   		\label{fig:gem_illus}
 	\end{figure}
 
 \end{landscape}
 \restoregeometry
 
+
+\subsection{Interpreting the results}
+	Though the developed algorithms are relatively very robust, there are certain classes of problems where the rank-deficiency in the stoichiometric matrices is inherent. In such cases, special care must be taken in interpreting the results computed by thermodynamic equilibrium codes. The author of this thesis co-authored a letter to the editor of Journal of Nuclear Materials explaining how one must be careful in interpreting the chemical potentials for molten salts systems. The letter by Piro et al.
+	\includepdf[pages=-]{publications/Piro_2019.pdf}
+	
 %==============================================================================================================================
 %														Global Optimisation
 %==============================================================================================================================
@@ -395,7 +325,7 @@
 	\begin{align}
 		\sum_{i=1}^{N_\phi} x_i = 1, \; x_i > 0, \; \forall i \in \phi.
 	\end{align}
-	The sufficient condition for equilibrium requires that the driving force $\Delta G_{\phi}$ computed with equation~\eqref{eq:drivingforce} is positive for all phases believed to be metastable and zero for all the stable phases. According to Hillert \cite{Hillert81}, the driving force of metastable phases can be evaluated at each iteration to determine whether or not it should be added into the system. However, this function can be non-convex and requires the evaluation of a global minimum. Though the open literature on computing these methods appears rather exhaustive, few authors have discussed generalised global minimisation schemes for the phase equilibria problem. The majority of articles focus either on relatively small systems, such as liquid-vapour equilibria, or are aimed at only a handful of calculations. Some notable exceptions to this include those of Hillert \cite{HILLERT198131}, Lukas \textit{et al.}\cite{LUKAS1982229}, Sundman \cite{Sundman15}, Piro and Simunovic \cite{Piro16}, and Otis \textit{et al.} \cite{Otis:2017ab}. Since both the robustness and computational efficiency of {\GEM} are of concern, a number of global optimisation methods were tested through a set of carefully constructed test problems representative of some common scenarios in equilibrium thermodynamics. Though no global optimisation method can guarantee the ability to find the true global minimum, sufficient confidence can be achieved for the problem under consideration under well-defined parameters.
+	The sufficient condition for equilibrium requires that the driving force $\Delta G_{\phi}$ computed with equation~\eqref{eq:drivingforce} is positive for all phases believed to be metastable and zero for all the stable phases. According to Hillert \cite{Hillert81}, the driving force of metastable phases can be evaluated at each iteration to determine whether or not it should be added into the system. However, this function can be non-convex and requires the evaluation of a global minimum. Though the open literature on computing these methods appears rather exhaustive, few authors have discussed generalised global minimisation schemes for the phase equilibria problem. The majority of articles focus either on relatively small systems, such as liquid-vapour equilibria, or are aimed at only a handful of calculations. Some notable exceptions to this include those of Hillert \cite{HILLERT198131}, Lukas et al.\cite{LUKAS1982229}, Sundman \cite{Sundman15}, Piro and Simunovic \cite{Piro16}, and Otis et al. \cite{Otis:2017ab}. Since both the robustness and computational efficiency of {\GEM} are of concern, a number of global optimisation methods were tested through a set of carefully constructed test problems representative of some common scenarios in equilibrium thermodynamics. Though no global optimisation method can guarantee the ability to find the true global minimum, sufficient confidence can be achieved for the problem under consideration under well-defined parameters.
 	
 	\subsection{Test Problems} \label{sec:test_global}
 	To objectively test the reliability and performance of various global optimisation algorithms, the methods must be benchmarked against a set of test problems representative of the requirements from the solver. While most of the open  literature focusses on a single problem and tries to optimise the algorithm for the problem, such an approach is not ideal for the development of {\GEM}. Instead the focus here has been to select an algorithm that can work reasonably well for wide variety of problems with a large number of components. The reasoning behind such an approach is that a wide variety of excess mixing models are encountered in computational thermodynamics applied to nuclear materials. To test the algorithms under consideration, eight test cases representing different thermodynamic models and system sizes, and are summarised in table~\ref{tab:test_cases}.
@@ -409,7 +339,7 @@
 	      		A			& 2					& Fictive binary system with a miscibility gap and a stoichiometric phase from Piro and Simunovic \cite{Piro16}.\\
 	      		B			& 2					& \ce{Pd-Rh} binary system with a shallow FCC miscibility gap phase from Kaye \textit {et al.} \cite{Kaye07}.\\
 	      		C			& 2					& Fictive binary system with three convex phases with one phase having a negative driving force from Piro and Simunovic \cite{Piro16}. \\
-	      		D			& 3					& \ce{Pu-U-O} ternary system from Gu\'{e}neau \textit{et al.} \cite{Gueneau11} containing an ideal gas phase, a non-ideal liquid phase, many stoichiometric phases and a \ce{(U$_y$ Pu$_{1-y}$)O$_{2\pm x}$} fluorite phase. Involves a multi-sublattice model and a charge balance constraint.\\
+	      		D			& 3					& \ce{Pu-U-O} ternary system from Gu\'{e}neau et al. \cite{Gueneau11} containing an ideal gas phase, a non-ideal liquid phase, many stoichiometric phases and a \ce{(U$_y$ Pu$_{1-y}$)O$_{2\pm x}$} fluorite phase. Involves a multi-sublattice model and a charge balance constraint.\\
 	      		E			& 3					& \ce{Al-Cr-Co} ternary system used as reference problem by Otis \textit {et al.} \cite{Otis:2017ab}. \\
 	      		F			& 5					& Hexagonal closed packing (HCP) phase in the quinary system containing noble metal fission products \ce{Mo-Pd-Tc-Ru-Rh} from Kaye \textit {et al.} \cite{Kaye07}.\\
 	      		G			& 10					& \multirow{2}{=}{Fictive high-dimensional systems with minefield of miscibility gaps based on Piro and Simunovic \cite{Piro16}.}\\
@@ -431,11 +361,11 @@
  
 	
 	\item	\emph{Problem B}\\
-		The binary  \ce{Pd-Rh} system from Kaye \textit{et al.} \cite{Kaye07} has been selected as the second test problem. It consists of a shallow miscibility gap in the FCC phase which is assumed to be properly identified by the solver but the global optimisation algorithm must confirm that the driving force, $\Delta G_\text{FCC}$, of the miscibility gap phase is indeed zero. The phase is represented by a substitutional solution model with the reference Gibbs energies of the components being $g_{\ce{Pd}}^\circ = -16480 + 9.02T$ \si{\joule \per \mole}, $g_{\ce{Rh}}^\circ = -26568 + 11.88 T$ \si{\joule \per \mole} and the excess energy given by $g_\text{FCC}^\text{ex} = x_{\ce{Pd}}x_{\ce{Rh}} \left(21247 + 2199 x_{\ce{Rh}} - (2.74 - 0.56x_{\ce{Rh}})T\right)$. The temperature of the system was fixed at $T = 1100$ \si{\kelvin} and the pressure at $P=1$ \si{\atmosphere}.
+		The binary  \ce{Pd-Rh} system from Kaye et al. \cite{Kaye07} has been selected as the second test problem. It consists of a shallow miscibility gap in the FCC phase which is assumed to be properly identified by the solver but the global optimisation algorithm must confirm that the driving force, $\Delta G_\text{FCC}$, of the miscibility gap phase is indeed zero. The phase is represented by a substitutional solution model with the reference Gibbs energies of the components being $g_{\ce{Pd}}^\circ = -16480 + 9.02T$ \si{\joule \per \mole}, $g_{\ce{Rh}}^\circ = -26568 + 11.88 T$ \si{\joule \per \mole} and the excess energy given by $g_\text{FCC}^\text{ex} = x_{\ce{Pd}}x_{\ce{Rh}} \left(21247 + 2199 x_{\ce{Rh}} - (2.74 - 0.56x_{\ce{Rh}})T\right)$. The temperature of the system was fixed at $T = 1100$ \si{\kelvin} and the pressure at $P=1$ \si{\atmosphere}.
 		\begin{figure}[htbp]			
 			\centering
 			\includegraphics[width=0.675\textwidth]{figures/chapter-6/System_PdRh.pdf}
-			\caption[Global optimisation test problem B: FCC phase miscibility gap in \ce{Pd-Rh} binary system.]{FCC phase miscibility gap in \ce{Pd-Rh} binary system from Kaye \textit{et al.} \cite{Kaye07} shows a correctly identified miscibility gap which must be verified by the global optimisation algorithm.}
+			\caption[Global optimisation test problem B: FCC phase miscibility gap in \ce{Pd-Rh} binary system.]{FCC phase miscibility gap in \ce{Pd-Rh} binary system from Kaye et al. \cite{Kaye07} shows a correctly identified miscibility gap which must be verified by the global optimisation algorithm.}
 			\label{fig:testB}
 		\end{figure}
 
@@ -449,14 +379,14 @@
 		\end{figure}
 	
 	\item	\emph{Problem D}\\
-		Mixed oxide fuel (MOX) is a nuclear fuel which is manufactured by mixing plutonium recovered from used reactor fuel with depleted uranium and the \ce{Pu-U-O} ternary system from Gu\'{e}neau \textit{et al.} \cite{Gueneau11} has been selected as a test problem. The thermodynamic assessment of the system contains an ideal gas, a non-ideal liquid,  and a \ce{(U_y Pu_{1-y})O$_{2\pm x}$} fluorite phase modelled using CEF with three sublattices and is an ionic phases where the first sublattice contains actinoid cations and the second and third sublattices contain oxygen anions mixing with vacancies. The global optimisation algorithm must respect the charge neutrality constraint thus distinguishing this problem from others. The system composition, as in \cite{Piro16}, is \SI{0.93}{\mole} of \ce{U}, \SI{0.07}{\mole} of \ce{Pu} and \SI{2}{\mole} of \ce{O} maintained at temperature $T = 1000$ \si{\kelvin} and hydrostatic pressure $P=1$ \si{\atmosphere}. The global optimisation algorithm must verify that the \ce{(U_y Pu_{1-y})O$_{2\pm x}$} fluorite phase is only stable phase at equilibrium.
+		Mixed oxide fuel (MOX) is a nuclear fuel which is manufactured by mixing plutonium recovered from used reactor fuel with depleted uranium and the \ce{Pu-U-O} ternary system from Gu\'{e}neau et al. \cite{Gueneau11} has been selected as a test problem. The thermodynamic assessment of the system contains an ideal gas, a non-ideal liquid,  and a \ce{(U_y Pu_{1-y})O$_{2\pm x}$} fluorite phase modelled using CEF with three sublattices and is an ionic phases where the first sublattice contains actinoid cations and the second and third sublattices contain oxygen anions mixing with vacancies. The global optimisation algorithm must respect the charge neutrality constraint thus distinguishing this problem from others. The system composition, as in \cite{Piro16}, is \SI{0.93}{\mole} of \ce{U}, \SI{0.07}{\mole} of \ce{Pu} and \SI{2}{\mole} of \ce{O} maintained at temperature $T = 1000$ \si{\kelvin} and hydrostatic pressure $P=1$ \si{\atmosphere}. The global optimisation algorithm must verify that the \ce{(U_y Pu_{1-y})O$_{2\pm x}$} fluorite phase is only stable phase at equilibrium.
 		
 	\item	\emph{Problem E}\\
-		Otis \textit{et al.} \cite{Otis:2017ab} demonstrated that for the \ce{Al-Co-Cr} ternary system modelled by Liu \textit{et al.} \cite{Liu:2015aa} poses a challenge to thermodynamic equilibrium codes. In particular, it was shown that at temperature $T = 1523$  \si{\kelvin}, a ternary miscibility gap can be ignored when considering the metastable BCC phase only. The phase was modelled with a three-sublattice CEF model with the elements mixing on the first and second sublattices. Considering the challenges posed by the BCC phase in the system, the system was selected as a test problem with the system containing \SI{0.5}{\mole} of \ce{Al}, \SI{0.2}{\mole} of \ce{Co} and \SI{0.3}{\mole} of \ce{Cr} at $T = 1000$ \si{\kelvin} and $P=1$ \si{\atmosphere}. The global optimisation algorithm must identify the existence of a miscibility gap.
+		Otis et al. \cite{Otis:2017ab} demonstrated that for the \ce{Al-Co-Cr} ternary system modelled by Liu et al. \cite{Liu:2015aa} poses a challenge to thermodynamic equilibrium codes. In particular, it was shown that at temperature $T = 1523$  \si{\kelvin}, a ternary miscibility gap can be ignored when considering the metastable BCC phase only. The phase was modelled with a three-sublattice CEF model with the elements mixing on the first and second sublattices. Considering the challenges posed by the BCC phase in the system, the system was selected as a test problem with the system containing \SI{0.5}{\mole} of \ce{Al}, \SI{0.2}{\mole} of \ce{Co} and \SI{0.3}{\mole} of \ce{Cr} at $T = 1000$ \si{\kelvin} and $P=1$ \si{\atmosphere}. The global optimisation algorithm must identify the existence of a miscibility gap.
 		\begin{figure}[htbp]
 			\centering
 			\includegraphics[width=0.6\textwidth]{figures/chapter-6/System_AlCoCr.pdf}
-			\caption[Global optimisation test problem E: BCC phase \ce{Al-Co-Cr} ternary system with the miscibility gap.]{\ce{Al-Co-Cr} phase diagram calculated with Thermo-Calc version 2018b with an increased point density. With only BCC phase enabled, the existence of the miscibility gaps is shown in the central portion but as shown by Otis \textit{et al.} \cite{Otis:2017ab}, the miscibility gap is lost using the default Thermo-Calc parameters.}
+			\caption[Global optimisation test problem E: BCC phase \ce{Al-Co-Cr} ternary system with the miscibility gap.]{\ce{Al-Co-Cr} phase diagram calculated with Thermo-Calc version 2018b with an increased point density. With only BCC phase enabled, the existence of the miscibility gaps is shown in the central portion but as shown by Otis et al. \cite{Otis:2017ab}, the miscibility gap is lost using the default Thermo-Calc parameters.}
 			\label{fig:testE}
 		\end{figure} 
 	
@@ -476,7 +406,7 @@
 		\label{fig:Grid_cons}
 	\end{figure}
 
-The discretisation of the grid plays a key role in the efficacy of this method and it has been shown by Chen \textit{et al.} \cite{Chen93b} that the grid must be sufficiently resolved to avoid missing critical features such as the minimum between grid points $\alpha_8$ and $\alpha_9$ in figure~\ref{fig:Grid_cons}. However, this requirement leads to performance concerns as too small a grid leads to an increase in the computational cost while too large a grid can lead to false positives in the optimisation process.  Piro and Simunovic \cite{Piro16} have demonstrated how uniformly spaced grid for a phase $\phi$ in $N_\phi$ dimensional Euclidean phase (each dimension corresponds to a species in phase $\phi$) can result in an enormously large number of grid points depending on the grid size. In the example with nine grid points, it becomes clear from figure~\ref{fig:Grid_cons} that global minimum would not be found but increasing the number of grid points will lead to an exponential increase in the cost. In conclusion, the rapid increase in the computational cost with the reduction in grid size and a questionable performance in terms of reaching a global maximum tilts the scales against this method. Despite the fact, this method was tested with three separate grid spacings ($\delta = 0.1, \, 0.01, \,\text{and}\, 0.001$) to serve as benchmarks and to numerically show the rapid increase in computational time.
+The discretisation of the grid plays a key role in the efficacy of this method and it has been shown by Chen et al. \cite{Chen93b} that the grid must be sufficiently resolved to avoid missing critical features such as the minimum between grid points $\alpha_8$ and $\alpha_9$ in figure~\ref{fig:Grid_cons}. However, this requirement leads to performance concerns as too small a grid leads to an increase in the computational cost while too large a grid can lead to false positives in the optimisation process.  Piro and Simunovic \cite{Piro16} have demonstrated how uniformly spaced grid for a phase $\phi$ in $N_\phi$ dimensional Euclidean phase (each dimension corresponds to a species in phase $\phi$) can result in an enormously large number of grid points depending on the grid size. In the example with nine grid points, it becomes clear from figure~\ref{fig:Grid_cons} that global minimum would not be found but increasing the number of grid points will lead to an exponential increase in the cost. In conclusion, the rapid increase in the computational cost with the reduction in grid size and a questionable performance in terms of reaching a global maximum tilts the scales against this method. Despite the fact, this method was tested with three separate grid spacings ($\delta = 0.1, \, 0.01, \,\text{and}\, 0.001$) to serve as benchmarks and to numerically show the rapid increase in computational time.
 	
 	\subsection{Spatial branch \& bound (sBB)}
 		The Branch and Bound (BB or B\&B), attributed to Land and Doig \cite{Land:1960aa} who introduced it in 1960 for discrete programming, is a widely used algorithmic paradigm for finding optimal solutions to optimisation problems. As illustrated in \ref{fig:BB},the algorithm systematically enumerates all the candidate solutions by sequentially pruning out non-feasible solution candidates through a recursive approach of partitioning the domain and finding an upper and a lower bound for each subdomain. In 1969, Falk and Soland \cite{Falk69} proposed one of the first BB algorithms that could be applied to an continuous objective function with separable concave portions with a closed and convex set of constraints and a bounded feasibility region.
@@ -576,20 +506,20 @@ sBB algorithms rely on the generation of rigorous lower and upper bounds for the
 OBBT can be applied to every variable $x_i$ separately and when feasible the convex relaxation constraints can be updated but at each iteration it will solve $2N$ optimisation problems making it extremely expensive and suitable only for initial bound tightening steps \cite{Smith:1999aa}. FBBT, on the other hand, considers each constraint of the  reformulated problem individually \cite{Shectman:1998aa}. At any sBB node $k$, if the local minimum $\hat{x}^k \in \left[x^l, x^u\right]$ of the convex relaxed problem $\mathbf{CP}_k$ is known, FBBT is applied to fictitious bounding box $B \cap {x \in \mathbb{R}^{n+q} : x_i \leq \tilde{x}_i}$, where $\tilde{x}_i \in \left(x_i^l, \hat{x}_i^k\right)$ is suitably chosen. If the resulting problem become infeasible or if its lower bound becomes larger than the best upper bound, then $\left[\tilde{x}_i^k, x_i^u\right]$ is a valid tightening . On the other hand, if $\tilde{x}_i \in \left(\hat{x}_i^k, x_i^u\right)$ is chosen and FBBT applied to the analogous bounding box results in infeasibility, then $\left[x_i^l, \tilde{x}_i^k\right]$ is valid.
 	
 	\item \emph{Branching}\\
-		Branching is critical to the performance of sBB and an effective strategy can help minimise the size of the sBB tree. The goal of branching is to choose a branch variable and corresponding branch point to be use to partition the domain. In doing so, the goal must be to improve the lower bound of the resulting subproblems and to eliminate as large an infeasible region as possible. In doing so, one must also try to keep the sBB balanced and together the three requirements are often conflicting and the implementations can be optimised to emphasise on one aspect or the other. Branching may be required when the lower bound $\bar{x}_{n+q}^k$ of an sBB node $\mathbf{P}_k$ is smaller than the best known feasible solution and the relaxation $\mathbf{LP}_k$ cannot be further refined. To objectively select the branching variable and point, Belotti \textit{et al.} \cite{Belotti:2009aa} define the $\vartheta_i$-\textit{infeasibility} of auxiliary variable $x_i$ at node $k$ as $U_i\left(\bar{x}^k\right) = \left|\bar{x}_i^k - \vartheta_i\left(\bar{x}^k\right) \right| \slash \left(1 + \left \Vert \nabla \vartheta_i(\bar{x}^k)  \right \Vert_2\right)$. The scaling of the error term in numerator with the norm of the gradient avoids selecting a variable $x_i$ with a small bound interval $[x_i^l, x_i^u]$ but with a large $\left|\bar{x}_i^k - \vartheta_i\left(\bar{x}^k\right) \right|$ as it is unlikely to improve linearisation if used for branching.
+		Branching is critical to the performance of sBB and an effective strategy can help minimise the size of the sBB tree. The goal of branching is to choose a branch variable and corresponding branch point to be use to partition the domain. In doing so, the goal must be to improve the lower bound of the resulting subproblems and to eliminate as large an infeasible region as possible. In doing so, one must also try to keep the sBB balanced and together the three requirements are often conflicting and the implementations can be optimised to emphasise on one aspect or the other. Branching may be required when the lower bound $\bar{x}_{n+q}^k$ of an sBB node $\mathbf{P}_k$ is smaller than the best known feasible solution and the relaxation $\mathbf{LP}_k$ cannot be further refined. To objectively select the branching variable and point, Belotti et al. \cite{Belotti:2009aa} define the $\vartheta_i$-\textit{infeasibility} of auxiliary variable $x_i$ at node $k$ as $U_i\left(\bar{x}^k\right) = \left|\bar{x}_i^k - \vartheta_i\left(\bar{x}^k\right) \right| \slash \left(1 + \left \Vert \nabla \vartheta_i(\bar{x}^k)  \right \Vert_2\right)$. The scaling of the error term in numerator with the norm of the gradient avoids selecting a variable $x_i$ with a small bound interval $[x_i^l, x_i^u]$ but with a large $\left|\bar{x}_i^k - \vartheta_i\left(\bar{x}^k\right) \right|$ as it is unlikely to improve linearisation if used for branching.
 		\begin{enumerate}
 			\item	Branching variable selection\\
-				In Couenne, integer variables have higher priority than continuous variable but since the driving force function results in a strictly NLP problem, continuous variables become the only candidate for branching. Defining the \emph{dependence set}, $D(x_i)$, as the set of variables in $\vartheta_i(x)$ (these are the variables in $x$ that $x_i$ directly depends on), the infeasibility of variable $x_i$ can be propagated to $D(x_i)$. In Couenne, Belotti \textit{et al.} \cite{Belotti:2009aa} define the non-linear infeasibility as:
+				In Couenne, integer variables have higher priority than continuous variable but since the driving force function results in a strictly NLP problem, continuous variables become the only candidate for branching. Defining the \emph{dependence set}, $D(x_i)$, as the set of variables in $\vartheta_i(x)$ (these are the variables in $x$ that $x_i$ directly depends on), the infeasibility of variable $x_i$ can be propagated to $D(x_i)$. In Couenne, Belotti et al. \cite{Belotti:2009aa} define the non-linear infeasibility as:
 				\[
 					\Omega_i^N(\bar{x}^k) = \mu_1 \sum_{j\in E(i)} U_j(\bar{x}^k) +  \mu_2 \max_{j\in E(i)} U_j(\bar{x}^k) +  \mu_3 \min_{j\in E(i)} U_j(\bar{x}^k),
 				\]
-				where for variable ${x}_i$, the set $E(i) = {j \in N \; : \; x_i \in D(x_j)}$. Parameter $\mu_k \geq 0, \, k = 1, 2, 3 $\footnote{Parameters $\mu_k$ defined here have no correlation to the chemical potential $\mu_i$.} and $\mu_1 + \mu_2 > 0$ ensures that $\bar{x}^k$ is infeasible if and only if $\Omega_i^N(\bar{x}^k) > 0$ for at least one variable $x_i$. In Couenne $(\mu_1, \mu_2, \mu_3) = (0.1, 1.3, 0.8)$ \cite{Belotti:2009aa}. The strategy, however, can often be ineffective and Couenne also has implementations of \emph{Violation Transfer} proposed by Tawarmalani and Sahinidis \cite{Tawarmalani:2004aa} and an extension of the \emph{reliability branching} technique introduced by Achterberg \textit{et al.} \cite{Achterberg:2005aa}. In violation transfer, violations of non-convexities by the current solution are assigned to problem variables followed by transfer of violations to $D(x_i)$.  The. violations are then weighted to account for branching priorities and potential for convex relaxation improvement. The variable that leads to the maximum weighted violation is selected as the branching variable \cite{Tawarmalani:2004aa}. Since, the reliability branching strategy was not used in {\GEM}, a discussion of it is omitted and can be found in \cite{Belotti:2022aa}.
+				where for variable ${x}_i$, the set $E(i) = {j \in N \; : \; x_i \in D(x_j)}$. Parameter $\mu_k \geq 0, \, k = 1, 2, 3 $\footnote{Parameters $\mu_k$ defined here have no correlation to the chemical potential $\mu_i$.} and $\mu_1 + \mu_2 > 0$ ensures that $\bar{x}^k$ is infeasible if and only if $\Omega_i^N(\bar{x}^k) > 0$ for at least one variable $x_i$. In Couenne $(\mu_1, \mu_2, \mu_3) = (0.1, 1.3, 0.8)$ \cite{Belotti:2009aa}. The strategy, however, can often be ineffective and Couenne also has implementations of \emph{Violation Transfer} proposed by Tawarmalani and Sahinidis \cite{Tawarmalani:2004aa} and an extension of the \emph{reliability branching} technique introduced by Achterberg et al. \cite{Achterberg:2005aa}. In violation transfer, violations of non-convexities by the current solution are assigned to problem variables followed by transfer of violations to $D(x_i)$.  The. violations are then weighted to account for branching priorities and potential for convex relaxation improvement. The variable that leads to the maximum weighted violation is selected as the branching variable \cite{Tawarmalani:2004aa}. Since, the reliability branching strategy was not used in {\GEM}, a discussion of it is omitted and can be found in \cite{Belotti:2022aa}.
 			\item Branching point selection\\
 				For a continuous variable $x_i$ appearing in a single expression $x_j = \vartheta_j(x_i)$, the goal of sBB is to keep the resulting tree balanced. This makes areas of the linearisations a reasonable metric for selecting the branching point as shown in figure~\ref{fig:branching_pt}. In Couenne, three branching point selection strategies are implemented.
 				\begin{figure}[htbp]
 					\centering
 					\includegraphics[width=\textwidth]{figures/chapter-6/branching_point}
-					\caption[Strategies for selecting a branching point]{Strategies for selecting a branching point as implemented in Couenne: (a) branching on current LP solution $\bar{x}_i^k$, (b) Convex combination of LP point $\bar{x}_i^k$ and midpoint of bound interval, (c) Balancing the areas of the two resulting linearisations. Figure from Belotti \textit{et al.} \cite{Belotti:2009aa}.}
+					\caption[Strategies for selecting a branching point]{Strategies for selecting a branching point as implemented in Couenne: (a) branching on current LP solution $\bar{x}_i^k$, (b) Convex combination of LP point $\bar{x}_i^k$ and midpoint of bound interval, (c) Balancing the areas of the two resulting linearisations. Figure from Belotti et al. \cite{Belotti:2009aa}.}
 			\label{fig:branching_pt}
 			\end{figure}
 		
@@ -659,7 +589,7 @@ OBBT can be applied to every variable $x_i$ separately and when feasible the con
 	
 	\begin{enumerate}
 		\item \emph{Constraint handling}\\
-			As previously stated, several strategies have been explored to impose the constraints in PSO. One of the simplest constraint-handling mechanism is that of reseting the particles that escape the feasible region \cite{Hu:2002aa,Guo:2004aa,Sun:2009aa}. Minimisation of a non-stationary multi-stage assignment penalty function was proposed by Parsopoulos and Vrahatis \cite{Parsopoulos:2005aa} and the results were promising albeit at the cost of a very complex process for determining penalty. In the feasibility-based approaches such as that by Pulido and Coello \cite{Pulido:2004aa}, a candidate solution is chosen leader based on Deb's comparison rules \cite{Deb:2000aa}. The constraint handling strategy implemented in {\GEM} is based on the method by Hu and Eberhart \textit{et al.} \cite{Hu:2002aa}. To make the solution more plausible, all the equality constraints are modified into inequality constraints to specified tolerance, i.e., the constraints on sum of mole fractions and the charge neutrality constraints are reformulated as:
+			As previously stated, several strategies have been explored to impose the constraints in PSO. One of the simplest constraint-handling mechanism is that of reseting the particles that escape the feasible region \cite{Hu:2002aa,Guo:2004aa,Sun:2009aa}. Minimisation of a non-stationary multi-stage assignment penalty function was proposed by Parsopoulos and Vrahatis \cite{Parsopoulos:2005aa} and the results were promising albeit at the cost of a very complex process for determining penalty. In the feasibility-based approaches such as that by Pulido and Coello \cite{Pulido:2004aa}, a candidate solution is chosen leader based on Deb's comparison rules \cite{Deb:2000aa}. The constraint handling strategy implemented in {\GEM} is based on the method by Hu and Eberhart et al. \cite{Hu:2002aa}. To make the solution more plausible, all the equality constraints are modified into inequality constraints to specified tolerance, i.e., the constraints on sum of mole fractions and the charge neutrality constraints are reformulated as:
 			\begin{gather}
 				\left | \sum_{i=1}^{N_\phi} x_i - 1 \right | <  \epsilon_1,\\
 				\left | \sum_{i=1}^{N_\phi} \nu_{i{e^-}} x_i \right | < \epsilon_2.
@@ -676,10 +606,10 @@ OBBT can be applied to every variable $x_i$ separately and when feasible the con
 			\end{enumerate}
 			
 		\item \emph{Particle initialisation}\\
-			One of the parameters in PSO that can potentially affect the convergence rate is the number of particles and their initial positions. While the particle position $x_i$ is often initialised randomly from a uniform sampling in $\left[ x_i^l, x_i^u\right]$, it has been shown by Woronow \cite{Woronow:1993aa} that, when compared to normalised exponential distribution, normalised uniform distributions produce a poorer coverage of composition space. Otis \textit{et al.} \cite{Otis:2017ab} employed a set of different sampling strategies such as Halton sequence, Sobol sequence and their variations to come come up with an efficient sampling strategy for PyCalphad. Furthermore, Piro and Simunovic \cite{Piro16} found that PSO often fails to capture the optimal solutions located close to the domain edges and special considerations must be taken when the optimal solution may exist close to the boundaries. To best see the effect of particles' initial position on the performance of PSO, a number of different options were tested. First, the number of particles, $N_p$, was selected from a finite set $\left\{ N_\phi, 2N_\phi\right\}$ and second, the particles were initialised using both normalised uniform and normalised exponential sampling. In addition, when $N_p = 2N_\phi$, a hybrid strategy was also used where $N_\phi$ particles were initialised using the sampling methods while the remaining $N_\phi$ particles were fixed at the corners of the domain. The reasoning behind this approach is that the particles closer to the edges should enable the spare closer to the edges to be properly explored. Also, more advanced sampling methods were not selected as, with well-tuned hyperparameters, PSO is expected to efficiently scan the domain unlike when only sampling is used and one must make sure that the features are not missed if the samples are not well picked. 
+			One of the parameters in PSO that can potentially affect the convergence rate is the number of particles and their initial positions. While the particle position $x_i$ is often initialised randomly from a uniform sampling in $\left[ x_i^l, x_i^u\right]$, it has been shown by Woronow \cite{Woronow:1993aa} that, when compared to normalised exponential distribution, normalised uniform distributions produce a poorer coverage of composition space. Otis et al. \cite{Otis:2017ab} employed a set of different sampling strategies such as Halton sequence, Sobol sequence and their variations to come come up with an efficient sampling strategy for PyCalphad. Furthermore, Piro and Simunovic \cite{Piro16} found that PSO often fails to capture the optimal solutions located close to the domain edges and special considerations must be taken when the optimal solution may exist close to the boundaries. To best see the effect of particles' initial position on the performance of PSO, a number of different options were tested. First, the number of particles, $N_p$, was selected from a finite set $\left\{ N_\phi, 2N_\phi\right\}$ and second, the particles were initialised using both normalised uniform and normalised exponential sampling. In addition, when $N_p = 2N_\phi$, a hybrid strategy was also used where $N_\phi$ particles were initialised using the sampling methods while the remaining $N_\phi$ particles were fixed at the corners of the domain. The reasoning behind this approach is that the particles closer to the edges should enable the spare closer to the edges to be properly explored. Also, more advanced sampling methods were not selected as, with well-tuned hyperparameters, PSO is expected to efficiently scan the domain unlike when only sampling is used and one must make sure that the features are not missed if the samples are not well picked. 
 
 		\item \emph{Particle dynamics}\\
-			Parameter tuning can have a significant impact on the performance of PSO and a large number of \emph{Adaptive PSO} (APSO) algorithms have been proposed in literature to overcome the problem of a-priori tuning of the parameters. A comparative analysis of many such algorithms has been performed by Harrison \textit{et al.} \cite{Harrison:2018aa}. Amongst one of the promising APSO algorithms is \emph{APSO based on velocity information} (APSO-VI) proposed by Xu \cite{Xu:2013aa} which adapts the inertia weight based on the current velocity of the particles. The concept of APSO-VI is borrowed from Yasuda \textit{et al.} \cite{Yasuda:2008aa} and aims to evolve the velocity to be close to an \emph{ideal} velocity. In APSO-VI the average velocity of swarm is defined as \cite{Xu:2013aa}:
+			Parameter tuning can have a significant impact on the performance of PSO and a large number of \emph{Adaptive PSO} (APSO) algorithms have been proposed in literature to overcome the problem of a-priori tuning of the parameters. A comparative analysis of many such algorithms has been performed by Harrison et al. \cite{Harrison:2018aa}. Amongst one of the promising APSO algorithms is \emph{APSO based on velocity information} (APSO-VI) proposed by Xu \cite{Xu:2013aa} which adapts the inertia weight based on the current velocity of the particles. The concept of APSO-VI is borrowed from Yasuda et al. \cite{Yasuda:2008aa} and aims to evolve the velocity to be close to an \emph{ideal} velocity. In APSO-VI the average velocity of swarm is defined as \cite{Xu:2013aa}:
 			\begin{equation}
 				\bar{v}^t = \frac{1}{n N_p} \sum_{i=1}^{N_p} \sum_{i=1}^{n} \left | v_{ij}^t \right |,
 			\end{equation}
@@ -701,7 +631,7 @@ OBBT can be applied to every variable $x_i$ separately and when feasible the con
 								\min \left\{ \omega^t - \Delta \omega, \, \omega_\text{max}\right\}& \text{if } \bar{v}^t <  {v}_\text{ideal}^{t+1}
 							\end{cases},
 			\end{equation}
-			where $\omega_\text{min}$ and $\omega_\text{max}$ are the minimum and maximum inertia weights and $\Delta \omega$ is the inertia weight step size. It has been shown by Harrison \textit{et al.} \cite{Harrison:2016aa} that decreasing the ideal velocity decrease the inertia weight such that it remains within convergent range. Xu fixed the parameters $\omega_\text{min} = 0.3$, $\omega_\text{max} = 0.9$, $\Delta \omega = 0.1$, and $\psi_1 = \psi_2 = 1.49$ \cite{Xu:2013aa} and, in this work, APSO-VI has been adopted, albeit with slightly different parameter values. In {\GEM}, the APSO-VI hyperparameters were selected to be $\omega_\text{min} = 0.2$, $\omega_\text{max} = 0.9$, $\Delta \omega = 0.1$, $\psi_1 = 1.5$ and  $\psi_2 = 2$. These values provided good convergence rates while reasonably exploring the search space and are similar to those previously used in thermodynamic equilibrium application such as by Piro and Simunovic \cite{Piro16} and Myint \textit{et al.} \cite{Myint:2021aa}.
+			where $\omega_\text{min}$ and $\omega_\text{max}$ are the minimum and maximum inertia weights and $\Delta \omega$ is the inertia weight step size. It has been shown by Harrison et al. \cite{Harrison:2016aa} that decreasing the ideal velocity decrease the inertia weight such that it remains within convergent range. Xu fixed the parameters $\omega_\text{min} = 0.3$, $\omega_\text{max} = 0.9$, $\Delta \omega = 0.1$, and $\psi_1 = \psi_2 = 1.49$ \cite{Xu:2013aa} and, in this work, APSO-VI has been adopted, albeit with slightly different parameter values. In {\GEM}, the APSO-VI hyperparameters were selected to be $\omega_\text{min} = 0.2$, $\omega_\text{max} = 0.9$, $\Delta \omega = 0.1$, $\psi_1 = 1.5$ and  $\psi_2 = 2$. These values provided good convergence rates while reasonably exploring the search space and are similar to those previously used in thermodynamic equilibrium application such as by Piro and Simunovic \cite{Piro16} and Myint et al. \cite{Myint:2021aa}.
 	\end{enumerate}
 
 	
@@ -736,6 +666,8 @@ Among the tested options, sBB proves to be the most reliable though at a cost to
 
 In the context of {\YJ}, both the sBB and APSO algorithms have been integrated into the code and the user will have the option of specifying the desired method. In cases where reliability is of the utmost and the system is deemed too complex, one could select sBB as the global optimisation algorithm while in cases where the system is deemed to be not very complicated or where there is a possibility of a-posteriori checking the results and / or augmenting global optimisation results with other information such as that from the grain information available in phase field.
 	
+%\subsection{Software Quality Assurance (SQA)}
+%	A key thrust area of the {\GEM} development was to meet the SQA standards required from all MOOSE-based applications. Not only must one make sure that the results are physically representative, but the code itself must meet criteria for readability and upgradability but also avoid regression, or accidental breakage, of features. 
 
 \section{Summary}
 	A number of algorithms for different parts of a thermodynamic equilibrium solver were presented in this chapter. Many of these algorithms have already been implemented in other codes available in the literature and GEM and levelling are relatively mature algorithms with little to no scope of improvement. This is evident from the fact that most of the development efforts since the original GEm method has relied on auxiliary operations such as initialisation, etc. However, this does not mean that improvements can not be made.  The development of an advanced thermodynamic solver leaves the door open for incremental gains on many of these algorithms.
