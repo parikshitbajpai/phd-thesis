@@ -18,7 +18,7 @@
 	   	\label{fig:datfile}
 	\end{figure}
 
-	A data file parser for {\GEM} has been developed in C++ and it performs the extraction of Gibbs energy functions from ChemSage format (*.dat) thermodynamic files (ChemSage format) and creates an in-memory thermodynamic database class, \texttt{Database}, that can be conveniently accessed by any part of the code throughout rest of the solve. All the data structure objects inherit from a single base class allowing the rest of the code to track the phases conveniently without having to track the model-specific  details. Moreover, in multiphysics simulations, it allows a single database instance to be created at the start of the simulations instead of the need of reading the datafile every time the information is needed. In {\GEM}, the Molten Salt Thermodynamic Database - Thermochemical \cite{MSTDB}, is natively supported but any ChemSage format datafile can be supplied by the user.
+	A data file parser for {\GEM} has been developed in C++ and it performs the extraction of Gibbs energy functions from ChemSage format (*.dat) thermodynamic files (ChemSage format) and creates an in-memory thermodynamic database class, \texttt{Database}, that can be conveniently accessed by any part of the code throughout rest of the solve. All the data structure objects inherit from a single base class allowing the rest of the code to track the phases conveniently without having to track the model-specific  details. Moreover, in multiphysics simulations, it allows a single database instance to be created at the start of the simulations instead of the need of reading the datafile every time the information is needed. In {\GEM}, the Molten Salt Thermodynamic Database - Thermochemical \cite{Besmann:2021aa,Ard:2022aa}, is natively supported but any ChemSage format datafile can be supplied by the user.
 	
 	The \texttt{Database} class includes a number of utility functions for post-processing and cleaning up the raw database constructed after parsing. A peculiarity of ChemSage datafiles is how they denote phases that can have a miscibility gap. In ChemSage, such phases are denoted by adding a duplicate entry for a phase that is considered to have miscibility gaps. This has several disadvantage. First, this creates unnecessary duplication of thermodynamic data and can have memory and performance implications for large databases. Second, the decision for miscibility gap should be enforced using physical rules rather than basing them upon the database or user inputs. As an example, since a phase with more than one miscibility gap not only plausible but also observed in many physical systems, a phase being duplicated once doesn't reveal any information about the number of such possible gaps and can be a source of confusion. In post-processing, such duplicate entries are deleted, but to not lose the information completely, a flag is raised in the thermodynamic phase whose duplicate was deleted. For multi-sublattice phases, the post-processor also maps all the sublattice constituents to the system components, and, for phase represented by MQM, it calculates the default coordination numbers for the quadruplets that are not included in the datafile.
 	
@@ -99,7 +99,7 @@
 
 	The next step in levelling is updating the phase assemblage in accordance with equation~\eqref{eq:lev_adj}. A  species with a positive $\hat{G}_i^{m+1}$ would yield a thermodynamically less stable assemblage and is left out along with phases with insignificant contributions to final equilibrium while the phase with the most negative $\hat{G}_i^{m+1}$ is introduced into the assemblage by replacing a phase in the previous assemblage. The phase assemblage at this stage must meet three requirements. First, the number of moles of all phase in $\mathbf{n}$ must be non-negative and real. Second, all the elements of the vector $\boldsymbol{\Gamma}$ must be real. Finally, the phase assemblage must not have been previously considered. If the phase assemblage does not meet any of these requirements, the phase with the second lowest relative Gibbs energy must be considered, and so on.
 
-	While the criteria for the phase to be added in the system was well established by Eriksson and Thompson, a criterion to select the phase to be replaced wasn't proposed and, typically, local iterations were performed to systematically traverse through the candidate phases until a particular combination yielded an entire set of non-negative and real mole numbers \cite{Eriksson89}. The number of these local iterations rapidly grows with the number of elements in the system and an alternative named \emph{Euclidean norm} was proposed by Piro and Simunovic \cite{Piro12a}. This method has been described in sec.~\ref{sec:Euclidean}
+	While the criteria for the phase to be added in the system was well established by Eriksson and Thompson, a criterion to select the phase to be replaced wasn't proposed and, typically, local iterations were performed to systematically traverse through the candidate phases until a particular combination yielded an entire set of non-negative and real mole numbers \cite{Eriksson89}. The number of these local iterations rapidly grows with the number of elements in the system and an alternative named \emph{Euclidean norm} was proposed by Piro and Simunovic \cite{Piro12a}. This method has been described in section~\ref{sec:Euclidean}
 
 	Once the new phase has been exchanged with one of the existing phases and its acceptability has been determined, levelling step is repeated until no phases with negative absolute Gibbs energy remain in the system. At this stage, the assemblage can be passed on to a non-linear solver as the initial estimate.
 
@@ -107,7 +107,7 @@
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=\textwidth]{figures/Levelling_illustration}
-		\caption{Illustration of the levelling process for a binary system of \ce{U-O} at each iteration (1 \si{\mole} \ce{U}, 2.2 \si{\mole} \ce{O}, 298.15 \si{\kelvin}, 1 \si{atm}) \cite{Piro11b}.}
+		\caption[Illustration of the levelling process for a binary system of \ce{U-O} at each iteration (1 \si{\mole} \ce{U}, 2.2 \si{\mole} \ce{O}, 298.15 \si{\kelvin}, 1 \si{atm}).]{Illustration of the levelling process for a binary system of \ce{U-O} at each iteration (1 \si{\mole} \ce{U}, 2.2 \si{\mole} \ce{O}, 298.15 \si{\kelvin}, 1 \si{atm}) \cite{Piro11b}.}
 		\label{fig:lev_illus}
 	\end{figure}
 
@@ -133,27 +133,27 @@
 %
 %		A demonstration of the post-levelling method in predicting the element potentials of combustion products from a coal fire shows that compared to levelling, post levelling calculations provide values much closer to the equilibrium values. As a result, the rate of convergence of the non-linear solver improves by a large factor.  While exact gains depend on the non-linear solver, line-search algorithm and the strategy for updating the estimated phase assemblage, relative performance gains can be easily envisaged even though post-levelling process incurs additional computational cost. This can be attributed to the fact that the cost of post-levelling is negligible in comparison to the cost of a single iteration in a non-linear solver \cite{Piro12a}.
 %
-%	\subsection{Euclidean norm} \label{sec:Euclidean}
-%	The Euclidean norm method was proposed by Piro and Simunovic \cite{Piro12a}, to strategically rank the best candidate phases to accommodate a new phase change. The Gibbs phase rule requires that when the thermodynamic degree of freedom $F$ equals zero, a phase must be removed in order to introduce a new phase. Determining whether a candidate phase is feasible is the most expensive task within the global iteration cycles as it requires solution of a simultaneous equation to ensure that the Hessian matrix is non-singular \cite{Piro12a}. If there are multiple candidate phases, this iterative process must be repeated for each candidate.
-%
-%	The Euclidean norm method systematically ranks the best candidates to be withdrawn from the system without having to perform an exhaustive search. The method is based on the principle that the best candidate phase to be withdrawn from the current assemblage has the most similar atomic composition to the phase that has to be added to the system.
-%
-%	The atomic fraction of element $j$ in a pure stoichiometric phase $\omega$ is represented as:
-%	\begin{equation}
-%		c_{\omega,j} = \frac{c_{\omega,j}}{\sum_{k=1}^{E} x_{i(\omega)}\nu_{\omega,j}}
-%	\end{equation}
-%
-%	Similarly, in the solution phase  $\lambda$, the atomic fraction of element $j$ is computed by
-%	\begin{equation}
-%		c_{\lambda,j} = \frac{\sum_{i=1}^{N_{\lambda}} \nu_{ij}}{\sum_{i=1}^{N_{\lambda}} \sum_{k=1}^{E} x_{i(\lambda) \nu_{i,k}}}
-%	\end{equation}
-%
-%	Denoting the atom fraction of the element $j$ in the new phase that is to be introduced into the system with $c_{\phi,j}^{*}$, the difference between this phase and the phases currently in the assemblage is given by the Euclidean norm of each phase $\phi$
-%	\begin{equation}
-%		\|c_\phi\|_2 = \sqrt{\sum_{j=1}^{E} \left(c_{\phi,j} - c_{\phi,j}^{*}\right)^2}
-%	\end{equation}
-%
-%	The phase with the lowest Euclidean norm has the most similar composition to the phase to be introduced in the assemblage. In case the resulting assemblage does not meet the criterion to be a valid assemblage, the phase with the second lowest Euclidean norm can be introduced and so on.
+	\subsection{Euclidean norm} \label{sec:Euclidean}
+	The Euclidean norm method was proposed by Piro and Simunovic \cite{Piro12a}, to strategically rank the best candidate phases to accommodate a new phase change. The Gibbs phase rule requires that when the thermodynamic degree of freedom $F$ equals zero, a phase must be removed in order to introduce a new phase. Determining whether a candidate phase is feasible is the most expensive task within the global iteration cycles as it requires solution of a simultaneous equation to ensure that the Hessian matrix is non-singular \cite{Piro12a}. If there are multiple candidate phases, this iterative process must be repeated for each candidate.
+
+	The Euclidean norm method systematically ranks the best candidates to be withdrawn from the system without having to perform an exhaustive search. The method is based on the principle that the best candidate phase to be withdrawn from the current assemblage has the most similar atomic composition to the phase that has to be added to the system.
+
+	The atomic fraction of element $j$ in a pure stoichiometric phase $\omega$ is represented as:
+	\begin{equation}
+		c_{\omega j} = \frac{c_{\omega j}}{\sum_{k=1}^{E} x_{i(\omega)}\nu_{\omega j}}
+	\end{equation}
+
+	Similarly, in the solution phase  $\lambda$, the atomic fraction of element $j$ is computed by
+	\begin{equation}
+		c_{\lambda j} = \frac{\sum_{i=1}^{N_{\lambda}} \nu_{ij}}{\sum_{i=1}^{N_{\lambda}} \sum_{k=1}^{E} x_{i(\lambda) \nu_{ik}}}
+	\end{equation}
+
+	Denoting the atom fraction of the element $j$ in the new phase that is to be introduced into the system with $c_{\phi j}^{*}$, the difference between this phase and the phases currently in the assemblage is given by the Euclidean norm of each phase $\phi$
+	\begin{equation}
+		\|c_\phi\|_2 = \sqrt{\sum_{j=1}^{E} \left(c_{\phi,j} - c_{\phi,j}^{*}\right)^2}
+	\end{equation}
+
+	The phase with the lowest Euclidean norm has the most similar composition to the phase to be introduced in the assemblage. In case the resulting assemblage does not meet the criterion to be a valid assemblage, the phase with the second lowest Euclidean norm can be introduced and so on.
 %
 %	As shown in figure~\ref{fig:PEA_gains}, the overall computational expense of thermodynamic calculations is significantly reduced when post-levelling and Euclidean norm methods are utilised \cite{Piro12a}. These performance gains can offer a significant advantage when considering multiphysics simulations where thermodynamic equilibrium is often the most computationally expensive calculation.
 %
@@ -262,7 +262,7 @@
 
 	Two issues that can prevent convergence are foreseen for a thermodynamic equilibrium solver. First, when the objective function has multiple roots, for example due to miscibility gap, and second when the slope of the objective function is extremely small or zero. These two issues can result in non-real numbers or divergence and possible failure of the iterative solver.
 
-	The numerical dampening through Wolfe/Armijo conditions and the use of levelling as an initialisation method can help in avoiding the ill-behaviour and promotes numerical stability and enhances performance characteristics. The proposed algorithm of the thermodynamic solver with both local and global iterations has been presented in fig.~\ref{fig:gem_illus}
+	The numerical dampening through Wolfe/Armijo conditions and the use of levelling as an initialisation method can help in avoiding the ill-behaviour and promotes numerical stability and enhances performance characteristics. The proposed algorithm of the thermodynamic solver with both local and global iterations has been presented in figure~\ref{fig:gem_illus}
 
 \newgeometry{margin=1cm}
 \begin{landscape}
@@ -304,7 +304,7 @@
 				\path (41) edge node[block_noborder,rotate=90,anchor=south]{\footnotesize{Passed}}(51);
 			\end{scope}
  		\end{tikzpicture}
-  		\caption{Illustration of the proposed methodology for updating the phase assemblage. Adapted from Piro \cite{Piro17}.}
+  		\caption[Illustration of the proposed methodology for updating the phase assemblage.]{Illustration of the proposed methodology for updating the phase assemblage. Adapted from Piro \cite{Piro17}.}
   		\label{fig:assemblage}
 	\end{figure}
 
