@@ -1,6 +1,6 @@
 \chapter{Literature Review} \label{chap:litreview}
 
-	Robust and fast methods for computing chemical equilibrium in complex systems are widely used in materials and chemical industries. While industrial applications essentially require calculation tools capable of discriminating between stable and unstable phases and converging to nontrivial solutions, numerical equilibrium calculations have historically focussed on representing dominant chemical reactions using the Law of Mass Action. It was only during and after the World War {II} that numerical approaches amenable to computer programming were developed. Since then, there has been significant growth in the number of methods and softwares for solving the equilibrium thermodynamics problem.
+	Robust and fast methods for computing chemical equilibrium in complex systems are widely used in materials and chemical industries. While industrial applications essentially require calculation tools capable of discriminating between stable and unstable phases and converging to nontrivial solutions, numerical equilibrium calculations have historically focussed on representing dominant chemical reactions using the Law of Mass Action. It was only during and after World War {II} that numerical approaches amenable to computer programming were developed. Since then, there has been significant growth in the number of methods and softwares for solving the equilibrium thermodynamics problem.
 	
 \section{Numerical Methods for Thermodynamic Equilibrium}
 	Up until the 1940s, chemical equilibria computations were based on two different methods. The first relied heavily on the assumption that only a few molecular species would be present in the final equilibrium and the law of mass action could be applied to these systems and the resulting system of non-linear equations was solvable using the relatively unsophisticated techniques of the time. The second method relied on a tedious trial-and-error approach with the user's intuition playing a significant role \cite{vanZeggeren11}. It was only during the Second World War that, fuelled by the development of rockets, research towards developing computational methods for chemical equilibrium gained momentum. This research was mainly driven by the fact that an accurate knowledge of chemical equilibrium of the propellants was a requirement for the design of rockets. However, all the methods developed at the time were based on the law of mass action and the procedure was not scalable to very large systems where it would be difficult to account for all the possible reactions.
@@ -49,10 +49,10 @@
  	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=0.75\textwidth]{figures/Simplex}
-		\caption{Approximation of the function $\beta$ in Simplex method. Reproduced by Piro \cite{Piro11b} from Dantzig \textit{et al.} \cite{Dantzig:1957aa}}
+		\caption[Approximation of the function $\beta$ in simplex method.]{Approximation of the function $\beta$ in Simplex method. Reproduced by Piro \cite{Piro11b} from Dantzig \textit{et al.} \cite{Dantzig:1957aa}}
 		\label{fig:simplex}
 	\end{figure}
-	Though the Simplex method has been successful in many optimisation problems \cite{Dantzig:2016aa}, the linearisation of $\beta$ generates a relatively large number of additional unknowns and the computational expense becomes quite large. Furthermore, the method is unable to determine the composition of dilute species \cite{vanZeggeren11}. As a result, the Simplex method has not received widespread usage in thermodynamic equilibrium calculations.
+	Though the Simplex method has been successful in many optimisation problems \cite{Dantzig:2016aa}, the linearisation of $\beta$ generates a relatively large number of additional unknowns and the computational expense becomes quite large. Furthermore, the method is unable to determine the composition of dilute species \cite{vanZeggeren11}. As a result, the simplex method has not received widespread usage in thermodynamic equilibrium calculations.
 
 
 \section{Gibbs Energy Minimisers}
@@ -168,7 +168,7 @@ For the case of thermodynamic equilibrium calculations, Piro and Simunovic \cite
 	The diversification and intensification plays a key role in ensuring a compromise between reliability and computational efficiency of stochastic algorithms and while the stochastic algorithms can often locate the global minimum in modest computational times compared to deterministic methods, they do not guarantee global optimality \cite{Zhang11,Blum:2003aa}.
 
 	\subsection{Global Optimisation Review}
-	 A few of the studies on global optimisation in thermodynamic equilibrium calculation have been summarised in tab.~\ref{tab:globalopt}. While most of the global optimisation methods applied to phase equilibrium have been studied with reference to liquid-liquid or vapour-liquid equilibrium, a few of the remarkable ones can be applied to more general phase equilibrium problems. Chaikunchuensakun \textit{et al.} \cite{Chaikunchuensakun:2002aa} applied a hybrid algorithm based on non-linear parametric optimisation routines which solves the Kuhn-Tucker conditions by minimising a quadratic sub-problem with linearised equality and inequality constraints. While the method can equilibrium solutions, a global solution cannot be guaranteed \cite{Zhang11}. Another notable study is by Nichita \textit{et al.} \cite{Nichita02} who tested the tunnelling method for multi-phase equilibrium calculation by direct minimisation of Gibbs energy of the components. Rossi \textit{et al.} \cite{ROSSI20111226} applied a convex analysis method to chemical and phase equilibrium of closed multi-component reactive system. Though the method is highly efficient and reliable, it is only applicable to convex functions. A duality based approach proposed by Pereira \textit{et al.} \cite{PEREIRA20101} can guarantee the global optimum but requires a differentiable objective function \cite{Zhang11}.
+	 A few of the studies on global optimisation in thermodynamic equilibrium calculation have been summarised in table~\ref{tab:globalopt}. While most of the global optimisation methods applied to phase equilibrium have been studied with reference to liquid-liquid or vapour-liquid equilibrium, a few of the remarkable ones can be applied to more general phase equilibrium problems. Chaikunchuensakun \textit{et al.} \cite{Chaikunchuensakun:2002aa} applied a hybrid algorithm based on non-linear parametric optimisation routines which solves the Kuhn-Tucker conditions by minimising a quadratic sub-problem with linearised equality and inequality constraints. While the method can equilibrium solutions, a global solution cannot be guaranteed \cite{Zhang11}. Another notable study is by Nichita \textit{et al.} \cite{Nichita02} who tested the tunnelling method for multi-phase equilibrium calculation by direct minimisation of Gibbs energy of the components. Rossi \textit{et al.} \cite{ROSSI20111226} applied a convex analysis method to chemical and phase equilibrium of closed multi-component reactive system. Though the method is highly efficient and reliable, it is only applicable to convex functions. A duality based approach proposed by Pereira \textit{et al.} \cite{PEREIRA20101} can guarantee the global optimum but requires a differentiable objective function \cite{Zhang11}.
 
 	 Amongst the stochastic methods, the most notable works are from Teh and Rangaiah \cite{Teh03} who show that the tabu search is more efficient that the genetic algorithm but requires further improvement for 100\% reliability. However, the system size considered by them is relatively small. Srinivas and Rangaiah \cite{Srinivas06} used the random tunnelling algorithm which can evaluate the global minimum for most of the examples tested but suffers from low reliability and is feasible only for small systems.
 
@@ -184,6 +184,7 @@ For the case of thermodynamic equilibrium calculations, Piro and Simunovic \cite
 	\toprule
 	\multicolumn{1}{c}{\textbf{Method}} &\phantom{abc} & \multicolumn{1}{c}{\textbf{Class}} &\phantom{abc} & \multicolumn{1}{c}{\textbf{Problem Formulation}}\\
 	\midrule
+	Sampling \cite{Sundman15,Otis:2017ab} && Deterministic && Gibbs energy \\
 	Branch and Bound \cite{CHEUNG2002169} && Deterministic && Potential energy \\
 	Branch and Bound \cite{Piro16} && Deterministic  && Gibbs energy \\
 	Convex optimisation \cite{ROSSI20111226}&& Deterministic && Gibbs energy \\
@@ -198,7 +199,7 @@ For the case of thermodynamic equilibrium calculations, Piro and Simunovic \cite
 	Hybrid genetic algorithm with interior point method \cite{STAUDT2009585} && Stochastic && Gibbs energy \\
 	Interval analysis \cite{Scurto:2003aa} && Deterministic && Gibbs energy surface \\
 	Nonlinear parametric optimisation \cite{Chaikunchuensakun:2002aa} && Deterministic && Gibbs energy \\
-	Particle swarm optimisation \cite{Bonilla09,Piro16} && Stochastic && Gibbs energy \\
+	Particle swarm optimisation \cite{Bonilla09,Piro16,Myint:2021aa} && Stochastic && Gibbs energy \\
 	Random tunnelling algorithm \cite{Srinivas06} && Stochastic && Gibbs energy \\
 	Simulated annealing \cite{Bonilla-Petriciolet:2009aa} && Stochastic && Gibbs energy \\
 	Successive quadratic programming \cite{LUCIA20002557} && Deterministic && Gibbs energy \\
@@ -210,15 +211,19 @@ For the case of thermodynamic equilibrium calculations, Piro and Simunovic \cite
 %\end{landscape}
 %\restoregeometry
 
-\section{Integration of Thermodynamics in Multiphysics Codes}
+\section{Multiphysics Integration of Computational Thermodynamics}
 
-	Recently significant effort has been invested in integrating thermodynamic equilibrium computations in multiphysics codes.  To highlight the relevance of coupling thermodynamic equilibrium calculations in multiphysics codes, some of the notable works are discussed in this section.
 
+	The interest in including thermodynamic equilibrium calculations in multiphysics simulations has been relatively recent. Even though the importance of thermodynamic variables in various physical simulations has been long recognised, the limitations on computational resources along with the high cost of equilibrium calculations made thermodynamically informed coupled simulations infeasible for most simulations beyond those aimed at purely demonstrating capability. However, over the last few years, the efforts towards coupling thermochemistry have been ever-increasing. Some of such coupling efforts, primarily the ones focussed on nuclear applications are reviewed here. 
+	
+	Most of the applications of coupling computational thermochemistry have been in nuclear fuel codes with some applications in microstructural evolution using phase field method and even lesser applications in safety analyses. Some of the works that have coupled computational thermodynamics with the commercial software package COMSOL include those of Higgs \textit{et al.}
+	
+	
 	Piro integrated the thermochemistry solver {Thermochimica} into the Advance Multi-Physics {AMP} code developed by Oak Ridge National Laboratory \cite{Piro11b}. This allowed the investigation of an irradiated fuel pellet by using isotopic evolution of irradiated nuclear fuel which was calculated through the software package {ORIGEN}. The integration of {Thermochimica} in {AMP} is shown in figure~\ref{fig:amp} and the capabilities of this simulation framework were demonstrated through a scenario that simulates the behaviour of highly irradiated \ce{UO2} fuel, results of which are shown in figure~\ref{fig:pirojnm}.
 	\begin{figure}[htbp]
 		\begin{center}
 		\includegraphics[width=0.75\textwidth]{figures/AMP_TC.png}
-		\caption{A flowchart of the Advanced Multi-Physics (AMP) code illustrating the interaction between the various modules is shown \cite{Piro11b}.}
+		\caption[A flowchart of the Advanced Multi-Physics (AMP) code illustrating the interaction between the various modules.]{A flowchart of the Advanced Multi-Physics (AMP) code illustrating the interaction between the various modules is shown \cite{Piro11b}.}
 		\label{fig:amp}
 		\end{center}
 	\end{figure}
@@ -226,7 +231,7 @@ For the case of thermodynamic equilibrium calculations, Piro and Simunovic \cite
 	\begin{figure}[htbp]
 		\begin{center}
 		\includegraphics[width=0.85\textwidth]{figures/Piro_JNM}
-		\caption{The predicted distribution of phases across the pellet is shown for an average pellet burnup of 102 GW d t(U)$^{?1}$. \cite{Piro13b}.}
+		\caption{The predicted distribution of phases across the pellet is shown for an average pellet burnup of 102 GW d t(U)$^{-1}$. \cite{Piro13b}.}
 		\label{fig:pirojnm}
 		\end{center}
 	\end{figure}
