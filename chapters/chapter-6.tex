@@ -69,17 +69,17 @@
 
 	Since the Gibbs energy is a relative thermodynamic function and the Gibbs energies of each component element are not related to one another \cite{Eriksson89}, it is possible to numerically alter the Gibbs energy of each phase while preserving the elemental differences. Levelling is performed by representing the set of Gibbs energies relative to the collection of phases assumed to be most stable and uses a relative Gibbs energy function called the \textit{absolute Gibbs energy} by Eriksson and Thompson and is the Gibbs energy of the pure species per atom in the species as shown in equation~\eqref{eq:absGibbs}
 	\begin{equation}\label{eq:absGibbs}
-		\hat{G}_i = \frac{G_j}{\sum_{j=1}^C \nu_{ij}}
+		\hat{G}_i = \frac{G_j}{\sum_{j=1}^C \nu_{ij}}.
 	\end{equation}
 
 	The levelling process determines the combination of phases yielding the lowest Gibbs energy by evaluating a combination of Gibbs energies on a relative basis. A phase that has a negative relative Gibbs energy with respect to the assemblage indicates that a phase in the assemblage must be replaced by the current phase to achieve a lower integral Gibbs energy. Mathematically, levelling is achieved through an iterative process that systematically adjusts fixed combinations of phases, subject to the linear equality and inequality mass balance constraints, to progressively minimise the GIbbs energy of the system \cite{Piro12a}. At iteration $m+1$, the adjustment to be applied to the relative Gibbs energy of phase $i$ is defined by \cite{Eriksson89}:
 	\begin{equation} \label{eq:lev_adj}
 		\begin{aligned}
-			d \hat{G}_i^{m\rightarrow m+1} &= \sum_{j=1}^{C} c_{ij} d \Gamma_j^{m\rightarrow m+1}\\
-			\hat{G}_i^{m+1} &= \hat{G}_i^{m} - d \hat{G}_i^{m\rightarrow m+1}
+			d \hat{G}_i^{m\rightarrow m+1} &= \sum_{j=1}^{C} c_{ij} d \Gamma_j^{m\rightarrow m+1},\\
+			\hat{G}_i^{m+1} &= \hat{G}_i^{m} - d \hat{G}_i^{m\rightarrow m+1},
 		\end{aligned}
 	\end{equation}
-	where, $c_{ij}$ denotes the atomic fraction of element $j$ in species $i$ and $d \Gamma_j^{m\rightarrow m+1}$ is the adjustment applied to the chemical potential of element $j$, which in turn is determined by the most stable phases found at iteration $m$. In  matrix form, the overall mass balance constraint can be represented as \cite{Piro12a}
+	where $c_{ij}$ denotes the atomic fraction of element $j$ in species $i$ and $d \Gamma_j^{m\rightarrow m+1}$ is the adjustment applied to the chemical potential of element $j$, which in turn is determined by the most stable phases found at iteration $m$. In  matrix form, the overall mass balance constraint can be represented as \cite{Piro12a}
 	\begin{equation} \label{eq:levMB_mat}
 		\mathbf{A^T} \mathbf{n}= \mathbf{b},
 	\end{equation}
@@ -89,7 +89,7 @@
 
 	In levelling, since the number of phases in the system is equal to the number of elements, the element potentials can then be uniquely determined from the current estimated phase assemblage by solving the following system of linear equations:
 	\begin{equation} \label{eq:levEP_mat}
-		\mathbf{A^T} \boldsymbol{\Gamma} = \boldsymbol{\mu}
+		\mathbf{A^T} \boldsymbol{\Gamma} = \boldsymbol{\mu},
 	\end{equation}
 	where $\boldsymbol{\Gamma} \in \mathbb{R}^{E} $ and $\boldsymbol{\mu} \in \mathbb{R}^{\Phi}$.
 
@@ -116,21 +116,25 @@
 \subsection{Euclidean norm} \label{sec:Euclidean}
 	The Euclidean norm method was proposed by Piro and Simunovic \cite{Piro12a}, to strategically rank the best candidate phases to accommodate a new phase change. The Gibbs phase rule requires that when the thermodynamic degree of freedom $F$ equals zero, a phase must be removed in order to introduce a new phase. Determining whether a candidate phase is feasible is the most expensive task within the global iteration cycles as it requires solution of a simultaneous equation to ensure that the Hessian matrix is non-singular \cite{Piro12a}. If there are multiple candidate phases, this iterative process must be repeated for each candidate.
 
-	The Euclidean norm method systematically ranks the best candidates to be withdrawn from the system without having to perform an exhaustive search. The method is based on the principle that the best candidate phase to be withdrawn from the current assemblage has the most similar atomic composition to the phase that has to be added to the system.
-
-	The atomic fraction of element $j$ in a pure stoichiometric phase $\omega$ is represented as:
+	The Euclidean norm method systematically ranks the best candidates to be withdrawn from the system without having to perform an exhaustive search. The method is based on the principle that the best candidate phase to be withdrawn from the current assemblage has the most similar atomic composition to the phase that has to be added to the system. The atomic fractions in phase $\phi$ are represented by the following equation:
 	\begin{equation}
-		c_{\omega j} = \frac{c_{\omega j}}{\sum_{k=1}^{E} x_{i(\omega)}\nu_{\omega j}}
+		c_{\phi j} = \frac{\sum_{i=1}^{N_{\phi}} \nu_{ij}}{\sum_{i=1}^{N_{\phi}} \sum_{k=1}^{C} x_i \nu_{ik}},
 	\end{equation}
-
-	Similarly, in the solution phase  $\lambda$, the atomic fraction of element $j$ is computed by
-	\begin{equation}
-		c_{\lambda j} = \frac{\sum_{i=1}^{N_{\lambda}} \nu_{ij}}{\sum_{i=1}^{N_{\lambda}} \sum_{k=1}^{E} x_{i(\lambda) \nu_{ik}}}
-	\end{equation}
+%	
+%
+%	The atomic fraction of element $j$ in a pure stoichiometric phase $\omega$ is represented as:
+%	\begin{equation}
+%		c_{\omega j} = \frac{c_{\omega j}}{\sum_{k=1}^{E} x_{i(\omega)}\nu_{\omega j}}
+%	\end{equation}
+%
+%	Similarly, in the solution phase  $\lambda$, the atomic fraction of element $j$ is computed by
+%	\begin{equation}
+%		c_{\lambda j} = \frac{\sum_{i=1}^{N_{\lambda}} \nu_{ij}}{\sum_{i=1}^{N_{\lambda}} \sum_{k=1}^{E} x_{i(\lambda) \nu_{ik}}}
+%	\end{equation}
 
 	Denoting the atom fraction of the element $j$ in the new phase that is to be introduced into the system with $c_{\phi j}^{*}$, the difference between this phase and the phases currently in the assemblage is given by the Euclidean norm of each phase $\phi$
 	\begin{equation}
-		\|c_\phi\|_2 = \sqrt{\sum_{j=1}^{E} \left(c_{\phi,j} - c_{\phi,j}^{*}\right)^2}
+		\|c_\phi\|_2 = \sqrt{\sum_{j=1}^{E} \left(c_{\phi,j} - c_{\phi,j}^{*}\right)^2}.
 	\end{equation}
 
 	The phase with the lowest Euclidean norm has the most similar composition to the phase to be introduced in the assemblage. In case the resulting assemblage does not meet the criterion to be a valid assemblage, the phase with the second lowest Euclidean norm can be introduced and so on.
@@ -157,14 +161,14 @@
 	\begin{equation}
 	\begin{aligned}
 		\|f\|^2 = &\sum_{j=1}^{C}\left(\sum_{\lambda=1}^{\Lambda} n_\lambda \sum_{i=1}^{N_\lambda} x_{i(\lambda)}\nu_{ij} + \sum_{\omega=1}^{\Omega}n_{\omega}\nu_{\omega,j} - b_j\right)^2 \\
-		&+ \sum_{\lambda=1}^{\Lambda} \left(\sum_{i=1}^{N_\lambda} x_{i(\lambda)}\left\vert\mu_{i(\lambda)} - \sum_{j=1}^{C}\nu_{ij} \Gamma_j \right\vert \right)^2 + \sum_{\omega=1}^{\Omega}\left(g_\omega - \sum_{j=1}^{C}\nu_{\omega,j} \Gamma_j \right)^2
+		&+ \sum_{\lambda=1}^{\Lambda} \left(\sum_{i=1}^{N_\lambda} x_{i(\lambda)}\left\vert\mu_{i(\lambda)} - \sum_{j=1}^{C}\nu_{ij} \Gamma_j \right\vert \right)^2 + \sum_{\omega=1}^{\Omega}\left(g_\omega - \sum_{j=1}^{C}\nu_{\omega,j} \Gamma_j \right)^2,
 		\end{aligned}
 	\end{equation}
 	where the first term on the right represents the mass balance residuals, the second represents the absolute sum of chemical potential residuals of solution species and the third represents the chemical potential residuals of stoichiometric phases. By enforcing the Wolfe/Armijo condition \cite{Nocedal06}, a sufficient step length is decided.
 
 	Each iteration step in the minimisation problem involves approximately solving the subproblem:
 	\begin{equation}
-		\min_\alpha f\left(\mathbf{x}^m + \alpha \mathbf{p}^m\right)
+		\min_\alpha f\left(\mathbf{x}^m + \alpha \mathbf{p}^m\right),
 	\end{equation}
 	where $\mathbf{x}^m$ is the best estimate at iteration $m$, $\mathbf{p}^m$ denotes the search direction vector and $\alpha$ represents the step size.
 
@@ -172,10 +176,10 @@
 
 	A step length $\alpha^m$ is said to satisfy the Wolfe conditions, restricted to the direction $\mathbf{p}^m$, if the following two inequalities hold:
 	\begin{equation}
-		f\left(\mathbf{x}^m + \alpha^m \mathbf{p}^m\right) \leq f\left(\mathbf{x}^m \right) + c_1 \alpha^m \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m \right)
+		f\left(\mathbf{x}^m + \alpha^m \mathbf{p}^m\right) \leq f\left(\mathbf{x}^m \right) + c_1 \alpha^m \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m \right),
 	\end{equation}
 	\begin{equation}
-		- \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m + \alpha^m \mathbf{p}^m\right) \leq - c_2 \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m \right)
+		- \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m + \alpha^m \mathbf{p}^m\right) \leq - c_2 \left(\mathbf{p}^m\right)^T \nabla f\left(\mathbf{x}^m \right),
 	\end{equation}
 	with $0 < c_1 < c_2 < 1$. The first inequality, known as the Armijo condition ensures that the step length $\alpha^m$ decreases $f$ sufficiently, and the second inequality known as the curvature condition ensures that the slope has been reduced sufficiently. Together, the two inequalities provide upper and lower bounds for the step lengths \cite{Nocedal06}.
 	
@@ -644,20 +648,18 @@ OBBT can be applied to every variable $x_i$ separately and when feasible the con
 	
 	For comparison, each implementation of the method was executed a hundred times on a 2020 M1 MacBook Air with 8 GB of memory. The methods were alternated in ABC...ABC... pattern to avoid bias and the total time for all the runs was considered. The average time of all the times in the interquartile range was selected as the performance metric while the number of times the algorithm correctly identified the minimum or absence of negative driving force was the metric of reliability. No runs were discarded for the reliability metric. The results of a comparative analysis are shown in figures~\ref{fig:res_time} and \ref{fig:res_rel}. The results demonstrate that the equispaced grid sampling method is only effective with very small resolutions leading to a very rapid increase in the cost. On the other hand, the APSO is a lot more robust but they do show that a larger number of particles can better scan the space. Despite their efficiency, the robustness of the APSO is slightly lower than the sBB algorithm which converges to the correct results for each test case but does so at the cost of increase in computational time. 
 
-\begin{figure}
+\begin{figure}[ht!]
      \centering
-     \includegraphics[width=0.6\textwidth]{figures/chapter-6/time.pdf}
+     \includegraphics[width=0.9\textwidth]{figures/chapter-6/time.pdf}
      \caption[Comparison of computational performance of different global optimisation algorithms.]{Comparison of computational performance of various global optimisation algorithms for the test cases. The wall clock time is the average time of the results in interquartile range for 100 calculations of each method and case combination}
      \label{fig:res_time}
  \end{figure}
 
-
-
-\begin{figure}
+\begin{figure}[ht!]
          \centering
-         \includegraphics[width=0.6\textwidth]{figures/chapter-6/reliability.pdf}
-         \label{fig:res_rel}
+         \includegraphics[width=0.9\textwidth]{figures/chapter-6/reliability.pdf}
      	\caption[Comparison of reliability of different global optimisation algorithms.]{Comparison of reliability of various global optimisation algorithms for the test cases. The reliability is the number of times the correct results were shown by a method out of the 100 calculations.}
+	\label{fig:res_rel}
  \end{figure}
  
 The grid sampling method was able to find the minimum in all the test cases albeit only when the grid resolution was increased to $\delta = 0.00$ and with a significant impediment on performance. In particular, one must be careful about the charge neutrality constraints with this approach. When dealing with ionic phases, many of the samples using this strategy will result in infeasibility due to the charge neutrality constraint getting violated. This can potentially compromise the method's reliability as a feasible point satisfying the charge constraint might never be found. In the implementation here, the objective function was evaluated at every sample point despite some of them being infeasible.
@@ -666,9 +668,9 @@ Among the tested options, sBB proves to be the most reliable though at a cost to
 
 In the context of {\YJ}, both the sBB and APSO algorithms have been integrated into the code and the user will have the option of specifying the desired method. In cases where reliability is of the utmost and the system is deemed too complex, one could select sBB as the global optimisation algorithm while in cases where the system is deemed to be not very complicated or where there is a possibility of a-posteriori checking the results and / or augmenting global optimisation results with other information such as that from the grain information available in phase field.
 	
-%\subsection{Software Quality Assurance (SQA)}
-%	A key thrust area of the {\GEM} development was to meet the SQA standards required from all MOOSE-based applications. Not only must one make sure that the results are physically representative, but the code itself must meet criteria for readability and upgradability but also avoid regression, or accidental breakage, of features. 
+\subsection{Software Quality Assurance (SQA)}
+	A key thrust area of the {\GEM} development was to meet the SQA standards required from all MOOSE-based applications. Not only must one make sure that the results are physically representative, but the code itself must meet criteria for readability, uniformity and understandability but also avoid vulnerability and bugs.
+{\GEM} has been developed following industry standard  development practices and procedures to ensure conformance to the MOOSE quality requirements. The key concepts worth mentioning are code review, source code control and continuous integration. MOOSE requires that any new code be reviewed by at least one reviewed other than the developer and the code can only be merged upon being approved. The main goal of the review process is to identify defects, improve code quality, finding better solutions to problems and ensuring coding guidelines are followed. The source code is maintained using the Git version control system and is hosted on INL's GitLab. Not only does it allow keeping a history of all the changes in the codebase but also enforces MOOSE syntax guidelines through Git hooks. MOOSE and hence {\GEM} use ClangFormat for all C++ code. {\GEM} also uses continuous integration (CI) using MOOSE's CI tool CIVET \cite{Slaughter:2021aa} and MOOSE's gold file based testing harness. Upon every commit to the repository, CIVET runs a suite of unit tests that verify the functionality of every separable code piece and also regression tests that test the whole code against known good results. Upon the completion of tests, a comprehensive report is generated that shows if the new code has breaks an existing functionality. The report also highlights the total and differential code coverage which is the percentage of code (lines and functions) that is hit in the tests. The last SQA process used in {\GEM} is code documentation. Every code is well documented through both in-code documentation and more detailed documentation pages that detail the different models, solvers and provide examples. Together, code review, version control, CI and documentation fulfil the SQA requirements of MOOSE-based applications.
 
 \section{Summary}
-	A number of algorithms for different parts of a thermodynamic equilibrium solver were presented in this chapter. Many of these algorithms have already been implemented in other codes available in the literature and GEM and levelling are relatively mature algorithms with little to no scope of improvement. This is evident from the fact that most of the development efforts since the original GEm method has relied on auxiliary operations such as initialisation, etc. However, this does not mean that improvements can not be made.  The development of an advanced thermodynamic solver leaves the door open for incremental gains on many of these algorithms.
-For example, the post-levelling and temporal series estimates for initialisation will be more carefully analysed and implemented during this work in order to minimise the computational cost of the non-linear step. The work on non-linear step will focus on improving the convergence rate by focussing the attention on the line-search and phase update algorithms. Finally, two of the major areas that stand to benefit from this work are global optimisation methods and integration with multiphysics framework {MOOSE}. The rigorous application based study of global optimisation methods which will be performed during this work is expected to provide a definitive answer to the question of reliability, efficiency and robustness of various candidate methods for application to thermodynamic equilibrium problems. The optimum method will then be implemented to achieve the best possible performance. Regarding {MOOSE} integration, this work will try to minimise the costs associated with thermodynamic equilibrium calculations, which significantly impede performance of multiphysics simulations, by minimising thermodynamic computation costs themselves  and reducing overheads  related to coupling which also contribute towards the performance impediment.
+	A number of algorithms for different parts of a thermodynamic equilibrium solver were presented in this chapter. Many of these algorithms have already been implemented in other codes available in the literature and GEM and levelling are well-matured algorithms. This is evident from the fact that most of the development efforts since the original GEM method have relied on auxiliary operations such as initialisation, etc. However, this does not mean that improvements can not be made.  The development of an advanced thermodynamic solver leaves the door open for incremental gains on many of these algorithms. The development of non-linear solver leverages state-of-the-art non-linear solvers available in PETSc and uses recent developments in algorithms for phase handling to minimise common pitfalls in many thermodynamic equilibrium codes. Finally, two of the major areas that stand to benefit from this work are global optimisation methods and integration with multiphysics framework {MOOSE}. The rigorous, experimental approach to global optimisation methods applicable to thermodynamic equilibrium provides measurable estimates for reliability, efficiency and robustness. The algorithms discussed here have been implemented in {\GEM} thus bringing native thermodynamic equilibrium capability to MOOSE.

@@ -270,6 +270,7 @@
 \newlength\thumbspacing
 \setlength\thumbspacing{2\thumbheight}
 
+
 %% We need the TikZ library calc to calculate the coordinates of the thumb
 %% indices.
 \usetikzlibrary{calc}
