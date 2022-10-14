@@ -42,7 +42,7 @@ A phase field simulation was performed at the University of Florida\footnote{The
     \subfloat[End of simulation\label{fig:EF2_e}]{%
       \includegraphics[width=0.475\textwidth]{figures/chapter-7/EF_2.871_e.pdf}
     }
-    \caption[Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$. Initially, the domain contained \ce{Ni} in the left half of the domain and molten salt in the right half as in subfigure (a). At the end of the simulation shown in subfigure (b), the oxidation of \ce{Ni} metal leads to the leaching of \ce{Ni} into the molten salt as exhibited by the interface shifting to the left (the dashed line denotes the initial position of interface).}
+    \caption[\ce{Ni} corrosion by \ce{LiF-NiF2} salt under oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$. Initially, the domain contained \ce{Ni} in the left half of the domain and molten salt in the right half as in subfigure (a). At the end of the simulation shown in subfigure (b), the oxidation of \ce{Ni} metal leads to the leaching of \ce{Ni} into the molten salt as exhibited by the interface shifting to the left (the dashed line denotes the initial position of interface).}
     \label{fig:pfres2}
 \end{figure}
 
@@ -54,7 +54,7 @@ A phase field simulation was performed at the University of Florida\footnote{The
     \subfloat[End of simulation\label{fig:EF3_e}]{%
       \includegraphics[width=0.475\textwidth]{figures/chapter-7/EF_3.0_e.pdf}
     }
-    \caption[Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$. The initial interface is shown in subfigure (a) while at the end of the simulation shown in subfigure (b), the reduction of \ce{Ni} metal leads to gain of \ce{Ni} metal from the molten salt as exhibited by the interface shifting to the right (the dashed line denotes the initial position of interface).}
+    \caption[\ce{Ni} corrosion by \ce{LiF-NiF2} salt under reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$. The initial interface is shown in subfigure (a) while at the end of the simulation shown in subfigure (b), the reduction of \ce{Ni} metal leads to gain of \ce{Ni} metal from the molten salt as exhibited by the interface shifting to the right (the dashed line denotes the initial position of interface).}
     \label{fig:pfres3}
 \end{figure}
        
@@ -63,7 +63,7 @@ A phase field simulation was performed at the University of Florida\footnote{The
 \begin{figure}
          \centering
          \includegraphics[width=0.95\textwidth]{figures/chapter-7/phasedia.png}
- 	 \caption{Yellowjacket prediction of \ce{NaF-CsF} phase diagram with the phase diagram from Lipkina et al. \cite{Lipkina:2022aa} overlayed on top.}
+ 	 \caption[Yellowjacket prediction of \ce{NaF-CsF} phase diagram.]{Yellowjacket prediction of \ce{NaF-CsF} phase diagram with the phase diagram from Lipkina et al. \cite{Lipkina:2022aa} overlayed on top.}
 	 \label{fig:res_phased}
 \end{figure}
 \begin{figure}
@@ -129,7 +129,7 @@ In addition to comparing phase distributions under the varying system parameters
 	Safety case demonstrations for MSRs are significantly different from the LWRs. Since the fuel is already molten, there are no thresholds for a major release of radioactive material with severe core damage in MSR accidents. The consequences of a primary system breach depend on the size and breach location and how much of the fuel salt or fission gases are leaked into a confined space.  A small breach can result in significant fuel salt release and the high salt temperature can lead to a high pressure in the confined space  \cite{Holcomb:2021aa}. Predicting vapour pressures is important for such safety demonstrations, but also for design and development of off-gas treatment system. {\GEM} can predict the change of vapour pressure of elements in gas phase which can be used in source-term analyses and other simulations.  The role of thermodynamic equilibrium solver in such cases can be demonstrated by the evolution of a fictive system representative of a molten salt system (\ce{FLiBe}) with some dissolved fissile material (\ce{U}) and some fission products (\ce{Nd, Ce, La, Cs, Rb}).  The system composition was adopted from Poschmann et al. \cite{Poschmann:2021ab} and is reported in table~\ref{tab:composition_msr}.
 	\begin{table}[htb]
 		\centering
-	   	\caption[Input mass parameters for CANDU fuel under severe accident condition.]{Input mass parameters for CANDU fuel under severe accident condition. Adopted from Poschmann et al. \cite{Poschmann:2021ab}.}
+	   	\caption[Input mass parameters for MSR fuel vapour pressure evolution.]{Input mass parameters for MSR fuel vapour pressure evolution. Adopted from Poschmann et al. \cite{Poschmann:2021ab}.}
 	   	\begin{tabular}{@{} lcr @{}} % Column formatting, @{} suppresses leading/trailing space
 	      		\toprule
 	      		\textbf{Element} & \phantom{abc}& \textbf{Moles [\si{\mole}]} \\
@@ -170,7 +170,7 @@ The system was assumed to undergo an unmitigated increase in temperature. The ph
  \end{figure}
 To reiterate, one must note that the results are purely for capability demonstration and must not be treated as physically relevant. However, they do exhibit cases where one might find the use of {\GEM} relevant.
  
-\section{Verification}
+\section{MQMQA Calculation Comparison of {\GEM} with FactSage}
 To ensure the accuracy of results, a significant effort was put into verification of {\GEM} results by comparison with commercial code FactSage. For this, a representative system was selected (the system composition is the same as that used by Poschmann et al. \cite{Poschmann:2021ab}) and the relative difference of the mole fractions of each quadruplet was compared between {\GEM} and FactSage. As shown in figure~\ref{fig:verif}, the results are in excellent agreement with FactSage and the maximum relative difference is of the order of \num{1d-5}. The Gibbs energy predicted by both {\GEM} and FactSage are both \SI{-2.9787d11}{\joule}. 
 \begin{figure}[!ht]
     \subfloat[Start of simulation\label{fig:verif_sp}]{%
