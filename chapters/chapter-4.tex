@@ -346,7 +346,7 @@ At every iteration step, the direction vector is computed and the system is adju
 	 i.e., all the species in equilibrium must lie on the Gibbs plane. If a phase lies below the Gibbs plane, adding it to the phase assemblage would yield a lower Gibbs energy of the system and such a system would not be at a global minimum. The Gibbs criteria is easily extendable to electrochemical equilibrium and can be conveniently implemented in a thermodynamic equilibrium solver \cite{Piro11a}.
 	 \end{enumerate}
 	 
-\subsection{Choice of numerical algorithm}
+\subsection{Choice of numerical algorithm}\label{sec:algo_choice}
 	Both GEM and PGE have advantages and disadvantages and the choice of the algorithm must be based on the applications and excess mixing models used in them. For {\GEM}, the Gibbs energy minimisation method was selected and the reasoning behind it has been explained by Bajpai et al. \cite{Bajpai:2021ab}. While the paper, presented on the following pages, was written primarily for the thermochemistry library Thermochimica, the goal was also to pre-emptively justify the choice of the algorithm for {\GEM}. 
 	\includepdf[pages=-]{publications/Bajpai_2021_CMS.pdf}
 	 
