@@ -6,7 +6,7 @@
 %													Phase Equilibrium
 %==============================================================================================================================	
 \section{Phase Equilibrium in Heterogeneous Systems} \label{sec:multi_eqb}
-	A heterogeneous system is defined as one where the thermodynamic properties may have different values in different parts of the system when the system is at equilibrium. While a continuous variation of these properties is possible, equilibrium thermodynamics in the context of this work only concerns discontinuous variations where the properties have different values in different portions of the systems but are homogenous within each portion. A practical example of such a scenario is that of multiple phases being present in a system with the properties in phase being homogenous and the different phases are in equilibrium with each other \cite{liu_wang_2016}.
+	A heterogeneous system is defined as one where the thermodynamic properties may have different values in different parts of the system when the system is at equilibrium. While a continuous variation of these properties is possible, equilibrium thermodynamics in the context of this work only concerns discontinuous variations where the properties have different values in different portions of the systems but are homogeneous within each portion. A practical example of such a scenario is that of multiple phases being present in a system with the properties in phase being homogeneous and the different phases are in equilibrium with each other \cite{liu_wang_2016}.
 	
 	In a system at equilibrium, with $C$ components, there are $C+2$ natural variables with $2$ representing the variables temperature, $T$, and pressure, $P$. For an isothermal, isobaric system, the equilibrium conditions result in:
 	\begin{equation}
@@ -39,7 +39,7 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 			\end{equation} 
 			
 		\item \textbf{Gibbs' phase rule}\\
-			Thermodynamic equilibrium conditions also require that the Gibbs' phase rule be satisfied. Gibbs' phase rule determines the \emph{degree of freedom} of the system, i.e., the number of phases that can be stable at equilibrium in relation to the state variables \cite{Gibbs:1878aa}. In general, the phase rule can be written as:
+			Thermodynamic equilibrium conditions also require that  Gibbs' phase rule be satisfied. Gibbs' phase rule determines the \emph{degree of freedom} of the system, i.e., the number of phases that can be stable at equilibrium in relation to the state variables \cite{Gibbs:1878aa}. In general, the phase rule can be written as:
 			\begin{equation}
                 			F=C-\Phi + 2 + \Xi,
             		\end{equation}
@@ -92,7 +92,7 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 %==============================================================================================================================
 
 \section{Computing Phase Equilibria}
-Accurate and computationally efficient determination of equilibrium from the conditions mentioned in the previous section require careful consideration of the numerical method employed in the solver. Over the years, numerous strategies have been developed to solve the equilibrium thermodynamics problems but the two most relevant methods are the \emph{Gibbs Energy Minimisation} by White, Johnson and Dantzig \cite{White:58} which is based on the method of steepest descent of second order and the \emph{Partitioning of Free Energy}  which was also proposed by White \cite{White67} but is substantially different from Gibbs energy minimisation.
+Accurate and computationally efficient determination of equilibrium from the conditions mentioned in the previous section require careful consideration of the numerical methods employed in the solver. Over the years, numerous strategies have been developed to solve the equilibrium thermodynamics problems but the two most relevant methods are the \emph{Gibbs Energy Minimisation} by White, Johnson and Dantzig \cite{White:58}, which is based on the method of steepest descent of second order, and the \emph{Partitioning of Free Energy} method, which was also proposed by White \cite{White67} but is substantially different than Gibbs energy minimisation.
 
 The goal of both Gibbs energy minimisation (GEM) and partitioning of Gibbs energy (PGE) approaches is to predict a unique combination of phases and species that minimise the integral Gibbs energy of an isothermal, isobaric system at a given composition. As in equation~\eqref{eqn:integralGibbs}, the integral Gibbs energy of a multicomponent multiphase system can be represented as:
 \begin{equation}\label{eq:int_gibbs}
@@ -102,7 +102,7 @@ where the symbols represent their usual variables mentioned before.
 As the conditions that must be satisfied at thermodynamic equilibrium have already been mentioned, the numerical procedures for  both the approaches can now be elaborated.
 
 \subsection{Method of Lagrange multipliers}
-White et al. \cite{White:58} established a second order steepest descent method for Gibbs energy minimisation which is based on the method of Lagrange multipliers for constrained optimisation. The GEM approach simultaneously optimises mass balance constraint and Gibbs' criterion while fixing the system size through the Gibbs phase rule. The dimensionless form of Gibbs energy of the system can be expressed as a quadratic approximation obtained by the Taylor series expansion as follows:
+White et al. \cite{White:58} established a second order steepest descent method for Gibbs energy minimisation, which is based on the method of Lagrange multipliers for constrained optimisation. The GEM approach simultaneously optimises mass balance constraint and Gibbs' criterion while fixing the system size through the Gibbs phase rule. The dimensionless form of Gibbs energy of the system can be expressed as a quadratic approximation obtained by the Taylor series expansion as follows:
   \begin{equation}\label{eq:GibbsTaylor}
     \begin{split}
       \tilde{Q}^{m+1} = \tilde{G}^{m} &+ \left .\sumstoichphase \Delta_{\omega} \pder{\tilde{G}^m}{\molestoich^m} \right \vert_{\molestoich^m = \molestoich^{m+1}} \\
@@ -111,14 +111,14 @@ White et al. \cite{White:58} established a second order steepest descent method 
                       &+ \left . \frac{1}{2} \sumsolnphase \sumspecies \sumspecies[l] \Delta_i \Delta_l \pqder{\tilde{G}^m}{\molespecies{i}^m}{\molespecies{l}^m} \right \vert_{\molespecies{i}^m = \molespecies{i}^{m+1}},
     \end{split}
   \end{equation}
-where the superscript $m$ and $m+1$ denote the iteration at which the Gibbs energy is calculated and the deltas can be represented as follows:
+where the superscript $m$ and $m+1$ denote the iteration at which the Gibbs energy is calculated and the deltas are represented as follows:
   \begin{gather}
       \Delta_i = \molespecies{i}^{m+1} - \molespecies{i}^{m},\\
       \Delta_\lambda = \molesol^{m+1} - \molesol^{m}, \\
       \Delta_\omega = \molestoich^{m+1} - \molestoich^{m}.
   \end{gather}
 
-While the first order partial derivatives are equal to the chemical potentials as shown in equation~\eqref{eq:mu_def}, the second order derivatives are as follows:
+While the first order partial derivatives are equal to the chemical potentials, as shown in equation~\eqref{eq:mu_def}, the second order derivatives are as follows:
 \begin{gather}
   \ppder{\tilde{G}^m}{\molestoich^m} = 0, \label{eq:partial1}\\
   \ppder{\tilde{G}^m}{\molespecies{i}^m} = \frac{1}{\molespecies{i}^m} - \frac{1}{\molesol^m}, \label{eq:partial2} \\
@@ -131,7 +131,7 @@ Substituting equations \eqref{eq:mu_def}~and~\eqref{eq:partial1}--\eqref{eq:part
                   + \sumsolnphase \sumspecies \Delta_i \cps{i}^m
                   + \frac{1}{2} \sumsolnphase \sumspecies \molespecies{i}^m \left(\frac{\Delta_i}{\molespecies{i}} - \frac{\Delta_\lambda}{\molesol^m} \right)^2,
 \end{equation}
-which must be minimised subject to the mass balance constraint. In order to solve the constrained optimisation problem, the method of Lagrange multipliers can be used and the resulting Lagrangian function is defined as:
+which must be minimised subject to the mass balance constraints. In order to solve the constrained optimisation problem, the method of Lagrange multipliers can be used and the resulting Lagrangian function is defined as:
   \begin{equation}\label{eq:GEM_Lagrangian}
       \mathcal{L} = \tilde{Q}^{m+1} - \sumelements \pi_{j}^{m+1} \left(\moleelem{j} - \moleelem{j}^m\right),
   \end{equation}
@@ -228,7 +228,7 @@ While solving equation~\eqref{eq:HessianEqn} gives the mole numbers of stoichiom
 \end{equation}
 
 \subsection{Partitioning of Gibbs energy}
-PGE is based on finding the roots of the mass balance residual by expressing the mole fraction as a function of system component potentials. The expression for chemical potential of a species from equation~\eqref{eq:mu_ex} can be substituted into equation~\eqref{eq:Gibbs_criterion} and upon rearranging one gets:
+PGE is based on finding the roots of the mass balance residual by expressing the mole fraction as a function of system component potentials. The expression for chemical potential of a solution species from equation~\eqref{eq:mu_ex} can be substituted into equation~\eqref{eq:Gibbs_criterion} and upon rearranging one gets:
     \begin{equation}
         \molefrac{i} = \exp{\left(-\pmgref{i} - \pmgex{i} +  \sumelements \stoich{i}{j} \cpe{j}\right)}.
     \end{equation}
@@ -382,7 +382,7 @@ Since the driving force function can be non-convex, finding the most negative dr
 						 - \lambda_\phi \left( \sum_{i=1}^{N_\phi} x_i - 1 \right)
 						 - \lambda_{e^-} \left( \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i - 1 \right),
 	\end{equation}
-	where the first Lagrange multiplier, $\lambda_phi$, imposes the constraint on mole fractions and the second multiplier, $\lambda_{e^-}$, extends the constraints to handle ionic phases where the charge neutrality constraint must also be satisfied. The natural constraint on mole fractions implies $x_i \in (0, 1)$ and the  unknowns in the above expression, $x_i$, $\lambda_\phi$ and $\lambda_{e^-}$, must lie in $\mathbb{R}^{N_\phi + 2}$. For phases without any ionic components, the dimension of the above problem reduces by one.  The Lagrangian function has a minimum value when $\nabla \mathcal{L} = 0$. Differentiating $\mathcal{L}$ with respect to $x_i$:
+	where the first Lagrange multiplier, $\lambda_{phi}$, imposes the constraint on mole fractions and the second multiplier, $\lambda_{e^-}$, extends the constraints to handle ionic phases where the charge neutrality constraint must also be satisfied. The natural constraint on mole fractions implies $x_i \in (0, 1)$ and the  unknowns in the above expression, $x_i$, $\lambda_{\phi}$ and $\lambda_{e^-}$, must lie in $\mathbb{R}^{N_\phi + 2}$. For phases without any ionic components, the dimension of the above problem reduces by one.  The Lagrangian function has a minimum value when $\nabla \mathcal{L} = 0$. Differentiating $\mathcal{L}$ with respect to $x_i$:
 	\begin{equation}
 		\frac{\partial \mathcal{L}}{\partial x_i}	= \tilde{\mu}_i -  \sum_{j=1}^{C} \nu_{ij} \tilde{\Gamma}_j - \lambda_\phi,
 	\end{equation}
