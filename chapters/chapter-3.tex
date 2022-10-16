@@ -1,7 +1,13 @@
 \chapter{Thermodynamic Basis} \label{chap:thermo}
+\epigraph[0pt]{
+    Die Energie der Welt ist konstant.  \\
+    Die Entropie der Welt strebt einem Maximum zu.
+}{Rudolf Clausius}
 
-The laws that govern all material systems can be expressed in two seemingly simple statements of Rudolf Clausius - \emph{``Die Energie der Welt ist konstant. Die Entropie der Welt strebt einem Maximum zu.''} and yet thermodynamics has drawn the attention of many great scientists including Maxwell, Boltzmann, Planck and  Mach. Physicist Arnold Sommerfeld accounted his experience of thermodynamics as \emph{``Thermodynamics is a funny subject. The first time you go through it, you don't understand it at all. The second time you go through it, you think you understand it, except for one or two small points. The third time you go through it, you know you don't understand it, but by that time you are so used to it, it doesn't bother you any more''}. A number of definitions and laws of thermodynamics form the basis of equilibrium thermodynamics and the Gibbs energy models and equations play a key role in the structure of the equilibrium solver.
 
+\begin{abstract}
+The laws that govern all material systems can be expressed in the two seemingly simple statements of Rudolf Clausius mentioned above which translate to \emph{The energy of the universe is constant. The entropy of the universe tends to a maximum.}. Yet thermodynamics has drawn the attention of many great scientists including Maxwell, Boltzmann, Planck and  Mach. Physicist Arnold Sommerfeld accounted his experience of thermodynamics as \emph{``Thermodynamics is a funny subject. The first time you go through it, you don't understand it at all. The second time you go through it, you think you understand it, except for one or two small points. The third time you go through it, you know you don't understand it, but by that time you are so used to it, it doesn't bother you any more''}. A number of definitions and laws of thermodynamics form the basis of equilibrium thermodynamics and the Gibbs energy models and equations play a key role in the structure of the equilibrium solver. This chapter discusses these fundamental laws of thermodynamics and defines the key thermodynamic properties of the system. This is followed by a description of the Gibbs energy models and chemical potential which are the main thermodynamic properties used in this work. Finally, the derivations of chemical potentials for the thermodynamic models used in this work are shown via the articles which were first published as part of this work.
+\end{abstract}
 %==============================================================================================================================
 %															Definitions
 %==============================================================================================================================
@@ -67,7 +73,7 @@ The laws that govern all material systems can be expressed in two seemingly simp
 		\begin{equation}
 			H = U + PV,
 		\end{equation}
-		where $U$ denotes the internal energy, $P$ denotes the pressure the system is at and $V$ represents the volume of the system.
+		where $U$ denotes the internal energy, $P$ denotes the hydrostatic pressure the system is at and $V$ represents the volume of the system.
 
 		The Helmholtz energy of a thermodynamic system is defined as:
 		\begin{equation}
@@ -131,17 +137,17 @@ The laws that govern all material systems can be expressed in two seemingly simp
 \section{Gibbs Energy and Chemical Potential}
 	Of particular interest in description of  thermodynamic equilibrium are the quantities named \emph{potentials}. A system is in thermodynamic equilibrium when it is simultaneously in thermal, mechanical, electrical and chemical equilibrium. This also refers to the state where there are no unbalanced potentials within the system. J.W. Gibbs used the term \emph{thermodynamic potential} to represent all the relevant system potentials to characterise the conditions of thermodynamic equilibrium \cite{Gibbs:1878aa}. Thermodynamic equilibrium calculations are based on the principle that the potential for each component must be uniform throughout the system at thermodynamic equilibrium. This section and the following describe the relation between Gibbs energy and chemical potentials and their use in computing thermodynamic equilibrium.
 
-	The Gibbs energy, $G_{i}$ [\si{\joule \per \mole}], of a pure species  $i$ is defined as \cite{Zemansky81}:
+	The Gibbs energy, $g_{i}$ [\si{\joule \per \mole}], of a pure species  $i$ is defined as \cite{Zemansky81}:
 	\begin{equation} \label{eqn:Gibbs_der1}
-			G_{i} = \Delta H_{i} - TS_{i},
+			g_{i} = \Delta h_{i} - Ts_{i},
 	\end{equation}
-	where T [\si{\kelvin}] is the absolute temperature, $\Delta H_{i}$ [\si{\joule \per \mole}] and $S_{i}$ [\si{\joule \per \mole \per \kelvin}] represent the enthalpy and absolute entropy of species $i$ in phase $\phi$ respectively. Since thermodynamic quantities are relative in nature, equation ~\eqref{eqn:Gibbs_der1} can be expanded as:
+	where $\Delta h_{i}$ [\si{\joule \per \mole}] and $s_{i}$ [\si{\joule \per \mole \per \kelvin}] represent the enthalpy and absolute entropy of species $i$ in phase $\phi$ respectively. Since thermodynamic quantities are relative in nature, equation ~\eqref{eqn:Gibbs_der1} can be expanded as:
 	\begin{equation} \label{eqn:Gibbs_der2}
-			G_{i} = \left(\Delta H_{i}^\circ + \int_{T_0}^{T} C_{p,i}dT \right) - T\left( S_{i}^\circ  + \int_{T_0}^{T} \frac{C_{p,i}}{T}dT \right) + \int_{P_0}^{P} V_i dP,
+			g_{i} = \left(\Delta h_{i}^\circ + \int_{T_0}^{T} c_{p,i}dT \right) - T\left( s_{i}^\circ  + \int_{T_0}^{T} \frac{c_{p,i}}{T}dT \right) + \int_{P_0}^{P} V_i dP,
 	\end{equation}
-	where $\Delta H_{i^\circ}$ [\si{\joule \per \mole}] and $S_{i^\circ}$ [\si{\joule \per \mole \per \kelvin}] are the standard enthalpy of formation and entropy respectively at standard temperature ($T_0 = 298.15$ \si{\kelvin}) and pressure ($P_0 = 1$ \si{atm}). The superscript / subscript $\circ$ represents a quantity at standard temperature and pressure, a notation that is used hereafter. $C_{p,i}$ [\si{\joule \per \mole \per \kelvin}]  denotes the molar heat capacity at constant pressure, $P$ [\si{atm}] is the absolute pressure and $V_i$ [\si{\meter \cubed \per \mole}] denotes the molar volume. For an ideal gas, from the gas law, the last term in equation~\eqref{eqn:Gibbs_der2} can be written as $RT \ln{\left(P/P_0\right)}$, where $R = 8.314462$ [\si{\joule \per \mole \per \kelvin}] is the ideal gas constant. For a pure ideal gas species $i$, the standard Gibbs energy is:
+	where $\Delta h_{i^\circ}$ [\si{\joule \per \mole}] and $s_{i^\circ}$ [\si{\joule \per \mole \per \kelvin}] are the standard enthalpy of formation and entropy respectively at standard temperature ($T_0 = 298.15$ \si{\kelvin}) and pressure ($P_0 = 1$ \si{atm}). The superscript / subscript $\circ$ represents a quantity at standard temperature and pressure, a notation that is used hereafter. $c_{p,i}$ [\si{\joule \per \mole \per \kelvin}]  denotes the molar heat capacity at constant pressure, $P$ [\si{\atmosphere}] is the absolute pressure and $V_i$ [\si{\meter \cubed \per \mole}] denotes the molar volume. For an ideal gas, from the gas law, the last term in equation~\eqref{eqn:Gibbs_der2} can be written as $RT \ln{\left(P/P_0\right)}$, where $R = 8.314462$ [\si{\joule \per \mole \per \kelvin}] is the ideal gas constant. For a pure ideal gas species $i$, the standard Gibbs energy is:
 	\begin{equation} \label{eqn:Gibbs_der_id}
-			G_{i} = \left(\Delta H_{i}^\circ + \int_{T_0}^{T} C_{p,i}dT \right) - T\left( S_{i}^\circ  + \int_{T_0}^{T} \frac{C_{p,i}}.{T}dT  - R \ln{\left(\frac{P}{P_0}\right)}\right).
+			G_{i} = \left(\Delta H_{i}^\circ + \int_{T_0}^{T} C_{p,i}dT \right) - T\left( S_{i}^\circ  + \int_{T_0}^{T} \frac{C_{p,i}}{T}dT  - R \ln{\left(\frac{P}{P_0}\right)}\right).
 	\end{equation}
 
 	The fact that Gibbs energies are relative quantities and can be numerically adjusted as long as the elemental differences are preserved is of practical importance and is often used in thermodynamic equilibrium calculation. Chemical potential of species $i$ in phase $\lambda$, $\mu_{i(\lambda)}$ [\si{\joule \per \mole}], is a measure of the change of the Gibbs energy of the system by the introduction of species $i$ and incorporates  the reference Gibbs energy of pure species, $g_{i}^\circ$, and the entropic contribution due to mixing as a function of its mole fraction. Mathematically, the chemical potential of a species $i$ is defined as \cite{Zemansky81}:
