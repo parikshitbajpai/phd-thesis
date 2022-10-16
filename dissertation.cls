@@ -16,7 +16,7 @@
 %% English is the default language, but Dutch is used for some sections.
 \RequirePackage[dutch,english]{babel}
 \RequirePackage{calc}
-\RequirePackage[nooneline,footnotesize]{caption}
+\RequirePackage[nooneline,footnotesize,justification=centering]{caption}
 %\RequirePackage{chapterbib}
 \RequirePackage{etaremune}
 \RequirePackage{fancyhdr}
@@ -478,7 +478,7 @@
     \vspace{2\baselineskip}%
 }
 
-%% The epigraph environment can be used to to add a quote to the title page of a chapter.
+%% The epigraph environment can be used to add a quote to the title page of a chapter.
 \newcommand\epigraph[3][2\baselineskip]{%
     \begin{flushright}%
         {\rmfamily\itshape #2}%
