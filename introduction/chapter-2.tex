@@ -12,7 +12,7 @@
     There are several challenges that had to be addressed in order to achieve the aforementioned objective.
     \begin{enumerate}
         \item Several thermodynamic models are used for representing the Gibbs energies of phases. Many models, in particular the modified quasichemical model in quadruplet approximation (MQMQA), are not well understood and the details required for implementing them in a solver are not readily available.
-        \item Thermodynamic calculations are inherently very expensive and the computational cost increases very rapidly with the number of system components. In fact, the cost  scales cubically $\left(\mathit{O}(C^3)\right)$ and the choice of algorithms can significantly impact the calculation time. This can be prohibitive in multiphysics simulations.
+        \item Thermodynamic calculations are inherently very expensive and the computational cost increases very rapidly with the number of system components. In fact, the cost  scales cubically $\left(\mathit{O}(C^3)\right)$ with the number of system components $C$ and the choice of algorithms can significantly impact the calculation time. This can be prohibitive in multiphysics simulations.
         \item Equilibrium calculations require solving a non-convex global optimisation problem. The algorithms used in literature are either primitive or limited to relatively very simple problems. This can affect both performance and reliability of the solver which is critical considering the intended application.
         \end{enumerate}
 
@@ -24,14 +24,14 @@
         \item Develop the new equilibrium solver in C++ following MOOSE coding conventions. The code must meet the rigorous source code control, continuous integration and verification requirements of MOOSE. Though {\GEM} is not NQA-I certified, it must try to achieve same quality standards as MOOSE is NQA-I certified. See \nameref{chap:implementation}.
         \item Quantitatively compare various global optimisation algorithms available in literature, and, based on performance and reliability, select and implement the algorithm {\GEM}. See \nameref{chap:implementation}.
         \item Demonstrate the capabilities of the developed thermodynamic solver through potential applications and benchmark against results available in literature and through other codes. See \nameref{chap:results}.
+        \item An internship at Idaho National Laboratory from June 2021 to September 2022, working on MOOSE integration of \GEM. Owing to COVID-19 induced travel restrictions, this internship was virtual.
     \end{itemize}
 
 \section{Deliverables}
 	The outcomes of this research were documented in several ways including publications in peer-reviewed journals, conference presentations and annual progress reports submitted to the Idaho National Laboratory (INL). The main deliverables of this work were as follows:
 	\begin{enumerate}
-	\item Code base for {\GEM} delivered to INL via export controlled repository on Nuclear Science User Facility (NSUF) High Performance Computing (HPC)'s GitLab instance. Since {\YJ} is export controlled, the 
-	\item Annual progress reports submitted to INL in September 2019, September 2020, August 2021 and September 2022. 
-	\item Publications in peer-reviewed journals and conference presentations. See \nameref{publications}.
-	\item An internship at Idaho National Laboratory from June 2021 to September 2022, working on MOOSE integration of \GEM. Owing to COVID-19 induced travel restrictions, this internship was virtual.
+	\item Code base for {\GEM} delivered to INL via export controlled repository on Nuclear Science User Facility (NSUF) High Performance Computing (HPC)'s GitLab instance. Since {\YJ} is export controlled, the code has not been shared here.
+	\item Four annual progress reports submitted to INL in September 2019, September 2020, August 2021 and September 2022. 
+	\item Six publications in peer-reviewed journals and seven conference presentations and posters. See \nameref{publications}.
 	\end{enumerate}
 	

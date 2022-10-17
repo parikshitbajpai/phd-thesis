@@ -4,22 +4,25 @@
     The foundations of thermodynamic equilibrium calculations were laid down by American chemical physicist Josiah Willard Gibbs who originally published his work \emph{On the Equilibrium of Heterogeneous Substances} in a relatively obscure American journal, the Transactions of the Connecticut Academy of Arts and Sciences, in several parts, during the years 1875 to 1878. Thermodynamic equilibrium computations in isothermal, isobaric systems are aimed at identifying a unique combination of phases and species which minimises the integral Gibbs energy of the system while satisfying the necessary underlying conditions. Thermodynamics requires that a favourable change in a system must decrease the Gibbs energy of the system while respecting the mass constraints of the system components and the Gibbs' phase rule must be satisfied.
 \end{abstract}
 	
-	
 %==============================================================================================================================
 %													Phase Equilibrium
 %==============================================================================================================================	
 \section{Phase Equilibrium in Heterogeneous Systems} \label{sec:multi_eqb}
-	A heterogeneous system is defined as one where the thermodynamic properties may have different values in different parts of the system when the system is at equilibrium. While a continuous variation of these properties is possible, equilibrium thermodynamics in the context of this work only concerns discontinuous variations where the properties have different values in different portions of the systems but are homogeneous within each portion. A practical example of such a scenario is that of multiple phases being present in a system with the properties in phase being homogeneous and the different phases are in equilibrium with each other \cite{liu_wang_2016}.
+    A heterogeneous system is defined as one where the thermodynamic properties may have different values in different parts of the system when the system is at equilibrium. While a continuous variation of these properties is possible, equilibrium thermodynamics in the context of this work only concerns discontinuous variations where the properties have different values in different portions of the systems but are homogeneous within each portion. A practical example of such a scenario is that of multiple phases being present in a system with the properties in phase being homogeneous and the different phases are in equilibrium with each other \cite{liu_wang_2016}.
 	
-	In a system at equilibrium, with $C$ components, there are $C+2$ natural variables with $2$ representing the variables temperature, $T$, and pressure, $P$. For an isothermal, isobaric system, the equilibrium conditions result in:
-	\begin{equation}
-		d G_{\text{sys}} = -S dT -Vd(-P) + \sum_{i} \mu_j d n_j = 0.
-	\end{equation}
-	As a result, the equilibrium state is defined by a minimum in the integral Gibbs energy of the system at constant $T$, $P$ and $n_i$. In doing so one must respect the mass balance and charge neutrality constraints. In the present context, this also implies that the chemical potential of each component must be homogenous in all phases stable at equilibrium and gives the common tangent construction for phases at equilibrium:
-	\begin{equation}
-		\mu_{i}^{\phi_1} = \mu_{i}^{\phi_2} = \mu_{i}^{\phi_2} = \cdots,
-	\end{equation}
-	where $\phi_1$, $\phi_2$, etc. denote the phases stable at equilibrium. The above arguments can be generalised into the necessary and sufficient conditions for equilibrium which are used in the development of the Gibbs energy minimiser. 
+    In a system at thermodynamic equilibrium, with $C$ components, there are $C+2$ natural variables with $2$ representing the variables temperature, $T$, and pressure, $P$. For an isothermal, isobaric system, the equilibrium conditions result in:
+    \begin{equation}
+        d G_{\text{sys}} = 0,
+    \end{equation}
+    where
+    \begin{equation}
+        d G_{\text{sys}} = -S dT -Vd(-P) + \sum_{i} \mu_j d n_j.
+    \end{equation}
+    As a result, the equilibrium state is defined by a minimum in the integral Gibbs energy of the system at constant $T$, $P$ and $n_i$. In doing so one must respect the mass balance and charge neutrality constraints. In the present context, this also implies that the chemical potential of each component must be homogenous in all phases stable at equilibrium and gives the common tangent construction for phases at equilibrium:
+    \begin{equation}
+        \mu_{i}^{\phi_1} = \mu_{i}^{\phi_2} = \mu_{i}^{\phi_2} = \cdots,
+    \end{equation}
+    where $\phi_1$, $\phi_2$, etc. denote the phases stable at equilibrium. The above arguments can be generalised into the necessary and sufficient conditions for equilibrium which are used in the development of the Gibbs energy minimiser. 
 %==============================================================================================================================
 %													Conditions of Phase Equilibrium
 %==============================================================================================================================
@@ -36,7 +39,7 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 			\begin{equation}\label{eq:massbalance}
 				b_j = \sum_{\phi=1}^{\Phi} n_{\phi}\sum_{i=1}^{N_{\phi}} {\nu}_{ij} x_{i},
 			\end{equation}
-			where ${\nu}_{ij}$ represents the stoichiometric coefficient of element $j$ in phase species $i$. In an electrochemical system where the electrons form a system component with zero moles overall in the system, the mass balance constraint includes the charge neutrality constraint but it can be explicitly written as:
+			where ${\nu}_{ij}$ represents the stoichiometric coefficient of system components $j$ in phase species $i$. In an electrochemical system where the electrons form a system component with zero moles overall in the system, the mass balance constraint includes the charge neutrality constraint but it can be explicitly written as:
 			\begin{equation}\label{eq:chargebalance}
 				b_{e^-} = \sum_{i=1}^{N_{\phi}}x_{i}{\nu}_{i{e^-}} = 0.
 			\end{equation} 
@@ -382,20 +385,20 @@ As previously mentioned in section~\ref{sec:eqb_theory}, satisfying the necessar
 Since the driving force function can be non-convex, finding the most negative driving force is essentially a constrained global optimisation problem. The domain space of  the problem is defined by the number of species in the solution phase and, because the mole fractions of the species must lie in $(0,1)$, the search space is box constrained. Using the sufficient conditions previously mentioned, the Lagrangian function of the driving force of solution phase $\phi$ can be defined as:
 	\begin{equation}\label{eq:DrivingForceLagrangian}
 		\mathcal{L}_\phi = \sum_{i=1}^{N_\phi} x_i \left(\tilde{\mu}_i - \sum_{j=1}^{C} \nu_{ij} \tilde{\Gamma}_j \right)
-						 - \lambda_\phi \left( \sum_{i=1}^{N_\phi} x_i - 1 \right)
-						 - \lambda_{e^-} \left( \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i - 1 \right),
+						 - \pi_\phi \left( \sum_{i=1}^{N_\phi} x_i - 1 \right)
+						 - \pi_{e^-} \left( \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i - 1 \right),
 	\end{equation}
-	where the first Lagrange multiplier, $\lambda_{phi}$, imposes the constraint on mole fractions and the second multiplier, $\lambda_{e^-}$, extends the constraints to handle ionic phases where the charge neutrality constraint must also be satisfied. The natural constraint on mole fractions implies $x_i \in (0, 1)$ and the  unknowns in the above expression, $x_i$, $\lambda_{\phi}$ and $\lambda_{e^-}$, must lie in $\mathbb{R}^{N_\phi + 2}$. For phases without any ionic components, the dimension of the above problem reduces by one.  The Lagrangian function has a minimum value when $\nabla \mathcal{L} = 0$. Differentiating $\mathcal{L}$ with respect to $x_i$:
+	where the first Lagrange multiplier, $\pi_{\phi}$, imposes the constraint on mole fractions and the second multiplier, $\pi_{e^-}$, extends the constraints to handle ionic phases where the charge neutrality constraint must also be satisfied. The natural constraint on mole fractions implies $x_i \in (0, 1)$ and the  unknowns in the above expression, $x_i$, $\pi_{\phi}$ and $\pi_{e^-}$, must lie in $\mathbb{R}^{N_\phi + 2}$. For phases without any ionic components, the dimension of the above problem reduces by one.  The Lagrangian function has a minimum value when $\nabla \mathcal{L} = 0$. Differentiating $\mathcal{L}$ with respect to $x_i$:
 	\begin{equation}
 		\frac{\partial \mathcal{L}}{\partial x_i}	= \tilde{\mu}_i -  \sum_{j=1}^{C} \nu_{ij} \tilde{\Gamma}_j - \lambda_\phi,
 	\end{equation}
 	which shows that the undetermined Lagrange multiplier, $\lambda_\phi$, is the same as the driving force of the phase, $\Delta G_\phi$. Differentiating with respect to $\lambda_\phi$ yields:
 	\begin{equation}
-		\frac{\partial \mathcal{L}}{\partial \lambda_\phi}	= 1 - \sum_{i=1}^{N_\phi} x_i,
+		\frac{\partial \mathcal{L}}{\partial \pi_\phi}	= 1 - \sum_{i=1}^{N_\phi} x_i,
 	\end{equation}
 	and taking the derivative with respect to $\lambda_{e^-}$ results in:
 	\begin{equation}
-		\frac{\partial \mathcal{L}}{\partial \lambda_{e^-}}	= 1 - \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i.
+		\frac{\partial \mathcal{L}}{\partial \pi_{e^-}}	= 1 - \sum_{i=1}^{N_\phi} \nu_{i {e^-}} x_i.
 	\end{equation}
 	The system of non-linear equations above can be solved using many different non-linear solution methods such as by taking the second order Taylor expansion of the Lagrangian function. The global optimisation algorithms used in {\GEM} will be discussed in further details in chapter~\ref{chap:implementation}.
 %==============================================================================================================================
@@ -403,37 +406,4 @@ Since the driving force function can be non-convex, finding the most negative dr
 %==============================================================================================================================
 
 \section{Summary}
-Based on the fundamental laws of thermodynamics, achieving thermochemical equilibrium in a system requires satisfaction of several conditions which are as follows:
-%	\subsection{Necessary conditions}
-    	\begin{enumerate}\compresslist
-        		\item \emph{Conservation of mass} requires that the mass of element $j$, $b_j$, must satisfy the following mass balance equation:
-            	\begin{equation*}
-                		b_j = \sum_{\lambda=1}^{\Lambda} n_{\lambda}\sum_{i=1}^{N_{\lambda}}x_{i({\lambda})}{\nu}_{ij} +  \sum_{\omega=1}^{\Omega} n_{\omega}{\nu}_{\omega},
-            	\end{equation*}
-            	where ${\nu}_{ij}$ and ${\nu}_{\omega}$ represent the stoichiometric coefficients of element $j$ in solution phase species $j$ and stoichiometric phase $\omega$ respectively.
-        		\item \emph{Gibbs' phase rule} which defines the thermodynamic degrees of freedom of the system must also be     satisfied:
-            	\begin{equation*}
-                		F=C-\Phi + 2 + \Xi,
-            	\end{equation*}
-            	where $F$ represents the degrees of freedom, $C$ denotes the number of components in the system, $\Phi$ denotes the number of phases and $\Xi$ denotes the number of ionic phases.
-        		\item \emph{Gibbs' criteria} for equilibrium requires that the Gibbs energy of a system be at a global equilibrium. In equivalent terms, the chemical potential for each system component must have the same value in all stable phases within the system \cite{HILLERT198131}, where the chemical potential of any constituent in a stable phase can be defined as a linear function of the element potentials, $\Gamma_j$, as:
-            	\begin{equation*}
-		        \mu_{i} = \sum_{j=1}^C \nu_{i,j} \Gamma_j.
-            	\end{equation*}
-    	\end{enumerate}
-
-%	\subsection{Sufficient conditions}
-    	The necessary conditions for thermodynamic equilibrium require that the chemical potentials of all stable solution phase species and stoichiometric phases abide by the above equality, which is equivalent to Gibbs energy of the system being at a local minimum, and that the conservation of mass and the Gibbs phase rule are satisfied. The sufficient condition requires that all the metastable phases abide by the following conditions
-    	\begin{equation*}
-        		\Delta G_{\phi} = \min_{x} \sum_{i=1}^{N_{\phi}}x_{i} \left (\mu_{i} - \sum_{j=1}^C \nu_{ij}\Gamma_j \right ),
-    	\end{equation*}
-    	i.e., there must exist a Gibbs' plane such that the element potentials lie on the plane and the chemical potentials of all the species lie on or above the plane and the mole fraction of the species must satisfy the following constraints
-	\begin{equation*}
-        		\begin{aligned}
-            		\sum_{i=1}^{N_{\phi}}x_{i} = 1, \\
-			x_{i} \geq 0 \;\; \forall i,
-        		\end{aligned}
-    	\end{equation*}
-    	i.e., the sum of mole fraction of all the species in a phase $\phi$ must be unity and that the individual mole fractions must be greater than or equal to zero.
-
-    	The aforementioned conditions are used in Gibbs energy minimisers to find a unique combination of phases that are stable in the system. In such solvers, one must also carefully consider the role of the numerical algorithm and the convergence criteria to be adopted as these choices can have a significant impact on both computational performance and robustness of the solver.
+Based on the fundamental laws of thermodynamics, achieving thermochemical equilibrium in a system requires satisfaction of several conditions. While satisfying the necessary conditions is relatively straightforward, special care must be taken to ensure that the sufficient condition is satisfied. This is because, as previously mentioned, the necessary conditions result in identification of a local minimum which may or may not correspond to the true global minimum. The aforementioned conditions are used in thermodynamic equilibrium solvers to find a unique combination of phases that are stable in the system. In such solvers, one must also carefully consider the role of the numerical algorithm and the convergence criteria to be adopted as these choices can have a significant impact on both computational performance and robustness of the solver.
