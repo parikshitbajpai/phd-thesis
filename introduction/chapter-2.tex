@@ -12,7 +12,7 @@
     There are several challenges that had to be addressed in order to achieve the aforementioned objective.
     \begin{enumerate}
         \item Several thermodynamic models are used for representing the Gibbs energies of phases. Many models, in particular the modified quasichemical model in quadruplet approximation (MQMQA), are not well understood and the details required for implementing them in a solver are not readily available.
-        \item Thermodynamic calculations are inherently very expensive and the computational cost increases very rapidly with the number of system components. In fact, the cost  scales cubically $\left(\mathit{O}(C^3)\right)$ with the number of system components $C$ and the choice of algorithms can significantly impact the calculation time. This can be prohibitive in multiphysics simulations.
+        \item Thermodynamic calculations are inherently very expensive and the computational cost increases very rapidly with the number of system components. In fact, the cost  scales cubically $\left(\mathit{O}\left(C^3\right)\right)$ with the number of system components $C$ and the choice of algorithms can significantly impact the calculation time. This can be prohibitive in multiphysics simulations.
         \item Equilibrium calculations require solving a non-convex global optimisation problem. The algorithms used in literature are either primitive or limited to relatively very simple problems. This can affect both performance and reliability of the solver which is critical considering the intended application.
         \end{enumerate}
 
