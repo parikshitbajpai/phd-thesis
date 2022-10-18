@@ -1,17 +1,17 @@
 \chapter{Statement of Work} \label{chap:overview}
 	
 \section{Problem Statement}
-    Thermodynamic equilibrium calculations are key to providing material properties and boundary conditions in multiphysics simulations. For advanced reactors such as MSRs, there's a need to replace empirical material properties with calculations rooted in fundamental laws of thermodynamics.  Despite the growing interest in direct coupling of thermodynamic equilibrium, the MOOSE framework lacks a tool for such calculations.
+    Thermodynamic equilibrium calculations are key to providing material properties and boundary conditions in multiphysics simulations. For advanced reactors such as \gls{msr}, there's a need to replace empirical material properties with calculations rooted in fundamental laws of thermodynamics.  Despite the growing interest in direct coupling of thermodynamic equilibrium, the \gls{moose} framework lacks a tool for such calculations.
 
-    While several equilibrium thermodynamics codes already exist, the rationale behind developing a new equilibrium thermodynamics code lies in the numerous limitations of these pre-existing tools. All but a handful of these codes are standalone codes aimed at single calculations, phase diagram generation and database development. Moreover, these codes usually support only a small number of system components. Among the codes that do exist with the capability of handling large systems and are aimed at multiphysics simulations, there are still several drawbacks and they do not meet many requirements of the MOOSE framework. These drawbacks include unavailability of readily available API for coupling to MOOSE apps and lack of SQA standards. Thus, a new equilibrium thermodynamics solver needed to be developed.
+    While several equilibrium thermodynamics codes already exist, the rationale behind developing a new equilibrium thermodynamics code lies in the numerous limitations of these pre-existing tools. All but a handful of these codes are standalone codes aimed at single calculations, phase diagram generation and database development. Moreover, these codes usually support only a small number of system components. Among the codes that do exist with the capability of handling large systems and are aimed at multiphysics simulations, there are still several drawbacks and they do not meet many requirements of the \gls{moose} framework. These drawbacks include unavailability of readily available \gls{api} for coupling to \gls{moose} apps and lack of \gls{sqa} standards. Thus, a new equilibrium thermodynamics solver needed to be developed.
 
-\section{Objective}
-    The overarching objective of this work was to incorporate native computational thermodynamics capabilities into the multiphysics framework MOOSE through the development of a new state-of-the-art equilibrium thermodynamic solver called \GEM. The software consolidates and integrates years of advancements and research in computational thermodynamics and leverages state-of-the-art nonlinear equation solvers and optimisation algorithms to enable real-time thermodynamic property calculation in multiphysics simulations. 
+\section{Objective Statement}
+    The overarching objective of this work was to incorporate native computational thermodynamics capabilities into the multiphysics framework \gls{moose} through the development of a new state-of-the-art equilibrium thermodynamic solver called \GEM. The software consolidates and integrates years of advancements and research in computational thermodynamics and leverages state-of-the-art nonlinear equation solvers and optimisation algorithms to enable real-time thermodynamic property calculation in multiphysics simulations. 
 
 \section{Challenges}
     There are several challenges that had to be addressed in order to achieve the aforementioned objective.
     \begin{enumerate}
-        \item Several thermodynamic models are used for representing the Gibbs energies of phases. Many models, in particular the modified quasichemical model in quadruplet approximation (MQMQA), are not well understood and the details required for implementing them in a solver are not readily available.
+        \item Several thermodynamic models are used for representing the Gibbs energies of phases. Many models, in particular the \gls{mqm}, are not well understood and the details required for implementing them in a solver are not readily available.
         \item Thermodynamic calculations are inherently very expensive and the computational cost increases very rapidly with the number of system components. In fact, the cost  scales cubically $\left(\mathit{O}\left(C^3\right)\right)$ with the number of system components $C$ and the choice of algorithms can significantly impact the calculation time. This can be prohibitive in multiphysics simulations.
         \item Equilibrium calculations require solving a non-convex global optimisation problem. The algorithms used in literature are either primitive or limited to relatively very simple problems. This can affect both performance and reliability of the solver which is critical considering the intended application.
         \end{enumerate}
@@ -21,16 +21,16 @@
     \begin{itemize}
         \item Analyse several thermodynamic models used to describe nuclear materials and derive the chemical potential expressions required for implementing the models in the code. See \nameref{chap:thermo}.
         \item Critically survey the numerous algorithms used for thermodynamic equilibrium calculations and identify the solution approach to be adopted. Identify key software design choices and optimise the algorithms for implementation in {\GEM}. See \nameref{chap:equilibrium} and \nameref{chap:implementation}.
-        \item Develop the new equilibrium solver in C++ following MOOSE coding conventions. The code must meet the rigorous source code control, continuous integration and verification requirements of MOOSE. Though {\GEM} is not NQA-I certified, it must try to achieve same quality standards as MOOSE is NQA-I certified. See \nameref{chap:implementation}.
+        \item Develop the new equilibrium solver in C++ following \gls{moose} coding conventions. The code must meet the rigorous source code control, continuous integration and verification requirements of \gls{moose}. Though {\GEM} is not \glsxtrshort{nqa}-{1} certified, it must try to achieve same quality standards as \gls{moose} is \glsxtrshort{nqa}-{1} certified. See \nameref{chap:implementation}.
         \item Quantitatively compare various global optimisation algorithms available in literature, and, based on performance and reliability, select and implement the algorithm {\GEM}. See \nameref{chap:implementation}.
         \item Demonstrate the capabilities of the developed thermodynamic solver through potential applications and benchmark against results available in literature and through other codes. See \nameref{chap:results}.
-        \item An internship at Idaho National Laboratory from June 2021 to September 2022, working on MOOSE integration of \GEM. Owing to COVID-19 induced travel restrictions, this internship was virtual.
+        \item An internship at Idaho National Laboratory from June 2021 to September 2022, working on \gls{moose} integration of \GEM. Owing to COVID-19 induced travel restrictions, this internship was virtual.
     \end{itemize}
 
 \section{Deliverables}
 	The outcomes of this research were documented in several ways including publications in peer-reviewed journals, conference presentations and annual progress reports submitted to the Idaho National Laboratory (INL). The main deliverables of this work were as follows:
 	\begin{enumerate}
-	\item Code base for {\GEM} delivered to INL via export controlled repository on Nuclear Science User Facility (NSUF) High Performance Computing (HPC)'s GitLab instance. Since {\YJ} is export controlled, the code has not been shared here.
+	\item Code base for {\GEM} delivered to INL via export controlled repository on Nuclear Science User Facility (NSUF) High Performance Computing (HPC)'s GitLab instance. Since {\YJ} is export controlled, the code cannot be provided here.
 	\item Four annual progress reports submitted to INL in September 2019, September 2020, August 2021 and September 2022. 
 	\item Six publications in peer-reviewed journals and seven conference presentations and posters. See \nameref{publications}.
 	\end{enumerate}
