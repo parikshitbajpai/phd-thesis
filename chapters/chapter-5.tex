@@ -14,7 +14,7 @@
     \begin{equation}
         d G_{\text{sys}} = 0,
     \end{equation}
-    where
+    % where
     \begin{equation}
         d G_{\text{sys}} = -S dT -Vd(-P) + \sum_{i} \mu_j d n_j.
     \end{equation}
@@ -28,12 +28,12 @@
 %==============================================================================================================================
 
 \section{Conditions of Phase Equilibrium} \label{sec:eqb_theory}
-A thermodynamic equilibrium solver must meet both the necessary and sufficient conditions for thermodynamic equilibrium. Rooted in the fundamental laws of thermodynamics, the necessary and sufficient conditions together ensure that the Gibbs energy of the system is at a local equilibrium while respecting the constraints.
+A thermodynamic equilibrium solver must respect both the necessary and sufficient conditions for thermodynamic equilibrium. Rooted in the fundamental laws of thermodynamics, the necessary conditions  ensure that the Gibbs energy of the system is at a local equilibrium. Satisfying the sufficient condition, while respecting the constraints, verifies that an alternative phase assemblage yielding a lower Gibbs energy is not possible and guarantees a global minimum.
 
 \subsection{Necessary conditions}
-	The necessary conditions for thermodynamic equilibrium require satisfaction of mass conservation and the Gibbs' phase rule in addition to satisfying the Gibbs' criterion which is a generalisation of the common tangent construction. These condition can be summarised as follows.
-	
-	\begin{enumerate}
+	% The necessary conditions for thermodynamic equilibrium require satisfaction of mass conservation and the Gibbs' phase rule in addition to satisfying the Gibbs' criterion which is a generalisation of the common tangent construction. These condition can be summarised as follows.
+  The necessary conditions for phase equilibrium, which include mass conservation, Gibbs' phase rule and a generalisation of the common tangent construction, are summarised as follows:
+	\begin{enumerate}\compresslist
 		\item \textbf{Conservation of mass}\\
 			The law of conservation of mass requires that the linear equations representing mass constraints be satisfied. For component $j$, the mass balance equation can be written as:
 			\begin{equation}\label{eq:massbalance}
@@ -42,8 +42,7 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 			where ${\nu}_{ij}$ represents the stoichiometric coefficient of system components $j$ in phase species $i$. In an electrochemical system where the electrons form a system component with zero moles overall in the system, the mass balance constraint includes the charge neutrality constraint but it can be explicitly written as:
 			\begin{equation}\label{eq:chargebalance}
 				b_{e^-} = \sum_{i=1}^{N_{\phi}}x_{i}{\nu}_{i{e^-}} = 0.
-			\end{equation} 
-			
+			\end{equation} 		
 		\item \textbf{Gibbs' phase rule}\\
 			Thermodynamic equilibrium conditions also require that  Gibbs' phase rule be satisfied. Gibbs' phase rule determines the \emph{degree of freedom} of the system, i.e., the number of phases that can be stable at equilibrium in relation to the state variables \cite{Gibbs:1878aa}. In general, the phase rule can be written as:
 			\begin{equation}
@@ -53,8 +52,7 @@ A thermodynamic equilibrium solver must meet both the necessary and sufficient c
 			\begin{equation}
                 			F=C-\Phi,
             		\end{equation}
-			which implies that the number of phases that can co-exist at equilibrium cannot exceed the number of components in a closed isothermal, isobaric system.
-			
+			which implies that the number of phases that can co-exist at equilibrium cannot exceed the number of components in a closed isothermal, isobaric system.			
 		\item \textbf{Gibbs' criterion}\\
 			Ensuring that the Gibbs phase rule and mass balance constraints are satisfied is relatively straightforward but special attention must be paid to ensuring that the integral Gibbs energy of the system is at a minimum. The equilibrium criteria established by Gibbs requires that at equilibrium $d G_\text{sys} = 0$ \cite{Gibbs:1878aa}. Thus, differentiating equation~\eqref{eqn:integralGibbs}:
 			\begin{equation}\label{eqn:dGibbs1}
