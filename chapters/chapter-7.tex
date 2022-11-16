@@ -1,11 +1,11 @@
 \chapter{Demonstration Problems} \label{chap:results}
 
 \begin{abstract}
-    Thermodynamics plays a central role in driving several physical phenomena and in nuclear it is often used in conjunction with other codes, such as a phase-field model or a fuel performance code. Another very useful application of the thermodynamic equilibrium is to study the behaviour of nuclear fuels and materials under severe accident conditions such as in predicting the impact of oxygen potential on onset temperature of fuel volatilisation. Though the goal of this work was to develop the capability to use thermodynamic equilibrium calculations in modelling nuclear materials, the tool was used to perform several calculations which can demonstrate its capability. It must be emphasised that such calculations are purely intended to demonstrate the capability of the tool developed as part of this research and are not aimed at modelling real-world problems and phenomena. Several such examples are presented in this chapter. The first example is a benchmarking exercise where the results of {\GEM} for a molten salt system are compared to the results from FactSage. The second example reproduces a phase-diagram already reported in literature followed by an example of phase evolution of oxide fuel. The next couple of examples show how thermochemical equilibrium calculations may be relevant to severe accident modelling in \gls{candu} and source term modelling in \gls{msr}. The last example demonstrates a simple coupling between {\GEM} and \gls{moose} phase field module to model leaching of \ce{Ni} by molten \ce{LiF-NiF2} salt.
+    Thermodynamics plays a central role in driving several physical phenomena and in nuclear reactor modelling, it is often used in conjunction with other codes, such as a phase-field model or a fuel performance code. Another very useful application of the thermodynamic equilibrium is to study the behaviour of nuclear fuels and materials under severe accident conditions such as in predicting the impact of oxygen potential on the onset temperature of fuel volatilisation. Though the goal of this work was to develop the capability to use thermodynamic equilibrium calculations in modelling nuclear materials, the tool was used to perform several calculations which can demonstrate its capability. It must be emphasised that such calculations are purely intended to demonstrate the capability of the tool developed as part of this research and are not aimed at modelling real-world problems and phenomena. Several such examples are presented in this chapter. The first example is a benchmarking exercise where the results of {\GEM} for a molten salt system are compared to the results from FactSage. The second example reproduces a phase-diagram already reported in literature followed by an example of phase evolution of oxide fuel. The next couple of examples show how thermochemical equilibrium calculations may be relevant to severe accident modelling in \gls{candu} reactors and source term modelling in \gls{msr}. The last example demonstrates a simple coupling between {\GEM} and the \gls{moose} phase field module to model leaching of \ce{Ni} by a molten \ce{LiF-NiF2} salt.
 \end{abstract}
 	
 \section{MQMQA Calculation Comparison of {\GEM} with FactSage}
-To ensure the accuracy of results, a significant effort was put into verification of {\GEM} results by benchmarking with the commercial code FactSage. For this, a representative system was selected (the system composition is the same as that used by Poschmann et al. \cite{Poschmann:2021ab}) and the relative difference of the mole fractions of each quadruplet was compared between {\GEM} and FactSage. The calculations were performed at \SI{1500}{\kelvin} and \SI{1}{\atmosphere} and, as shown in Figure~\ref{fig:verif}, the results are in excellent agreement with FactSage and the maximum relative difference is of the order of \num{1d-5}. The Gibbs energy predicted by both {\GEM} and FactSage are both \SI{-2.9787d11}{\joule}. 
+To ensure the accuracy of results, a significant effort was put into verification of {\GEM} results by benchmarking with the commercial code FactSage. For this, a representative system was selected (the system composition is the same as that used by Poschmann et al. \cite{Poschmann:2021ab}) and the relative differences in the mole fractions of each quadruplet were compared between {\GEM} and FactSage. The calculations were performed at \SI{1500}{\kelvin} and \SI{1}{\atmosphere} and, as shown in Figure~\ref{fig:verif}, the results are in excellent agreement with FactSage and the maximum relative difference is of the order of \num{1d-5}. The Gibbs energy predicted by both {\GEM} and FactSage is \SI{-2.9787d11}{\joule}. 
 \begin{figure}[!ht]
     \subfloat[Start of simulation\label{fig:verif_sp}]{%
       \includegraphics[width=0.5\textwidth]{figures/chapter-7/MQM_Vsp.pdf}
@@ -14,16 +14,16 @@ To ensure the accuracy of results, a significant effort was put into verificatio
     \subfloat[Quadruplet errors\label{fig:verif_hm}]{%
       \includegraphics[width=0.46\textwidth]{figures/chapter-7/MQM_Vhm.pdf}
     }
-    \caption[Comparison of output species concentrations predictions from {\GEM} and FactSage for an MSR system.]{Comparison of output species concentrations predictions from {\GEM} and FactSage for an MSR system. The figure on the left shows the comparison of the values from the two plots with the green line indicating same values. A more detailed error heatmap is shown on the right with each block denoting the relative error of a quadruplet.}
+    \caption[Comparison of output species concentration predictions from {\GEM} and FactSage for an MSR system.]{Comparison of output species concentration predictions from {\GEM} and FactSage for an \gls{msr} system. The figure on the left shows the comparison between values from the two softwares with the green line indicating same values. A more detailed heatmap is shown on the right with each block denoting the relative difference in mole fractions for a quadruplet.}
     \label{fig:verif}
 \end{figure}
        
 \section{Phase Diagram Construction}
-	Thermodynamic equilibrium calculations form the basis of phase diagram calculation. To demonstrate such applications, the phase diagram of the  \ce{NaF-CsF} binary system was calculated using {\GEM}. This binary system has been recently re-evaluated experimentally by Lipkina et al. \cite{Lipkina:2022aa} and the phase diagram generated here was compared to the experimental results. The calculations from {\GEM} are shown in Figure~\ref{fig:res_phased} and show excellent agreement with the experimental data for the eutectic points.
+	Thermodynamic equilibrium calculations form the basis of phase diagram calculations. To demonstrate such applications, the phase diagram of the  \ce{NaF-CsF} binary system was calculated using {\GEM}. This binary system has been recently re-evaluated experimentally by Lipkina et al. \cite{Lipkina:2022aa} and the phase diagram generated here was compared to the experimental results. The calculations from {\GEM} are shown in Figure~\ref{fig:res_phased} and show excellent agreement with the experimental data for the eutectic points.
     \begin{figure}
         \centering
         \includegraphics[width=0.95\textwidth]{figures/chapter-7/phasedia.png}
-        \caption[Yellowjacket prediction of \ce{NaF-CsF} phase diagram.]{Yellowjacket prediction of \ce{NaF-CsF} phase diagram with the phase diagram from Lipkina et al. \cite{Lipkina:2022aa} overlayed on top.}
+        \caption[Yellowjacket prediction of a \ce{NaF-CsF} phase diagram.]{Yellowjacket prediction of a \ce{NaF-CsF} phase diagram (coloured regions) with the phase diagram from Lipkina et al. \cite{Lipkina:2022aa} overlayed on top.}
         \label{fig:res_phased}
     \end{figure}
     \begin{figure}
@@ -32,14 +32,14 @@ To ensure the accuracy of results, a significant effort was put into verificatio
         \caption[Reference \ce{NaF-CsF} phase  diagram from Lipkina et al.]{Reference \ce{NaF-CsF} phase  diagram from Lipkina et al. \cite{Lipkina:2022aa}.}
         \label{fig:res_refdia}
     \end{figure}
-    There is, however, a departure between the liquidus points calculated by Lipkina et al. and the ones predicted by {\YJ}. This is a direct consequence of the database used in the calculations (\gls{mstdb}) as it has not been updated to reflect the recent experimental results. In fact, as shown by the solid black line, the calculations match the results of the previously available experimental data. The example not only highlights the capability of {\GEM} but also shows a need for the re-evaluation of the \ce{NaF-CsF} thermodynamic model currently used in the databases.
+    There is, however, a departure between the liquidus points calculated by Lipkina et al. and the ones predicted by {\GEM}. This is a direct consequence of the database used in the calculations (\gls{mstdb}) as it has not been updated to reflect the recent experimental results. In fact, as shown by the solid black line, the calculations match the results of the previously available experimental data. The example not only highlights the capability of {\GEM} but also shows a need for the re-evaluation of the \ce{NaF-CsF} thermodynamic model currently used in the databases.
     
 
 \section{CANDU Fuel Phase Evolution}
-Severe accident scenarios are amongst the phenomena that benefit most from the use of thermodynamic equilibrium calculations \cite{Piro:2021aa}. Piro performed thermodynamic investigations on irradiated uranium dioxide \gls{candu} fuel under conditions representative of severe accident scenarios \cite{Piro:2022aa}. Piro considered two cases of irradiated fuel interacting with the atmosphere. In the first case, the fuel was in contact with hydrogen gas while in the second case the irradiated fuel was in contact with air and steam.  Piro used \gls{taf-id} \cite{Gueneau15,Gueneau:2021aa} and varied the ratio of fuel to total atmospheric gas as well as the temperature and hydrostatic pressure. Here, a couple of similar simulations are performed albeit for the first case with a single fuel to atmosphere ratio and the database used is a modified version of TAF-ID obtained by translating the \gls{taf-id} tdb file into ChemSage format. For the simulation, the same composition as that used by Piro was selected and the values are reported in Table~\ref{tab:composition_candu}. In the table, $b_{\ce{O}}$, $b_{\ce{H}}$ and $b_{\ce{N}}$ are variables which depend on the hydrogen to steam molar ratio $H = n_{\ce{H2}} / n_{\ce{H2O}}$, air to steam molar ratio $A = n_{\text{air}} / n_{\ce{H2O}}$, and fission product to atmosphere molar ratio $R = b_{\ce{Cs}} / n_{\text{gas}}$. The calculations show that under the given conditions, the main phase is O2ZRU\_C with other phases evolving as the system temperature changes. It must again be emphasised that the simulation is only representative of the capabilities developed as part of {\GEM} and must be considered as a safety case simulation. 
+Severe accident scenarios are amongst the phenomena that benefit most from the use of thermodynamic equilibrium calculations \cite{Piro:2021aa}. Piro performed thermodynamic investigations on irradiated uranium dioxide \gls{candu} reactor fuel under conditions representative of severe accident scenarios \cite{Piro:2022aa}. Piro considered two cases of irradiated fuel interacting with the atmosphere. In the first case, the fuel was in contact with hydrogen gas while in the second case the irradiated fuel was in contact with air and steam.  Piro used \gls{taf-id} \cite{Gueneau15,Gueneau:2021aa} and varied the ratio of fuel to total atmospheric gas as well as the temperature and hydrostatic pressure. Here, a couple of similar simulations are performed albeit only for the case with a single fuel to atmosphere ratio and the database used is a modified version of TAF-ID obtained by translating the \gls{taf-id} tdb file into ChemSage format. For the simulation, the same composition as that used by Piro was selected and the values are reported in Table~\ref{tab:composition_candu}. In the table, $b_{\ce{O}}$, $b_{\ce{H}}$ and $b_{\ce{N}}$ are variables which depend on the hydrogen to steam molar ratio $H = n_{\ce{H2}} / n_{\ce{H2O}}$, air to steam molar ratio $A = n_{\text{air}} / n_{\ce{H2O}}$, and fission product (Cesium in this case) to atmosphere molar ratio $R = b_{\ce{Cs}} / n_{\text{gas}}$. The calculations show that under the given conditions, the main phase is O2ZRU\_C with other phases evolving as the system temperature changes. It must again be emphasised that the simulation is only representative of the capabilities developed as part of {\GEM} and must not be considered as a safety case simulation. 
 \begin{table}[htb]
 		\centering
-	   	\caption[Input mass parameters for CANDU fuel under severe accident condition.]{Input mass parameters for \gls{candu} fuel under severe accident condition. Adopted from Piro \cite{Piro:2022aa}.}
+	   	\caption[Input mass parameters for CANDU fuel under a severe accident condition.]{Input mass parameters for \gls{candu} fuel under a severe accident condition. Adopted from Piro \cite{Piro:2022aa}.}
 	   	\begin{tabular}{@{} lcr @{}} % Column formatting, @{} suppresses leading/trailing space
 	      		\toprule
 	      		\textbf{Element} & \phantom{abc}& \textbf{Moles [\si{\mole}]} \\
@@ -78,7 +78,7 @@ Using $H = 10^5$ and $R = 10^{-4}$ for the case of fuel in contact with hydrogen
      \label{fig:candu_phase}
 \end{figure}
 
-In addition to comparing phase distributions under the varying system parameters, one is often interested in the oxidation states of different phases as they affect the material properties. Thermodynamic equilibrium calculations can be used to compute the oxygen-to-metal ratio $\left(O/M\right)$ of the phases. The same calculations as those used for the phase evolution were used to calculate the $\left(O/M\right)$ ratio and its evolution for O2ZRU\_C phase is shown in Figure~\ref{fig:candu_om}.
+In addition to comparing phase distributions under the varying system parameters, one is often interested in the oxidation states of different phases as they affect the material properties. Thermodynamic equilibrium calculations can be used to compute the oxygen-to-metal ratio $\left(O/M\right)$ of the phases. The same calculations as those used for the phase evolution were used to calculate the $\left(O/M\right)$ ratio and its evolution for the O2ZRU\_C phase is shown in Figure~\ref{fig:candu_om}.
 \begin{figure}[htb]
          \centering
          \includegraphics[width=0.7\textwidth]{figures/chapter-7/Candu_OM.pdf}
@@ -87,7 +87,7 @@ In addition to comparing phase distributions under the varying system parameters
 \end{figure}
 
 \section{Vapour Pressure Evolution in an MSR}
-	Safety case demonstrations for \gls{msr} are significantly different from water-cooled reactors. Since the fuel is already molten, there are no thresholds for a major release of radioactive material with severe core damage in MSR accidents. The consequences of a primary system breach depend on the size and breach location and how much of the fuel salt or fission gases are leaked into a confined space.  A small breach can result in significant fuel salt release and the high salt temperature can lead to a high pressure in the confined space  \cite{Holcomb:2021aa}. Predicting vapour pressures is important for such safety demonstrations, but also for design and development of off-gas treatment system. {\GEM} can predict the change of vapour pressure of elements in gas phase, which can be used in source-term analyses and other simulations.  The role of thermodynamic equilibrium solver in such cases can be demonstrated by the evolution of a fictive system representative of a molten salt system (\ce{FLiBe}) with some dissolved fissile material (\ce{U}) and some fission products (\ce{Nd, Ce, La, Cs, Rb}).  The system composition was adopted from Poschmann et al. \cite{Poschmann:2021ab} and is reported in Table~\ref{tab:composition_msr}.
+	Safety case demonstrations for \gls{msr} are significantly different from water-cooled reactors. Since the fuel is already molten, there are no thresholds for a major release of radioactive material with severe core damage in \gls{msr} accidents. The consequences of a primary system breach depend on the size and breach location and how much of the fuel salt or fission gases are leaked into a confined space.  A small breach can result in significant fuel salt release and the high salt temperature can lead to a high pressure in the confined space  \cite{Holcomb:2021aa}. Predicting vapour pressures is important for such safety demonstrations, but also for design and development of off-gas treatment system. {\GEM} can predict the changes in vapour pressure of elements in gas phase, which can be used in source-term analyses and other simulations.  The role of a thermodynamic equilibrium solver in such cases can be demonstrated by the evolution of a fictive system representative of a molten salt system (\ce{FLiBe}) with some dissolved fissile material (\ce{U}) and some fission products (\ce{Nd, Ce, La, Cs, Rb}).  The system composition was adopted from Poschmann et al. \cite{Poschmann:2021ab} and is reported in Table~\ref{tab:composition_msr}.
 	\begin{table}[htb]
 		\centering
 	   	\caption[Input mass parameters for MSR fuel vapour pressure evolution.]{Input mass parameters for MSR fuel vapour pressure evolution. From Poschmann et al. \cite{Poschmann:2021ab}.}
@@ -110,7 +110,7 @@ In addition to comparing phase distributions under the varying system parameters
 	   \label{tab:composition_msr}
 	\end{table}
 
-    The system was assumed to undergo an unmitigated increase in temperature. The phase evolution, vapour pressure of species in gas phase and element potential change as a function of temperature are shown in figures~\ref{fig:res_molemsr}, \ref{fig:res_vpmsr} and \ref{fig:res_epmsr}.
+    The system was assumed to undergo an unmitigated increase in temperature. The phase evolution, vapour pressure of species in the gas phase and element potential change as a function of temperature are shown in figures~\ref{fig:res_molemsr}, \ref{fig:res_vpmsr} and \ref{fig:res_epmsr}.
         \begin{figure}[ht]
         \centering
         \includegraphics[width=0.9\textwidth]{figures/chapter-7/msr_moles.pdf}
@@ -120,13 +120,13 @@ In addition to comparing phase distributions under the varying system parameters
     \begin{figure}[ht]
         \centering
         \includegraphics[width=0.9\textwidth]{figures/chapter-7/msr_vp.pdf}
-        \caption{Vapour pressure prediction in molten salt system.}
+        \caption{Vapour pressure prediction in a molten salt system.}
         \label{fig:res_vpmsr}
     \end{figure}
     \begin{figure}[ht]
         \centering
         \includegraphics[width=0.9\textwidth]{figures/chapter-7/msr_ep.pdf}
-        \caption{Element potential evolution in MSR.}
+        \caption{Element potential evolution in an MSR.}
         \label{fig:res_epmsr}
      \end{figure}
 To reiterate, one must note that the results are purely for capability demonstration and must not be treated as physically relevant. However, they do exhibit cases where one might find the use of {\GEM} relevant.
@@ -138,7 +138,7 @@ The objective of {\YJ} development was to allow concurrent coupling of GEM with 
 \end{equation}
 where $g_i^\text{ec}$ denotes the Gibbs energy with the reduction component accounted for. 
 
-For the initial demonstration of the methodology, \ce{LiF-NiF2} salt interacting with \ce{Ni} metal at \SI{1150}{\kelvin} was selected. The Gibbs energy from the thermodynamic equilibrium code then takes the following form:
+For the initial demonstration of the methodology, a \ce{LiF-NiF2} salt interacting with \ce{Ni} metal at \SI{1150}{\kelvin} was selected. The Gibbs energy from the thermodynamic equilibrium code then takes the following form:
 \begin{equation*}
 	g_\text{GEM} = x_{\ce{NiF2}} g_{\ce{NiF2}}^\circ + x_{\ce{LiF}} g_{\ce{LiF}}^\circ + RT\left( x_{\ce{NiF2}} \ln{x_{\ce{NiF2}}} + x_{\ce{LiF}} \ln{x_{\ce{LiF}}} \right) + g^\text{ex}.
 \end{equation*}
@@ -168,7 +168,7 @@ A phase field simulation was performed by collaborators at the University of Flo
     \subfloat[End of simulation\label{fig:EF2_e}]{%
       \includegraphics[width=0.475\textwidth]{figures/chapter-7/EF_2.871_e.pdf}
     }
-    \caption[\ce{Ni} corrosion by \ce{LiF-NiF2} salt under oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$. Initially, the domain contained \ce{Ni} in the left half of the domain and molten salt in the right half as in subfigure (a). At the end of the simulation shown in subfigure (b), the oxidation of \ce{Ni} metal leads to the leaching of \ce{Ni} into the molten salt as exhibited by the interface shifting to the left (the dashed line denotes the initial position of interface).}
+    \caption[\ce{Ni} corrosion by \ce{LiF-NiF2} salt under an oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under oxidising condition $\left(\Delta E_{\ce{F}} = 2.871\right)$. Initially, the domain contained \ce{Ni} in the left half of the domain and molten salt in the right half as in subfigure (a). At the end of the simulation shown in subfigure (b), the oxidation of \ce{Ni} metal leads to the leaching of \ce{Ni} into the molten salt as exhibited by the interface shifting to the left (the dashed line denotes the initial position of interface).}
     \label{fig:pfres2}
 \end{figure}
 
@@ -180,7 +180,7 @@ A phase field simulation was performed by collaborators at the University of Flo
     \subfloat[End of simulation\label{fig:EF3_e}]{%
       \includegraphics[width=0.475\textwidth]{figures/chapter-7/EF_3.0_e.pdf}
     }
-    \caption[\ce{Ni} corrosion by \ce{LiF-NiF2} salt under reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$. The initial interface is shown in subfigure (a) while at the end of the simulation shown in subfigure (b), the reduction of \ce{Ni} metal leads to gain of \ce{Ni} metal from the molten salt as exhibited by the interface shifting to the right (the dashed line denotes the initial position of interface).}
+    \caption[\ce{Ni} corrosion by \ce{LiF-NiF2} salt under a reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$.]{Simulation of \ce{Ni} corrosion by \ce{LiF-NiF2} salt under reducing condition $\left(\Delta E_{\ce{F}} = 3.0\right)$. The initial interface is shown in subfigure (a) while at the end of the simulation shown in subfigure (b), the reduction of \ce{Ni} metal leads to gain of \ce{Ni} metal from the molten salt as exhibited by the interface shifting to the right (the dashed line denotes the initial position of interface).}
     \label{fig:pfres3}
 \end{figure}
 

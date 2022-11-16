@@ -62,7 +62,7 @@ A thermodynamic equilibrium solver must respect both the necessary and sufficien
 			\begin{equation}\label{eqn:dGibbs2}
 				\sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( n_{i} d \mu_{i}\right) = 0.
 			\end{equation}
-			Substituting the Gibbs-Duhem equation in equation~\eqref{eqn:dGibbs2} gives:
+			Substituting the Gibbs-Duhem equation in equation~\eqref{eqn:dGibbs1} gives:
 			\begin{equation}\label{eqn:dGibbs3}
 				d G_{\text{sys}} = \sum_{\phi=1}^{\Phi} \sum_{i=1}^{N_{\phi}} \left( d n_{i}\mu_{i} \right) = 0.
 			\end{equation}
@@ -106,7 +106,7 @@ where the symbols represent their usual variables mentioned before.
 As the conditions that must be satisfied at thermodynamic equilibrium have already been mentioned, the numerical procedures for  both the approaches can now be elaborated.
 
 \subsection{Method of Lagrange multipliers}
-White et al. \cite{White:58} established a second order steepest descent method for minimising Gibbs energy, which is based on the method of Lagrange multipliers for constrained optimisation. The \gls{gem} approach simultaneously optimises mass balance constraint and Gibbs' criterion while fixing the system size through the Gibbs phase rule. The dimensionless form of Gibbs energy of the system can be expressed as a quadratic approximation obtained by the Taylor series expansion as follows:
+White et al. \cite{White:58} established a second order steepest descent method for minimising Gibbs energy, which is based on the method of Lagrange multipliers for constrained optimisation. The \gls{gem} approach simultaneously optimises the mass balance constraint and Gibbs' criterion while fixing the system size through the Gibbs phase rule. The dimensionless form of Gibbs energy of the system can be expressed as a quadratic approximation obtained by the Taylor series expansion as follows:
   \begin{equation}\label{eq:GibbsTaylor}
     \begin{split}
       \tilde{Q}^{m+1} = \tilde{G}^{m} &+ \left .\sumstoichphase \Delta_{\omega} \pder{\tilde{G}^m}{\molestoich^m} \right \vert_{\molestoich^m = \molestoich^{m+1}} \\
@@ -115,7 +115,7 @@ White et al. \cite{White:58} established a second order steepest descent method 
                       &+ \left . \frac{1}{2} \sumsolnphase \sumspecies \sumspecies[l] \Delta_i \Delta_l \pqder{\tilde{G}^m}{\molespecies{i}^m}{\molespecies{l}^m} \right \vert_{\molespecies{i}^m = \molespecies{i}^{m+1}},
     \end{split}
   \end{equation}
-where the superscript $m$ and $m+1$ denote the iteration at which the Gibbs energy is calculated and the deltas are represented as follows:
+where the superscripts $m$ and $m+1$ denote the iteration at which the Gibbs energy is calculated and the deltas are represented as follows:
   \begin{gather}
       \Delta_i = \molespecies{i}^{m+1} - \molespecies{i}^{m},\\
       \Delta_\lambda = \molesol^{m+1} - \molesol^{m}, \\
@@ -302,15 +302,14 @@ The Jacobian matrix\footnote{It must be noted the Jacobian matrix from the parti
     \spder{\moleelem{1}^m}{n_{\omega=1}^m} & \dots & \spder{\moleelem{E}^m}{n_{\omega=1}^m} & 0 & \dots & 0 & 0 & \dots & 0 \\
     \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
     \spder{\moleelem{1}^m}{n_{\omega=\Omega}^m} & \dots & \spder{\moleelem{E}^m}{n_{\omega=\Omega}^m} & 0 & \dots & 0 & 0 & \dots & 0
-    \end{bmatrix}
+    \end{bmatrix},
 \end{equation}
-where, the partials derivatives are defined as follows:
+where the partial derivatives are defined as follows:
 \begin{gather}
     \pder{\moleelem{j}^m}{\cpe{k}^m} = \sumsolnphase \molesol^m \sumspecies \molefrac{i}^m \stoich{i}{j} \stoich{i}{k}\\
     \pder{\moleelem{j}^m}{n_{\lambda}^m} = \sumspecies \molefrac{i}^m \stoich{i}{j} \\
     \pder{\moleelem{j}^m}{n_{\omega}^m} = \stoich{\omega}{j}.
 \end{gather}
-
 At every iteration step, the direction vector is computed and the system is adjusted until the convergence criteria are achieved.
 
 
@@ -333,7 +332,7 @@ At every iteration step, the direction vector is computed and the system is adju
 	 \begin{equation}
 	 	\hat{\mu}_{i} = \frac{{\mu}_i}{a_{i(T)}},
 	 \end{equation}
-	 where $\hat{\mu}_{i}$ [\si{\joule \per g-at}] is the chemical potential and ${a_{i(T)}}$  is the total number of atoms in the formula mass. This method of defining chemical potentials allows an equivalent comparison of chemical potentials of compounds with different numbers of atoms per molar mass.
+	 where $\hat{\mu}_{i}$ [\si{\joule \per \gram \per \atom}] is the chemical potential and ${a_{i(T)}}$  is the total number of atoms in the formula mass. This method of defining chemical potentials allows an equivalent comparison of chemical potentials of compounds with different numbers of atoms per molar mass.
 
 	 At equilibrium, all $\hat{\mu}_{i}$ must lie on a hyper-plane at equilibrium in the $C$-dimensional Euclidean space, where $C$ represents the number of system components. This plane is called the \emph{Gibbs plane} and an example of it is shown in Figure~\ref{fig:GibbsPlane} for a three dimensional space.
 	 \begin{figure}[ht!]

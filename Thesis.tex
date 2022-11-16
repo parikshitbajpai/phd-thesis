@@ -1,4 +1,4 @@
-\documentclass{dissertation}
+\documentclass[oneside]{dissertation}
 
 \usepackage[version=4]{mhchem}
 \usepackage{siunitx}
@@ -17,7 +17,7 @@
 \usepackage[acronym,nonumberlist]{glossaries-extra}
 \setabbreviationstyle[acronym]{long-short}
 \makeglossaries
-\usepackage[parfill]{parskip}
+% \usepackage[parfill]{parskip}
 \usepackage{csquotes}
 
 \theoremstyle{definition}
@@ -39,6 +39,7 @@
 \newcommand{\YJ}{Yellowjacket}
 \newcommand{\GEM}{{\YJ}--GEM}
 
+\DeclareSIUnit\atom{at}
 \DeclareSIUnit{\atmosphere}{atm}
 \DeclareSIQualifier{\electric}{e}
 
