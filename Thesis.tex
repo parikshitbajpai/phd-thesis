@@ -1,4 +1,4 @@
-\documentclass[oneside]{dissertation}
+\documentclass[]{dissertation}
 
 \usepackage[version=4]{mhchem}
 \usepackage{siunitx}
@@ -14,7 +14,7 @@
 \usepackage{xfrac}
 \usepackage{algorithm2e}
 \usepackage{subfig}
-\usepackage[acronym,nonumberlist]{glossaries-extra}
+\usepackage[acronym,nonumberlist,nomain,automake]{glossaries-extra}
 \setabbreviationstyle[acronym]{long-short}
 \makeglossaries
 % \usepackage[parfill]{parskip}
@@ -22,12 +22,12 @@
 
 \theoremstyle{definition}
 \newtheorem*{objective}{Objective}
- 
+
 \theoremstyle{remark}
 \newtheorem*{constraint}{Constraints}
 
 \newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
- 
+
 \newcommand{\compresslist}{
 	\setlength{\itemsep}{1pt}
 	\setlength{\parskip}{0pt}
@@ -59,7 +59,7 @@
 
 % Thesis Title
 % Format: \title[Optional Subtitle]{Title}
-\title[Development of Yellowjacket Gibbs Energy Minimiser]{Calculating Thermochemical Equilibrium for Multiphysics Simulations of Nuclear Materials} 
+\title[Development of Yellowjacket Gibbs Energy Minimiser]{Calculating Thermochemical Equilibrium for Multiphysics Simulations of Nuclear Materials}
 
 % Author Name
 % Format: \author{Firstname}{Lastname}
